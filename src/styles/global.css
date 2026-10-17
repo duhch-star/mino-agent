@@ -1,0 +1,43 @@
+/* =========================================================================
+ * 全局重置 + 应用外壳。设计令牌由 theme/*.css 提供（--dsw-* / --dsh-*）。
+ * 这里只补 token 未覆盖的部分：根高度、正文颜色、以及复刻层用到的
+ * 聊天几何桥接变量（对齐 deepseek-harness 的 ChatView / ConversationRoot）。
+ * ========================================================================= */
+
+:root {
+  color-scheme: light dark;
+
+  /* 聊天内容列宽与输入框侧边留白（对齐 ChatView 的共享宽度规则） */
+  --dsh-chat-content-width: 748px;
+  --dsh-composer-side-clearance: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--dsw-font-family);
+  font-size: var(--dsh-content-font-size, 14px);
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-bg-base);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 品牌字体（Montserrat）快捷入口 */
+.brand-font {
+  font-family: var(--dsw-font-family-brand);
+}
+
+/* 复刻层通用按钮禁用态（与 ui-primitives Button 一致） */
+button:disabled {
+  cursor: not-allowed;
+}
