@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { chapterIndex } from '../data/chapters.js'
 import { IconCopy, IconCheck } from './Icons.jsx'
@@ -178,7 +178,7 @@ export function extractHeadings(text) {
   return headings
 }
 
-export function Markdown({ text }) {
+export const Markdown = memo(function Markdown({ text }) {
   const blocks = parseBlocks(text || '')
   return (
     <div className="assistantBody">
@@ -230,4 +230,4 @@ export function Markdown({ text }) {
       })}
     </div>
   )
-}
+})

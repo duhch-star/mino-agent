@@ -71,24 +71,6 @@
   padding: 0;
 }
 
-.brandMark {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  color: var(--dsw-alias-label-primary);
-}
-
-.brandName {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
 .iconButton {
   flex: none;
   display: inline-flex;
@@ -259,7 +241,6 @@
   margin-bottom: 12px;
 }
 
-.sidebar.collapsed .brandName,
 .sidebar.collapsed .newSession span,
 .sidebar.collapsed .panelTitle,
 .sidebar.collapsed .sessionList,

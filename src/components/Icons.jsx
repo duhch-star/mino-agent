@@ -26,14 +26,6 @@ export function IconSend({ size = 16 }) {
   return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
 }
 
-export function IconSun({ size = 16 }) {
-  return <svg {...base} width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
-}
-
-export function IconMoon({ size = 16 }) {
-  return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-}
-
 export function IconClose({ size = 16 }) {
   return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
 }
@@ -93,10 +85,6 @@ export function IconRefresh({ size = 16 }) {
 
 export function IconVideo({ size = 16 }) {
   return <svg {...base} width={size} height={size} aria-hidden="true"><path d="m22 8-6 4 6 4V8Z" /><rect x="2" y="6" width="14" height="12" rx="2" /></svg>
-}
-
-export function IconUser({ size = 16 }) {
-  return <svg {...base} width={size} height={size} aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg>
 }
 
 export function IconShield({ size = 16 }) {

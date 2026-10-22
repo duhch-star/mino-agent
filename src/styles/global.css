@@ -32,11 +32,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* 品牌字体（Montserrat）快捷入口 */
-.brand-font {
-  font-family: var(--dsw-font-family-brand);
-}
-
 /* 复刻层通用按钮禁用态（与 ui-primitives Button 一致） */
 button:disabled {
   cursor: not-allowed;
