@@ -498,18 +498,24 @@
 
 .answerMetaLabel { margin-right: 2px; }
 .answerReference { max-width: min(100%, 280px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 1px 7px; border: 1px solid var(--dsw-alias-border-l1); border-radius: var(--dsw-radius-sm); }
-.answerMetrics { margin-top: 8px; color: var(--dsw-alias-label-tertiary); font-size: 11px; line-height: 18px; }
-
-.answerActions {
+.chatAnswerFooter {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+  margin-top: 8px;
+}
+
+.chatAnswerActions {
+  display: flex;
+  flex: none;
+  align-items: center;
   gap: 4px;
-  min-height: 28px;
-  margin-top: 5px;
   color: var(--dsw-alias-label-tertiary);
 }
 
-.answerAction {
+.chatAnswerAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -523,7 +529,8 @@
   cursor: pointer;
 }
 
-.answerAction:hover, .answerAction.active { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
+.chatAnswerAction:hover, .chatAnswerAction.active { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
+.chatAnswerMetrics { color: var(--dsw-alias-label-tertiary); font-size: 11px; line-height: 18px; text-align: right; }
 .feedbackSaved { margin-left: 4px; font-size: 11px; color: var(--dsw-alias-label-tertiary); }
 
 /* 正在思考状态：deep-diving 品牌色 */
@@ -837,6 +844,8 @@
   .composerControl { padding: 0 6px; font-size: 11px; }
   .sendBtn { padding: 0 10px; }
   .composerFootnote { font-size: 10px; }
+  .chatAnswerFooter { align-items: flex-start; flex-wrap: wrap; gap: 2px 10px; }
+  .chatAnswerMetrics { width: 100%; text-align: left; }
   .emptyChatStage { padding: 20px 12px 32px; }
   .emptyGreeting { gap: 9px; margin-bottom: 16px; }
   .emptyGreeting h1 { font-size: 18px; line-height: 25px; }

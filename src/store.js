@@ -156,6 +156,7 @@ export const useChatStore = create(persist((set, get) => ({
     let acc = ''
     try {
       const result = await streamChatMessage({
+        conversationId: activeId,
         text: clean,
         context,
         mode: options.mode || 'career',
@@ -293,8 +294,8 @@ export const useLearningStore = create(persist((set) => ({
 // ---------------------------------------------------------------------------
 export const useAuthStore = create(persist((set) => ({
   user: null, // { name, role: 'user' | 'admin' }
-  login: async (name, role) => {
-    const { user } = await apiLogin(name, role)
+  login: async (name, password, role) => {
+    const { user } = await apiLogin(name, password, role)
     set({ user })
   },
   logout: () => set({ user: null }),

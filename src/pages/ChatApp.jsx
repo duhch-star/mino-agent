@@ -52,21 +52,23 @@ function AssistantMessage({ message, sessionId, setFeedback, branchConversation 
           {reference.kind === 'knowledge' ? '知识库章节' : '待上传附件'} · {reference.title}
         </span>)}
       </div>}
-      {metrics.length > 0 && <div className="answerMetrics" aria-label="回答用量与耗时">{metrics.join(' · ')}</div>}
-      {message.content && <div className="answerActions">
-        <button className="answerAction" onClick={copyReply} aria-label={copied ? '已复制回答' : '复制回答'} title={copied ? '已复制' : '复制'}>
-          {copied ? <IconCheck /> : <IconCopy />}
-        </button>
-        <button className={`answerAction ${message.feedback === 'helpful' ? 'active' : ''}`} onClick={() => setFeedback(sessionId, message.id, 'helpful')} aria-label="回答有帮助" aria-pressed={message.feedback === 'helpful'} title="有帮助">
-          <IconThumbUp />
-        </button>
-        <button className={`answerAction ${message.feedback === 'unhelpful' ? 'active' : ''}`} onClick={() => setFeedback(sessionId, message.id, 'unhelpful')} aria-label="回答没帮助" aria-pressed={message.feedback === 'unhelpful'} title="没帮助">
-          <IconThumbDown />
-        </button>
-        {message.task?.status !== 'running' && <button className="answerAction" onClick={() => branchConversation(sessionId, message.id)} aria-label="从此回答分支继续" title="分支继续">
-          <IconBranch />
-        </button>}
-        {message.feedback && <span className="feedbackSaved">已记录本地反馈</span>}
+      {message.content && <div className="chatAnswerFooter">
+        <div className="chatAnswerActions">
+          <button className="chatAnswerAction" onClick={copyReply} aria-label={copied ? '已复制回答' : '复制回答'} title={copied ? '已复制' : '复制'}>
+            {copied ? <IconCheck /> : <IconCopy />}
+          </button>
+          <button className={`chatAnswerAction ${message.feedback === 'helpful' ? 'active' : ''}`} onClick={() => setFeedback(sessionId, message.id, 'helpful')} aria-label="回答有帮助" aria-pressed={message.feedback === 'helpful'} title="有帮助">
+            <IconThumbUp />
+          </button>
+          <button className={`chatAnswerAction ${message.feedback === 'unhelpful' ? 'active' : ''}`} onClick={() => setFeedback(sessionId, message.id, 'unhelpful')} aria-label="回答没帮助" aria-pressed={message.feedback === 'unhelpful'} title="没帮助">
+            <IconThumbDown />
+          </button>
+          {message.task?.status !== 'running' && <button className="chatAnswerAction" onClick={() => branchConversation(sessionId, message.id)} aria-label="从此回答分支继续" title="分支继续">
+            <IconBranch />
+          </button>}
+          {message.feedback && <span className="feedbackSaved">已记录本地反馈</span>}
+        </div>
+        {metrics.length > 0 && <div className="chatAnswerMetrics" aria-label="回答用量与耗时">{metrics.join(' · ')}</div>}
       </div>}
     </div>
   )

@@ -127,7 +127,7 @@ src/
 
 ## 后端接口契约
 
-前端通过 **`src/api.js`** 访问数据（当前为 mock 实现，数据取自 `src/data/`）。接入后端时**只需把 `src/api.js` 各函数体替换为 fetch 调用**，页面 / 组件 / 状态层无需改动。每个函数签名即「前端 ↔ 后端」契约：
+接口清单、请求/响应 schema、鉴权、错误格式、SSE 事件、附件上传和页面接线情况统一维护在 [`BACKEND_API.md`](BACKEND_API.md)。`src/api.js` 目前提供 mock 函数，不会请求真实服务；已有函数签名不代表页面已经接入 API。
 
 | 函数（接口） | 建议端点 | 说明 |
 |---|---|---|
@@ -138,34 +138,15 @@ src/
 | `fetchGuides()` | `GET /api/guides` | 求职指南列表 |
 | `fetchGuide(id)` | `GET /api/guides/:id` | 指南章节正文 |
 | `fetchQuiz(id)` | `GET /api/guides/:id/quiz` | 章节测验 |
-| `fetchQuestions(position)` | `GET /api/interview/questions?position=` | 面试题库 |
+| `fetchQuestions(position, difficulty)` | `GET /api/interview/questions?position=&difficulty=` | 面试题库 |
 | `fetchInterviewFeedback(position, question, answer)` | `POST /api/interview/feedback` | 维度化反馈 |
 | `streamChatMessage(request, callbacks)` | `POST /api/chat`（SSE 流式） | 对话（文本、章节上下文、求职模式、工具、回答档位、附件元数据；通过回调接收内容与完成状态） |
-| `apiLogin(name, role)` | `POST /api/auth/login` | 登录（返回 JWT + 用户信息） |
-| `analyzeResume(text)` | `POST /api/career/resume/analyze` | 简历分析 |
+| `apiLogin(name, password, role)` | `POST /api/auth/login` | 登录 mock（真实角色必须由服务端鉴权） |
+| `analyzeResume({ text, attachmentIds })` | `POST /api/career/resume/analyze` | 简历分析 |
 | `fetchReviewDrafts()` | `GET /api/review/drafts` | 待审核章节草稿 |
-| `reviewDraft(id, action)` | `POST /api/review/drafts/:id` | 审核通过 / 驳回 |
+| `reviewDraft(id, action)` | `POST /api/review/drafts/:id` | 审核 mock；正式端点/schema见交接文档 |
 
-> **语音链路**（STT/TTS）是流式双向通信，不走上面的 REST 契约，接入点在 `InterviewRoom.jsx` 的 `micBtn` 与 `CharacterView` 的 `speaking`（建议 WebSocket 流式）。
-
-### 对话请求与流式响应
-
-`POST /api/chat` 请求体建议使用以下结构。附件在前端演示阶段只传元数据；真实接入时应先调用上传接口获得文件 ID，再把文件 ID 放入对话请求。
-
-```json
-{
-  "text": "请帮我分析这段经历",
-  "context": { "title": "STAR 回答", "snippet": "..." },
-  "mode": "resume",
-  "tool": "resume_analysis",
-  "depth": "deep",
-  "attachments": [
-    { "name": "resume.pdf", "type": "application/pdf", "size": 102400 }
-  ]
-}
-```
-
-SSE 可使用 `event: delta` 推送 `{ "delta": "..." }`，以 `event: activity` 推送可面向用户展示的阶段状态（例如 `generating`），并以 `event: done` 返回可选的 `{ "usage": { "inputTokens": 0, "outputTokens": 0 }, "performance": { "durationMs": 0, "tokensPerSecond": 0 } }`。活动事件只用于呈现任务阶段与已选材料，不应返回系统提示词或模型内部推理。`usage` 和 `performance` 只由后端提供真实统计；无数据时前端不显示数值。错误通过 `event: error` 返回结构化错误信息。助手消息下方提供复制、有用性反馈和从回答创建分支会话；反馈接入后端时可使用 `POST /api/chat/feedback`，携带 `conversationId`、`messageId` 和 `rating`（`helpful` / `unhelpful`）。
+> 语音/视频面试涉及 STT/TTS 与实时媒体传输，需由前后端另行确定 WebSocket 或 WebRTC 协议，当前仅使用浏览器本地权限与演示状态。
 
 ## 数据分层
 
@@ -176,7 +157,7 @@ SSE 可使用 `event: delta` 推送 `{ "delta": "..." }`，以 `event: activity`
 ```
 
 - `src/data/` 是**纯 mock 数据**，仅用于前端设计演示，后端就绪后可删除。
-- `src/api.js` 是**唯一接口层**，后端契约见上表。
+- `src/api.js` 是预期接口层；当前仍有页面直接读写本地 mock，详细接线状态见 `BACKEND_API.md`。
 - **已接线（async + 流式）**：对话 `useChatStore.sendMessage`、面试反馈 `useInterviewStore.submitAnswer`、登录 `useAuthStore.login`。
 - **待接线（同步读 `src/data/`）**：知识库 / 指南 / 题库等只读数据，接后端时改为「进页面 → 调 `api.js` → loading → 渲染」。
 
