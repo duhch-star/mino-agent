@@ -59,12 +59,18 @@ export const useChatStore = create(persist((set, get) => ({
   setContext: (ctx) => set({ context: ctx }),
   clearContext: () => set({ context: null }),
 
-  sendMessage: async (text) => {
+  sendMessage: async (text, options = {}) => {
     const clean = text.trim()
-    if (!clean) return
+    const attachments = (options.attachments || []).map(file => ({
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      lastModified: file.lastModified,
+    }))
+    if (!clean && !attachments.length && !get().context) return
     const { activeId, conversations, sessions, context } = get()
     const full = context ? `（关于《${context.title}》：${context.snippet}）\n${clean}` : clean
-    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full }
+    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
     const assistantId = `a${Date.now()}`
     set({
       running: true,
@@ -75,24 +81,49 @@ export const useChatStore = create(persist((set, get) => ({
       },
       sessions: sessions.map(s =>
         s.id === activeId && s.title === '新对话'
-          ? { ...s, title: clean.length > 16 ? clean.slice(0, 16) + '…' : clean }
+          ? { ...s, title: clean ? (clean.length > 16 ? clean.slice(0, 16) + '…' : clean) : attachments[0]?.name || '附件分析' }
           : s,
       ),
     })
     let acc = ''
-    await streamChatMessage(clean, context, (chunk) => {
-      acc += chunk
+    try {
+      const result = await streamChatMessage({
+        text: clean,
+        context,
+        mode: options.mode || 'career',
+        depth: options.depth || 'standard',
+        tool: options.tool || null,
+        attachments,
+      }, {
+        onChunk: chunk => {
+          acc += chunk
+          set(state => {
+            const list = state.conversations[activeId] || []
+            return {
+              conversations: {
+                ...state.conversations,
+                [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc } : m),
+              },
+            }
+          })
+        },
+        onComplete: result => {
+          set(state => {
+            const list = state.conversations[activeId] || []
+            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, usage: result.usage, performance: result.performance } : m) } }
+          })
+        },
+      })
+      return result
+    } catch (error) {
       set(state => {
         const list = state.conversations[activeId] || []
-        return {
-          conversations: {
-            ...state.conversations,
-            [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc } : m),
-          },
-        }
+        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || '暂时无法生成回复，请稍后重试。', error: true } : m) } }
       })
-    })
-    set({ running: false })
+      return { error }
+    } finally {
+      set({ running: false })
+    }
   },
 }), { name: 'xiao-chat', partialize: (s) => ({ sessions: s.sessions, conversations: s.conversations, activeId: s.activeId }) }))
 

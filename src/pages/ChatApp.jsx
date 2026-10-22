@@ -22,7 +22,10 @@ export default function ChatApp() {
         <div className="chatColumn">
           {messages.map(m => m.role === 'user' ? (
             <div key={m.id} className="userRow">
-              <div className="userBubble">{m.content}</div>
+              <div className="userBubble">
+                {m.attachments?.length > 0 && <div className="messageAttachments">{m.attachments.map(file => <span key={`${file.name}:${file.lastModified}`}>{file.name}</span>)}</div>}
+                {m.content}
+              </div>
             </div>
           ) : (
             <div key={m.id} className="assistantRoot">

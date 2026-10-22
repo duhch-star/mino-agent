@@ -140,13 +140,32 @@ src/
 | `fetchQuiz(id)` | `GET /api/guides/:id/quiz` | 章节测验 |
 | `fetchQuestions(position)` | `GET /api/interview/questions?position=` | 面试题库 |
 | `fetchInterviewFeedback(position, question, answer)` | `POST /api/interview/feedback` | 维度化反馈 |
-| `streamChatMessage(text, context, onChunk)` | `POST /api/chat`（SSE 流式） | 对话（逐 token 回调） |
+| `streamChatMessage(request, callbacks)` | `POST /api/chat`（SSE 流式） | 对话（文本、章节上下文、求职模式、工具、回答档位、附件元数据；通过回调接收内容与完成状态） |
 | `apiLogin(name, role)` | `POST /api/auth/login` | 登录（返回 JWT + 用户信息） |
 | `analyzeResume(text)` | `POST /api/career/resume/analyze` | 简历分析 |
 | `fetchReviewDrafts()` | `GET /api/review/drafts` | 待审核章节草稿 |
 | `reviewDraft(id, action)` | `POST /api/review/drafts/:id` | 审核通过 / 驳回 |
 
 > **语音链路**（STT/TTS）是流式双向通信，不走上面的 REST 契约，接入点在 `InterviewRoom.jsx` 的 `micBtn` 与 `CharacterView` 的 `speaking`（建议 WebSocket 流式）。
+
+### 对话请求与流式响应
+
+`POST /api/chat` 请求体建议使用以下结构。附件在前端演示阶段只传元数据；真实接入时应先调用上传接口获得文件 ID，再把文件 ID 放入对话请求。
+
+```json
+{
+  "text": "请帮我分析这段经历",
+  "context": { "title": "STAR 回答", "snippet": "..." },
+  "mode": "resume",
+  "tool": "resume_analysis",
+  "depth": "deep",
+  "attachments": [
+    { "name": "resume.pdf", "type": "application/pdf", "size": 102400 }
+  ]
+}
+```
+
+SSE 可使用 `event: delta` 推送 `{ "delta": "..." }`，并以 `event: done` 返回 `{ "usage": null, "performance": null }`。`usage` 和 `performance` 只由后端提供真实统计；无数据时前端不显示数值。错误通过 `event: error` 返回结构化错误信息。
 
 ## 数据分层
 
