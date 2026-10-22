@@ -46,6 +46,30 @@ export function IconCheck({ size = 16 }) {
   return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
 }
 
+export function IconThumbUp({ size = 14 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3Zm0 0 5-8c2 0 3 1 3 3l-1 5h5a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 2H7" /></svg>
+}
+
+export function IconThumbDown({ size = 14 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M7 14V3H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3Zm0 0 5 8c2 0 3-1 3-3l-1-5h5a2 2 0 0 0 2-2l-2-7a2 2 0 0 0-2-2H7" /></svg>
+}
+
+export function IconBranch({ size = 14 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><circle cx="6" cy="6" r="2" /><circle cx="18" cy="18" r="2" /><path d="M8 6h2a4 4 0 0 1 4 4v4a4 4 0 0 0 4 4M6 8v12" /></svg>
+}
+
+export function IconMore({ size = 16 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg>
+}
+
+export function IconEdit({ size = 14 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><path d="m16 4 4 4M4 20l4-.8L19 8a2.1 2.1 0 0 0-3-3L5 16l-1 4Z" /></svg>
+}
+
+export function IconTrash({ size = 14 }) {
+  return <svg {...base} width={size} height={size} aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6" /></svg>
+}
+
 // —— 新增：求职智能体用 ——
 export function IconHome({ size = 16 }) {
   return <svg {...base} width={size} height={size} aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><path d="M9 22V12h6v10" /></svg>

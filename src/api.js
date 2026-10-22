@@ -36,13 +36,15 @@ const mock = (data, ms = 200) => new Promise(r => setTimeout(() => r(data), ms))
 //       if (line.startsWith('data:')) onChunk(JSON.parse(line.slice(5)).delta)
 //     }
 //   }
-export async function streamChatMessage(request, { onChunk, onComplete, onError } = {}) {
+export async function streamChatMessage(request, { onChunk, onActivity, onComplete, onError } = {}) {
   const reply = buildMockReply(request)
+  onActivity?.({ type: 'status', status: 'running', label: '正在生成回答' })
   for (const chunk of tokenize(reply)) {
     await sleep(20)
     onChunk?.(chunk)
   }
   const result = { message: reply, usage: null, performance: null }
+  onActivity?.({ type: 'status', status: 'completed', label: '回答已生成' })
   onComplete?.(result)
   return result
 }
@@ -53,18 +55,14 @@ function tokenize(text) {
   return chunks
 }
 
-function buildMockReply({ text, context, mode, depth, tool, attachments = [] }) {
+function buildMockReply({ text, context, attachments = [] }) {
   const topic = text.slice(0, 24)
-  const modeLabels = { career: '求职咨询', resume: '简历优化', interview: '面试练习' }
-  const toolLabels = { resume_analysis: '分析简历', job_description: '分析岗位描述', knowledge_search: '检索知识库', star_stories: '整理 STAR 案例' }
   return (
     (context ? `> 关于《${context.title}》这段内容，我的理解是：\n\n` : '') +
-    `${attachments.length ? `已收到 ${attachments.length} 个待分析文件（当前为界面演示，尚未上传文件内容）。\n\n` : ''}` +
-    `当前模式：${modeLabels[mode] || modeLabels.career}${tool ? `；工具：${toolLabels[tool] || tool}` : ''}；回答档位：${depth === 'deep' ? '深入分析' : '标准回答'}。\n\n` +
-    `你问的是「${topic || '请结合附件进行分析'}${text.length > 24 ? '…' : ''}」，从求职角度我的建议：\n\n` +
+    `${attachments.length ? '当前附件仅保留在本地选择状态，接入上传接口后才能分析文件内容。\n\n' : ''}` +
+    `关于「${topic || '你的求职问题'}${text.length > 24 ? '…' : ''}」，可以先从以下方面梳理：\n\n` +
     `## 要点\n\n- 把**你的能力**对应到目标岗位要求\n- 用 STAR 结构组织经历，突出「我做了什么」\n- 结论先行，再用数据佐证\n\n` +
-    '```js\n// 接入后端 LLM 后，这里返回真实的流式回答\nconst reply = await fetch("/api/chat", { method: "POST" })\n```\n\n' +
-    `需要更具体的建议，可以告诉我你的目标岗位。`
+    `需要更具体的建议，可以补充目标岗位、相关经历或你最想解决的问题。`
   )
 }
 

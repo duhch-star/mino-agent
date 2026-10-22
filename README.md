@@ -165,7 +165,7 @@ src/
 }
 ```
 
-SSE 可使用 `event: delta` 推送 `{ "delta": "..." }`，并以 `event: done` 返回 `{ "usage": null, "performance": null }`。`usage` 和 `performance` 只由后端提供真实统计；无数据时前端不显示数值。错误通过 `event: error` 返回结构化错误信息。
+SSE 可使用 `event: delta` 推送 `{ "delta": "..." }`，以 `event: activity` 推送可面向用户展示的阶段状态（例如 `generating`），并以 `event: done` 返回可选的 `{ "usage": { "inputTokens": 0, "outputTokens": 0 }, "performance": { "durationMs": 0, "tokensPerSecond": 0 } }`。活动事件只用于呈现任务阶段与已选材料，不应返回系统提示词或模型内部推理。`usage` 和 `performance` 只由后端提供真实统计；无数据时前端不显示数值。错误通过 `event: error` 返回结构化错误信息。助手消息下方提供复制、有用性反馈和从回答创建分支会话；反馈接入后端时可使用 `POST /api/chat/feedback`，携带 `conversationId`、`messageId` 和 `rating`（`helpful` / `unhelpful`）。
 
 ## 数据分层
 

@@ -56,8 +56,61 @@ export const useChatStore = create(persist((set, get) => ({
 
   selectSession: (id) => set({ activeId: id }),
 
+  renameSession: (id, title) => {
+    const cleanTitle = title.trim()
+    if (!cleanTitle) return
+    set(state => ({ sessions: state.sessions.map(session => session.id === id ? { ...session, title: cleanTitle.slice(0, 48) } : session) }))
+  },
+
+  deleteSession: (id) => {
+    const state = get()
+    const remainingSessions = state.sessions.filter(session => session.id !== id)
+    const conversations = { ...state.conversations }
+    delete conversations[id]
+    if (!remainingSessions.length) {
+      const fallbackId = `s${Date.now()}`
+      set({ sessions: [{ id: fallbackId, title: '新对话' }], conversations: { ...conversations, [fallbackId]: [] }, activeId: fallbackId })
+      return
+    }
+    set({
+      sessions: remainingSessions,
+      conversations,
+      activeId: state.activeId === id ? remainingSessions[0].id : state.activeId,
+    })
+  },
+
+  branchConversation: (sessionId, messageId) => {
+    const { sessions, conversations } = get()
+    const sourceMessages = conversations[sessionId] || []
+    const messageIndex = sourceMessages.findIndex(message => message.id === messageId)
+    if (messageIndex < 0) return
+    const sourceSession = sessions.find(session => session.id === sessionId)
+    const id = `s${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    const title = `继续：${sourceSession?.title || '求职对话'}`.slice(0, 24)
+    const branchedMessages = sourceMessages.slice(0, messageIndex + 1).map(message => ({
+      ...message,
+      references: message.references?.map(reference => ({ ...reference })),
+      attachments: message.attachments?.map(file => ({ ...file })),
+      options: message.options ? { ...message.options } : undefined,
+      task: message.task ? { ...message.task } : undefined,
+    }))
+    set(state => ({
+      sessions: [{ id, title, branchedFrom: sessionId }, ...state.sessions],
+      conversations: { ...state.conversations, [id]: branchedMessages },
+      activeId: id,
+    }))
+  },
+
   setContext: (ctx) => set({ context: ctx }),
   clearContext: () => set({ context: null }),
+  setMessageFeedback: (sessionId, messageId, feedback) => set(state => ({
+    conversations: {
+      ...state.conversations,
+      [sessionId]: (state.conversations[sessionId] || []).map(message =>
+        message.id === messageId ? { ...message, feedback: message.feedback === feedback ? null : feedback } : message,
+      ),
+    },
+  })),
 
   sendMessage: async (text, options = {}) => {
     const clean = text.trim()
@@ -70,14 +123,29 @@ export const useChatStore = create(persist((set, get) => ({
     if (!clean && !attachments.length && !get().context) return
     const { activeId, conversations, sessions, context } = get()
     const full = context ? `（关于《${context.title}》：${context.snippet}）\n${clean}` : clean
-    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
+    const references = [
+      ...(context ? [{ kind: 'knowledge', title: context.title }] : []),
+      ...attachments.map(file => ({ kind: 'file', title: file.name })),
+    ]
+    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments, references, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
     const assistantId = `a${Date.now()}`
     set({
       running: true,
       context: null,
       conversations: {
         ...conversations,
-        [activeId]: [...(conversations[activeId] || []), userMsg, { id: assistantId, role: 'assistant', content: '' }],
+        [activeId]: [...(conversations[activeId] || []), userMsg, {
+          id: assistantId,
+          role: 'assistant',
+          content: '',
+          references,
+          task: {
+            status: 'running',
+            mode: options.mode || 'career',
+            tool: options.tool || null,
+            depth: options.depth || 'standard',
+          },
+        }],
       },
       sessions: sessions.map(s =>
         s.id === activeId && s.title === '新对话'
@@ -95,6 +163,12 @@ export const useChatStore = create(persist((set, get) => ({
         tool: options.tool || null,
         attachments,
       }, {
+        onActivity: activity => {
+          set(state => {
+            const list = state.conversations[activeId] || []
+            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, task: { ...m.task, status: activity.status, label: activity.label } } : m) } }
+          })
+        },
         onChunk: chunk => {
           acc += chunk
           set(state => {
@@ -110,7 +184,7 @@ export const useChatStore = create(persist((set, get) => ({
         onComplete: result => {
           set(state => {
             const list = state.conversations[activeId] || []
-            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, usage: result.usage, performance: result.performance } : m) } }
+            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, usage: result.usage, performance: result.performance, task: { ...m.task, status: 'completed' } } : m) } }
           })
         },
       })
@@ -118,7 +192,7 @@ export const useChatStore = create(persist((set, get) => ({
     } catch (error) {
       set(state => {
         const list = state.conversations[activeId] || []
-        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || '暂时无法生成回复，请稍后重试。', error: true } : m) } }
+        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || '暂时无法生成回复，请稍后重试。', error: true, task: { ...m.task, status: 'failed', label: '生成失败' } } : m) } }
       })
       return { error }
     } finally {
