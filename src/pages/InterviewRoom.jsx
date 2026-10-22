@@ -160,7 +160,7 @@ export default function InterviewRoom() {
                   <div className="starExampleTitle">STAR 改写示例</div>
                   <pre>{t.feedback.starExample}</pre>
                 </div>
-                <Link to={`/knowledge/${t.feedback.chapterId}`} className="btn outline sm goStudy">
+                <Link to={`/guide/${t.feedback.chapterId}`} className="btn outline sm goStudy">
                   <IconBook size={14} />去补课：{chapterById(t.feedback.chapterId)?.title}
                 </Link>
               </div>

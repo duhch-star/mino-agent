@@ -8,6 +8,8 @@ import Onboarding from './pages/Onboarding.jsx'
 import Login from './pages/Login.jsx'
 import Home from './pages/Home.jsx'
 import Knowledge from './pages/Knowledge.jsx'
+import CollegePage from './pages/CollegePage.jsx'
+import MajorPage from './pages/MajorPage.jsx'
 import ChapterReader from './pages/ChapterReader.jsx'
 import Interview from './pages/Interview.jsx'
 import InterviewRoom from './pages/InterviewRoom.jsx'
@@ -45,7 +47,9 @@ export default function App() {
           <Route element={<Shell />}>
             <Route path="/home" element={<Home />} />
             <Route path="/knowledge" element={<Knowledge />} />
-            <Route path="/knowledge/:id" element={<ChapterReader />} />
+            <Route path="/knowledge/college/:cid" element={<CollegePage />} />
+            <Route path="/knowledge/major/:mid" element={<MajorPage />} />
+            <Route path="/guide/:id" element={<ChapterReader />} />
             <Route path="/interview" element={<Interview />} />
             <Route path="/career" element={<Career />} />
             <Route path="/chat" element={<ChatApp />} />

@@ -352,3 +352,29 @@ a { text-decoration: none; color: inherit; }
 .wm-agent { font-weight: 400; color: var(--dsw-alias-label-secondary); }
 .brandSubtitle { font-family: var(--dsw-font-family); font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
 .sidebar.collapsed .brandLockupText { display: none; }
+
+/* ------------------------------------------------------------------ 知识库：学院/专业/教材 */
+.collegeGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.collegeCard { display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px; border: 0.5px solid var(--dsw-alias-border-l3); border-radius: var(--dsw-radius-lg); background: var(--dsw-alias-bg-layer-1); transition: background-color var(--ds-transition-duration) var(--ds-ease-in-out); }
+.collegeCard:hover { background: var(--dsw-alias-interactive-bg-hover); }
+.collegeCardName { font: var(--dsw-font-s-strong-14); color: var(--dsw-alias-label-primary); }
+.collegeCardMeta { font: var(--dsw-font-xxs-12); color: var(--dsw-alias-label-tertiary); }
+
+.majorList { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.majorCard { display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px; border: 0.5px solid var(--dsw-alias-border-l3); border-radius: var(--dsw-radius-lg); background: var(--dsw-alias-bg-layer-1); transition: background-color var(--ds-transition-duration) var(--ds-ease-in-out); }
+.majorCard:hover { background: var(--dsw-alias-interactive-bg-hover); }
+.majorCardName { font: var(--dsw-font-s-strong-14); color: var(--dsw-alias-label-primary); }
+.majorCardMeta { font: var(--dsw-font-xxs-12); color: var(--dsw-alias-label-tertiary); }
+
+.aiBlock { margin-bottom: 12px; }
+.aiLabel { font: var(--dsw-font-xxs-strong-12); color: var(--dsw-alias-label-tertiary); margin-bottom: 6px; }
+
+.textbookTree { border: 0.5px solid var(--dsw-alias-border-l3); border-radius: var(--dsw-radius-md); background: var(--dsw-alias-bg-layer-1); padding: 8px; }
+.treeLabel { display: flex; align-items: center; gap: 6px; width: 100%; padding: 4px 8px; border: none; border-radius: var(--dsw-radius-sm); background: transparent; color: var(--dsw-alias-label-primary); font: var(--dsw-font-s-14); text-align: left; cursor: pointer; }
+.treeLabel:hover { background: var(--dsw-alias-interactive-bg-hover); }
+.treeLabel.leaf { cursor: default; color: var(--dsw-alias-label-secondary); }
+.treeLabelText { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.treeCaret { flex: none; display: inline-flex; align-items: center; color: var(--dsw-alias-label-tertiary); transition: transform var(--ds-transition-duration) var(--ds-ease-in-out); }
+.treeCaret.open { transform: rotate(180deg); }
+.treeLeaf { padding: 3px 8px; font: var(--dsw-font-xs-13); color: var(--dsw-alias-label-tertiary); }
+.treeLeaf.chapter { color: var(--dsw-alias-label-secondary); }

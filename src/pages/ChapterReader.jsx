@@ -163,7 +163,7 @@ export default function ChapterReader() {
 
             <div className="nextChapter">
               {next ? (
-                <Link to={`/knowledge/${next.id}`} className="btn primary">下一篇：{next.title} →</Link>
+                <Link to={`/guide/${next.id}`} className="btn primary">下一篇：{next.title} →</Link>
               ) : (
                 <span className="formHint">已到最后一章</span>
               )}
@@ -176,7 +176,7 @@ export default function ChapterReader() {
                   {chapter.related.map(t => {
                     const rid = chapterIndex[t]
                     return rid
-                      ? <Link key={rid} to={`/knowledge/${rid}`} className="tag big">{t}</Link>
+                      ? <Link key={rid} to={`/guide/${rid}`} className="tag big">{t}</Link>
                       : <span key={t} className="tag big">{t}</span>
                   })}
                 </div>

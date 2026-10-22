@@ -97,7 +97,7 @@ export default function Career() {
           <div className="careerCardTitle">STAR 案例整理</div>
           <p className="careerCardDesc">把零散经历整理成可讲的故事</p>
           <p className="formHint">每个改进点都能一键跳转到对应知识章节补课。</p>
-          <Link to="/knowledge/star" className="btn outline sm">学习 STAR 方法</Link>
+          <Link to="/guide/star" className="btn outline sm">学习 STAR 方法</Link>
         </section>
       </div>
     </div>

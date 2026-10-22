@@ -62,7 +62,7 @@ export default function Home() {
         <ol className="pathList">
           {learningPath().map((c, i) => (
             <li key={c.id}>
-              <Link to={`/knowledge/${c.id}`} className="pathItem">
+              <Link to={`/guide/${c.id}`} className="pathItem">
                 <span className="pathIdx">{i + 1}</span>
                 <span>{c.title}</span>
                 <span className="pathMeta">{c.difficulty} · {c.readTime}</span>
@@ -78,7 +78,7 @@ export default function Home() {
           <h2 className="sectionTitle">继续学习</h2>
           <div className="chapterGrid">
             {inProgress.map(c => (
-              <Link key={c.id} to={`/knowledge/${c.id}`} className="chapterCard">
+              <Link key={c.id} to={`/guide/${c.id}`} className="chapterCard">
                 <div className="chapterCardTitle">{c.title}</div>
                 <div className="chapterCardMeta">{c.difficulty} · {c.readTime}</div>
               </Link>
@@ -92,7 +92,7 @@ export default function Home() {
         <h2 className="sectionTitle">为你推荐</h2>
         <div className="chapterGrid">
           {chapters.map(c => (
-            <Link key={c.id} to={`/knowledge/${c.id}`} className="chapterCard">
+            <Link key={c.id} to={`/guide/${c.id}`} className="chapterCard">
               <div className="chapterCardTitle">{c.title}</div>
               <div className="chapterCardMeta">{c.difficulty} · {c.readTime}</div>
               <div className="tagRow">

@@ -32,7 +32,7 @@ function renderInline(text, keyBase) {
     if (part.startsWith('[[') && part.endsWith(']]')) {
       const title = part.slice(2, -2)
       const id = chapterIndex[title]
-      if (id) return <Link key={key} to={`/knowledge/${id}`} className="md-link">{title}</Link>
+      if (id) return <Link key={key} to={`/guide/${id}`} className="md-link">{title}</Link>
       return part
     }
     return renderCodeBold(part, key)
