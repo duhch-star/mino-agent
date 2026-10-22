@@ -125,18 +125,40 @@ src/
 - 口型联动依赖模型含 `mouthOpen` 或 viseme 变形目标（`AA/EE/IH/OH/UH` 等）；没有则自动退化为整体浮动。
 - 详见 `public/models/README.txt`。
 
-## 接入真实后端
+## 后端接口契约
 
-前端把「智能」都收敛在少数几个函数里，接后端时只需替换：
+前端通过 **`src/api.js`** 访问数据（当前为 mock 实现，数据取自 `src/data/`）。接入后端时**只需把 `src/api.js` 各函数体替换为 fetch 调用**，页面 / 组件 / 状态层无需改动。每个函数签名即「前端 ↔ 后端」契约：
 
-| 能力 | 位置 | 现状 → 待替换 |
+| 函数（接口） | 建议端点 | 说明 |
 |---|---|---|
-| 对话 | `store.js` `useChatStore.sendMessage` | `cannedReply` 假回复 → 流式 LLM 接口 |
-| 面试反馈 | `data/interview.js` `makeFeedback` | 启发式规则 → LLM 维度化输出 |
-| 题库 | `data/interview.js` `questionBank` | 静态 → 后端按岗位下发 |
-| 章节/推荐 | `data/chapters.js` | 静态 → AI 章节生成流水线 |
-| 登录鉴权 | `store.js` `useAuthStore` | 本地 mock → JWT + 用户信息 |
-| 语音 | `InterviewRoom.jsx` 的 `micBtn` / `CharacterView` 的 `speaking` | 波形占位 → STT/TTS 流式 |
+| `fetchColleges()` | `GET /api/knowledge/colleges` | 学院列表 |
+| `fetchCollege(id)` | `GET /api/knowledge/colleges/:id` | 学院详情（专业列表） |
+| `fetchMajor(id)` | `GET /api/knowledge/majors/:id` | 专业详情（核心课程 + 能力关键词 + 适配岗位） |
+| `fetchTextbookGroups()` | `GET /api/knowledge/textbooks` | 教材章节目录 |
+| `fetchGuides()` | `GET /api/guides` | 求职指南列表 |
+| `fetchGuide(id)` | `GET /api/guides/:id` | 指南章节正文 |
+| `fetchQuiz(id)` | `GET /api/guides/:id/quiz` | 章节测验 |
+| `fetchQuestions(position)` | `GET /api/interview/questions?position=` | 面试题库 |
+| `fetchInterviewFeedback(position, question, answer)` | `POST /api/interview/feedback` | 维度化反馈 |
+| `sendChatMessage(text, context)` | `POST /api/chat`（建议流式） | 对话 |
+| `apiLogin(name, role)` | `POST /api/auth/login` | 登录（返回 JWT + 用户信息） |
+| `analyzeResume(text)` | `POST /api/career/resume/analyze` | 简历分析 |
+| `fetchReviewDrafts()` | `GET /api/review/drafts` | 待审核章节草稿 |
+| `reviewDraft(id, action)` | `POST /api/review/drafts/:id` | 审核通过 / 驳回 |
+
+> **语音链路**（STT/TTS）是流式双向通信，不走上面的 REST 契约，接入点在 `InterviewRoom.jsx` 的 `micBtn` 与 `CharacterView` 的 `speaking`（建议 WebSocket 流式）。
+
+## 数据分层
+
+```
+页面/组件  →  store.js（状态）  →  api.js（接口，mock）  →  data/*.js（mock 数据）
+                                         ↓ 接后端后
+                                     fetch('/api/...')
+```
+
+- `src/data/` 是**纯 mock 数据**，仅用于前端设计演示，后端就绪后可删除。
+- `src/api.js` 是**唯一接口层**，后端契约见上表。
+- 页面目前直接读 `src/data/`（同步），接后端时改为「进入页面 → 调 `api.js` → loading → 渲染」，这是唯一需要补的接线。
 
 ## 设计系统与许可
 
