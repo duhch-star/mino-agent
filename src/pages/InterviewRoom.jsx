@@ -247,6 +247,11 @@ export default function InterviewRoom() {
                 <p className="questionText">{question}</p>
               </div>
 
+              {/* 反馈生成中 */}
+              {st.stage === 'feedbacking' && (
+                <div className="feedbacking"><span className="runningDot" />正在生成反馈…</div>
+              )}
+
               {/* 本轮反馈 */}
               {st.stage === 'feedback' && last && (
                 <div className="feedbackCard">
@@ -275,7 +280,7 @@ export default function InterviewRoom() {
                   <textarea
                     className="composerInput"
                     rows={3}
-                    placeholder={st.stage === 'feedback' ? '点击「下一题」继续…' : '输入你的回答…（文字兜底，随时可改）'}
+                    placeholder={st.stage === 'feedbacking' ? '反馈生成中…' : st.stage === 'feedback' ? '点击「下一题」继续…' : '输入你的回答…（文字兜底，随时可改）'}
                     value={draft}
                     onChange={e => setDraft(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
@@ -289,6 +294,8 @@ export default function InterviewRoom() {
                           {st.index + 1 >= total ? '查看复盘' : '下一题'}
                         </button>
                       </div>
+                    ) : st.stage === 'feedbacking' ? (
+                      <span className="formHint">正在生成反馈…</span>
                     ) : (
                       <button className="sendBtn" onClick={submit} disabled={!draft.trim()}>
                         <IconSend size={14} />提交回答

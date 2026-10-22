@@ -10,8 +10,8 @@ export default function Login() {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
 
-  const submit = () => {
-    login(name.trim(), role)
+  const submit = async () => {
+    await login(name.trim(), role)
     navigate(role === 'admin' ? '/review' : '/home')
   }
 

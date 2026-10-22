@@ -140,7 +140,7 @@ src/
 | `fetchQuiz(id)` | `GET /api/guides/:id/quiz` | 章节测验 |
 | `fetchQuestions(position)` | `GET /api/interview/questions?position=` | 面试题库 |
 | `fetchInterviewFeedback(position, question, answer)` | `POST /api/interview/feedback` | 维度化反馈 |
-| `sendChatMessage(text, context)` | `POST /api/chat`（建议流式） | 对话 |
+| `streamChatMessage(text, context, onChunk)` | `POST /api/chat`（SSE 流式） | 对话（逐 token 回调） |
 | `apiLogin(name, role)` | `POST /api/auth/login` | 登录（返回 JWT + 用户信息） |
 | `analyzeResume(text)` | `POST /api/career/resume/analyze` | 简历分析 |
 | `fetchReviewDrafts()` | `GET /api/review/drafts` | 待审核章节草稿 |
@@ -158,7 +158,8 @@ src/
 
 - `src/data/` 是**纯 mock 数据**，仅用于前端设计演示，后端就绪后可删除。
 - `src/api.js` 是**唯一接口层**，后端契约见上表。
-- 页面目前直接读 `src/data/`（同步），接后端时改为「进入页面 → 调 `api.js` → loading → 渲染」，这是唯一需要补的接线。
+- **已接线（async + 流式）**：对话 `useChatStore.sendMessage`、面试反馈 `useInterviewStore.submitAnswer`、登录 `useAuthStore.login`。
+- **待接线（同步读 `src/data/`）**：知识库 / 指南 / 题库等只读数据，接后端时改为「进页面 → 调 `api.js` → loading → 渲染」。
 
 ## 设计系统与许可
 

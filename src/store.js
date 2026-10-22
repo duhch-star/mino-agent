@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { positions, difficulties, durations, questionBank, makeFeedback } from './data/interview.js'
+import { positions, difficulties, durations, questionBank } from './data/interview.js'
+import { streamChatMessage, fetchInterviewFeedback, apiLogin } from './api.js'
 
 // ---------------------------------------------------------------------------
 // UI：主题 / 侧边栏 / 设置 / 字号
@@ -21,17 +22,6 @@ export const useUiStore = create(persist((set) => ({
 // 对话助手（复用原 DeepSeek 聊天外壳）
 // ---------------------------------------------------------------------------
 let chatIdSeq = 100
-
-function cannedReply(text) {
-  return (
-    `收到，关于「**${text.slice(0, 40)}${text.length > 40 ? '…' : ''}**」，我可以从求职的角度帮你梳理：\n\n` +
-    `- 明确你的**目标岗位**与核心能力\n` +
-    `- 用 STAR 结构组织你的表达\n` +
-    `- 结合你的简历给出可落地建议\n\n` +
-    '```js\n// 接入真实 LLM 后端后，这里返回流式回答\nconst reply = await agent.chat(text)\n```\n\n' +
-    `相关章节：[[面试官如何评价 STAR 回答]]`
-  )
-}
 
 const seedSessions = [
   { id: 's1', title: '求职方向怎么定？' },
@@ -69,17 +59,19 @@ export const useChatStore = create(persist((set, get) => ({
   setContext: (ctx) => set({ context: ctx }),
   clearContext: () => set({ context: null }),
 
-  sendMessage: (text) => {
+  sendMessage: async (text) => {
     const clean = text.trim()
     if (!clean) return
     const { activeId, conversations, sessions, context } = get()
     const full = context ? `（关于《${context.title}》：${context.snippet}）\n${clean}` : clean
+    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full }
+    const assistantId = `a${Date.now()}`
     set({
       running: true,
       context: null,
       conversations: {
         ...conversations,
-        [activeId]: [...(conversations[activeId] || []), { id: `u${Date.now()}`, role: 'user', content: full }],
+        [activeId]: [...(conversations[activeId] || []), userMsg, { id: assistantId, role: 'assistant', content: '' }],
       },
       sessions: sessions.map(s =>
         s.id === activeId && s.title === '新对话'
@@ -87,16 +79,20 @@ export const useChatStore = create(persist((set, get) => ({
           : s,
       ),
     })
-    setTimeout(() => {
-      const state = get()
-      set({
-        running: false,
-        conversations: {
-          ...state.conversations,
-          [activeId]: [...(state.conversations[activeId] || []), { id: `a${Date.now()}`, role: 'assistant', content: cannedReply(clean) }],
-        },
+    let acc = ''
+    await streamChatMessage(clean, context, (chunk) => {
+      acc += chunk
+      set(state => {
+        const list = state.conversations[activeId] || []
+        return {
+          conversations: {
+            ...state.conversations,
+            [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc } : m),
+          },
+        }
       })
-    }, 900)
+    })
+    set({ running: false })
   },
 }), { name: 'xiao-chat', partialize: (s) => ({ sessions: s.sessions, conversations: s.conversations, activeId: s.activeId }) }))
 
@@ -137,12 +133,13 @@ export const useInterviewStore = create((set, get) => ({
 
   setMode: (mode) => set({ mode }),
 
-  submitAnswer: (answer) => {
+  submitAnswer: async (answer) => {
     const clean = (answer || '').trim()
     if (!clean) return
     const { position, questions, index, transcript } = get()
     const q = questions[index]
-    const feedback = makeFeedback(position, q, clean)
+    set({ stage: 'feedbacking' })
+    const feedback = await fetchInterviewFeedback(position, q, clean)
     set({
       transcript: [...transcript, { q, a: clean, feedback }],
       stage: 'feedback',
@@ -191,6 +188,9 @@ export const useLearningStore = create(persist((set) => ({
 // ---------------------------------------------------------------------------
 export const useAuthStore = create(persist((set) => ({
   user: null, // { name, role: 'user' | 'admin' }
-  login: (name, role) => set({ user: { name: name || (role === 'admin' ? '管理员' : '求职者'), role } }),
+  login: async (name, role) => {
+    const { user } = await apiLogin(name, role)
+    set({ user })
+  },
   logout: () => set({ user: null }),
 }), { name: 'xiao-auth' }))

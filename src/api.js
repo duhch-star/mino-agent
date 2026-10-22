@@ -5,6 +5,7 @@
 // 为 fetch 调用，页面 / 组件 / 状态层无需改动。
 //
 // 每个函数签名即「前端 ↔ 后端」契约，统一返回 Promise。
+// 流式接口（streamChatMessage）遵循 SSE 协议：逐 token 回调 onChunk。
 // =====================================================================
 
 import { colleges, collegeById, majorById } from './data/colleges.js'
@@ -12,8 +13,54 @@ import { textbookGroups } from './data/textbooks.js'
 import { chapters, chapterById, quizBank } from './data/chapters.js'
 import { questionBank, makeFeedback } from './data/interview.js'
 
-// 模拟网络延迟返回
+const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 const mock = (data, ms = 200) => new Promise(r => setTimeout(() => r(data), ms))
+
+// ---------------------------------------------------------------------
+// 对话助手（流式，SSE 协议）
+// ---------------------------------------------------------------------
+// 真实实现示例（后端以 text/event-stream 逐 token 推送）：
+//   const res = await fetch('/api/chat', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ text, context }),
+//   })
+//   const reader = res.body.getReader()
+//   const dec = new TextDecoder()
+//   let buf = ''
+//   while (true) {
+//     const { done, value } = await reader.read()
+//     if (done) break
+//     buf += dec.decode(value, { stream: true })
+//     for (const line of buf.split('\n')) {
+//       if (line.startsWith('data:')) onChunk(JSON.parse(line.slice(5)).delta)
+//     }
+//   }
+export async function streamChatMessage(text, context, onChunk) {
+  const reply = buildMockReply(text, context)
+  for (const chunk of tokenize(reply)) {
+    await sleep(20)
+    onChunk(chunk)
+  }
+  return reply
+}
+
+function tokenize(text) {
+  const chunks = []
+  for (let i = 0; i < text.length; i += 2) chunks.push(text.slice(i, i + 2))
+  return chunks
+}
+
+function buildMockReply(text, context) {
+  const topic = text.slice(0, 24)
+  return (
+    (context ? `> 关于《${context.title}》这段内容，我的理解是：\n\n` : '') +
+    `你问的是「${topic}${text.length > 24 ? '…' : ''}」，从求职角度我的建议：\n\n` +
+    `## 要点\n\n- 把**你的能力**对应到目标岗位要求\n- 用 STAR 结构组织经历，突出「我做了什么」\n- 结论先行，再用数据佐证\n\n` +
+    '```js\n// 接入后端 LLM 后，这里返回真实的流式回答\nconst reply = await fetch("/api/chat", { method: "POST" })\n```\n\n' +
+    `需要更具体的建议，可以告诉我你的目标岗位。`
+  )
+}
 
 // ---------------------------------------------------------------------
 // 知识库：学院 / 专业 / 核心课程 / 教材章节
@@ -34,17 +81,12 @@ const mock = (data, ms = 200) => new Promise(r => setTimeout(() => r(data), ms))
 // 面试
 // ---------------------------------------------------------------------
 /** 按岗位下发题目 */ export async function fetchQuestions(position) { /* GET /api/interview/questions?position= */ return mock(questionBank[position] || []) }
-/** 提交回答 → 维度化反馈 */ export async function fetchInterviewFeedback(position, question, answer) { /* POST /api/interview/feedback */ return mock(makeFeedback(position, question, answer)) }
-
-// ---------------------------------------------------------------------
-// 对话助手
-// ---------------------------------------------------------------------
-/** 发送消息（建议流式） */ export async function sendChatMessage(text, context) { /* POST /api/chat */ return mock({ reply: `（演示回复）关于「${text.slice(0, 40)}」…` }) }
+/** 提交回答 → 维度化反馈 */ export async function fetchInterviewFeedback(position, question, answer) { /* POST /api/interview/feedback */ return mock(makeFeedback(position, question, answer), 600) }
 
 // ---------------------------------------------------------------------
 // 鉴权 / 账号
 // ---------------------------------------------------------------------
-/** 登录 */ export async function apiLogin(name, role) { /* POST /api/auth/login */ return mock({ user: { name, role }, token: 'mock-jwt' }) }
+/** 登录 */ export async function apiLogin(name, role) { /* POST /api/auth/login */ return mock({ user: { name: name || (role === 'admin' ? '管理员' : '求职者'), role }, token: 'mock-jwt' }) }
 
 // ---------------------------------------------------------------------
 // 职业辅导
