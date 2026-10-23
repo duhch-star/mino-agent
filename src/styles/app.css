@@ -790,6 +790,7 @@
   font-size: 11px;
   text-align: center;
 }
+.composerError { width: min(100%, 720px); padding: 6px 4px 0; color: var(--dsw-alias-status-danger, #c43d3d); font-size: 12px; }
 
 .messageAttachments { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
 .messageAttachments span { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 7px; border-radius: var(--dsw-radius-sm); background: var(--dsw-alias-bg-layer-2); font-size: 11px; }

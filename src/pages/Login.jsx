@@ -9,10 +9,16 @@ export default function Login() {
   const [role, setRole] = useState('user')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const submit = async () => {
-    await login(name.trim(), password, role)
-    navigate(role === 'admin' ? '/review' : '/home')
+    setError('')
+    try {
+      const user = await login(name.trim(), password, role)
+      navigate(user.role === 'admin' ? '/review' : '/home')
+    } catch (loginError) {
+      setError(loginError.message || '登录失败')
+    }
   }
 
   return (
@@ -50,6 +56,8 @@ export default function Login() {
             onChange={e => setPassword(e.target.value)}
           />
         </div>
+
+        {error && <p role="alert" className="loginError">{error}</p>}
 
         <div className="onboardingActions">
           <button className="btn ghost" onClick={() => navigate('/onboarding')}>游客模式</button>

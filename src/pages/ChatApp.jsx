@@ -42,14 +42,14 @@ function AssistantMessage({ message, sessionId, setFeedback, branchConversation 
           <div><span>模式</span><strong>{MODE_LABELS[message.task.mode] || '求职咨询'}</strong></div>
           <div><span>工具</span><strong>{TOOL_LABELS[message.task.tool] || '未选择'}</strong></div>
           <div><span>回答档位</span><strong>{message.task.depth === 'deep' ? '深入分析' : '标准回答'}</strong></div>
-          {references.map((reference, index) => <div key={`${reference.kind}:${reference.title}:${index}`}><span>{reference.kind === 'knowledge' ? '知识库章节' : '附件状态'}</span><strong>{reference.kind === 'knowledge' ? reference.title : `${reference.title}（待上传）`}</strong></div>)}
+          {references.map((reference, index) => <div key={`${reference.kind}:${reference.title}:${index}`}><span>{reference.kind === 'knowledge' ? '知识库章节' : '附件状态'}</span><strong>{reference.kind === 'knowledge' ? reference.title : `${reference.title}（${reference.status === 'ready' ? '已上传' : '上传失败'}）`}</strong></div>)}
         </div>
       </details>}
       <Markdown text={message.content} />
       {references.length > 0 && <div className="answerReferences" aria-label="本轮关联材料">
         <span className="answerMetaLabel">本轮材料</span>
         {references.map((reference, index) => <span className="answerReference" key={`${reference.kind}:${reference.title}:${index}`}>
-          {reference.kind === 'knowledge' ? '知识库章节' : '待上传附件'} · {reference.title}
+          {reference.kind === 'knowledge' ? '知识库章节' : reference.status === 'ready' ? '已上传附件' : '上传失败'} · {reference.title}
         </span>)}
       </div>}
       {message.content && <div className="chatAnswerFooter">

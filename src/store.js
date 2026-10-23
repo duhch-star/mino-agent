@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { positions, difficulties, durations, questionBank } from './data/interview.js'
-import { streamChatMessage, fetchInterviewFeedback, apiLogin } from './api.js'
+import { streamChatMessage, fetchInterviewFeedback, apiLogin, backendLogin, createBackendChatSession, fetchBackendChatSessions, fetchBackendChatMessages, renameBackendChatSession, deleteBackendChatSession, uploadChatAttachments } from './api.js'
 
 // ---------------------------------------------------------------------------
 // UI：主题 / 侧边栏 / 设置 / 字号
@@ -45,6 +45,20 @@ export const useChatStore = create(persist((set, get) => ({
   running: false,
   context: null, // 就地追问上下文 { title, snippet }
 
+  hydrateSessions: async () => {
+    const { items = [] } = await fetchBackendChatSessions()
+    const conversations = {}
+    await Promise.all(items.map(async session => {
+      const result = await fetchBackendChatMessages(session.id)
+      conversations[session.id] = result.items || []
+    }))
+    set({
+      sessions: items.map(item => ({ id: item.id, title: item.title, parentId: item.parent_id, branchMessageId: item.branch_message_id })),
+      conversations,
+      activeId: items.some(item => item.id === get().activeId) ? get().activeId : items[0]?.id || null,
+    })
+  },
+
   newSession: () => {
     const id = `s${++chatIdSeq}`
     set(s => ({
@@ -59,10 +73,12 @@ export const useChatStore = create(persist((set, get) => ({
   renameSession: (id, title) => {
     const cleanTitle = title.trim()
     if (!cleanTitle) return
+    if (id.startsWith('conv_')) renameBackendChatSession(id, cleanTitle).catch(error => console.error(error))
     set(state => ({ sessions: state.sessions.map(session => session.id === id ? { ...session, title: cleanTitle.slice(0, 48) } : session) }))
   },
 
   deleteSession: (id) => {
+    if (id.startsWith('conv_')) deleteBackendChatSession(id).catch(error => console.error(error))
     const state = get()
     const remainingSessions = state.sessions.filter(session => session.id !== id)
     const conversations = { ...state.conversations }
@@ -121,17 +137,37 @@ export const useChatStore = create(persist((set, get) => ({
       lastModified: file.lastModified,
     }))
     if (!clean && !attachments.length && !get().context) return
-    const { activeId, conversations, sessions, context } = get()
+    let uploadedAttachments = []
+    if (options.attachments?.length) {
+      const uploadResult = await uploadChatAttachments(options.attachments)
+      uploadedAttachments = uploadResult.files || []
+    }
+    let { activeId, conversations, sessions, context } = get()
+    if (!activeId || !activeId.startsWith('conv_')) {
+      const current = sessions.find(session => session.id === activeId)
+      const created = await createBackendChatSession({ title: current?.title || '新对话' })
+      const previousId = activeId
+      activeId = created.id
+      conversations = { ...conversations, [activeId]: conversations[previousId] || [] }
+      delete conversations[previousId]
+      sessions = previousId
+        ? sessions.map(session => session.id === previousId ? { ...session, id: activeId, title: clean.slice(0, 40) || session.title } : session)
+        : [{ id: activeId, title: clean.slice(0, 40) || '新对话' }, ...sessions]
+      set({ activeId, sessions, conversations })
+      if (clean) renameBackendChatSession(activeId, clean.slice(0, 40)).catch(error => console.error(error))
+    }
     const full = context ? `（关于《${context.title}》：${context.snippet}）\n${clean}` : clean
     const references = [
       ...(context ? [{ kind: 'knowledge', title: context.title }] : []),
-      ...attachments.map(file => ({ kind: 'file', title: file.name })),
+      ...attachments.map(file => ({ kind: 'file', title: file.name, status: uploadedAttachments.some(item => item.name === file.name) ? 'ready' : 'failed' })),
     ]
-    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments, references, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
+    const attachmentMeta = attachments.map(file => ({ ...file, status: uploadedAttachments.some(item => item.name === file.name) ? 'ready' : 'failed' }))
+    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments: attachmentMeta, references, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
     const assistantId = `a${Date.now()}`
     set({
       running: true,
       context: null,
+
       conversations: {
         ...conversations,
         [activeId]: [...(conversations[activeId] || []), userMsg, {
@@ -162,7 +198,8 @@ export const useChatStore = create(persist((set, get) => ({
         mode: options.mode || 'career',
         depth: options.depth || 'standard',
         tool: options.tool || null,
-        attachments,
+        attachments: attachmentMeta,
+        attachmentIds: uploadedAttachments.map(file => file.id),
       }, {
         onActivity: activity => {
           set(state => {
@@ -193,7 +230,7 @@ export const useChatStore = create(persist((set, get) => ({
     } catch (error) {
       set(state => {
         const list = state.conversations[activeId] || []
-        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || '暂时无法生成回复，请稍后重试。', error: true, task: { ...m.task, status: 'failed', label: '生成失败' } } : m) } }
+        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || error.message || '暂时无法生成回复，请稍后重试。', error: true, task: { ...m.task, status: 'failed', label: '生成失败' } } : m) } }
       })
       return { error }
     } finally {
@@ -295,8 +332,10 @@ export const useLearningStore = create(persist((set) => ({
 export const useAuthStore = create(persist((set) => ({
   user: null, // { name, role: 'user' | 'admin' }
   login: async (name, password, role) => {
-    const { user } = await apiLogin(name, password, role)
+    const { user } = await backendLogin(name, password)
     set({ user })
+    await useChatStore.getState().hydrateSessions()
+    return user
   },
   logout: () => set({ user: null }),
 }), { name: 'xiao-auth' }))

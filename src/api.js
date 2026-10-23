@@ -16,6 +16,57 @@ import { questionBank, makeFeedback } from './data/interview.js'
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms))
 const mock = (data, ms = 200) => new Promise(r => setTimeout(() => r(data), ms))
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+const tokenStoreKey = 'mino_tokens'
+
+function getTokens() {
+  try { return JSON.parse(localStorage.getItem(tokenStoreKey) || '{}') } catch { return {} }
+}
+
+async function requestApi(path, options = {}) {
+  const headers = new Headers(options.headers || {})
+  const accessToken = getTokens().accessToken
+  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+  if (options.body && !(options.body instanceof FormData)) headers.set('Content-Type', 'application/json')
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers })
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}))
+    throw new Error(payload.error?.message || `请求失败 (${response.status})`)
+  }
+  return response
+}
+
+export async function backendLogin(username, password) {
+  const response = await fetch(`${API_BASE}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.error?.message || '登录失败')
+  localStorage.setItem(tokenStoreKey, JSON.stringify({ accessToken: data.accessToken, refreshToken: data.refreshToken }))
+  return data
+}
+
+export async function createBackendChatSession(payload = {}) {
+  return (await requestApi('/api/chat/sessions', { method: 'POST', body: JSON.stringify(payload) })).json()
+}
+
+export async function fetchBackendChatSessions() {
+  return (await requestApi('/api/chat/sessions')).json()
+}
+
+export async function fetchBackendChatMessages(id) {
+  return (await requestApi(`/api/chat/sessions/${encodeURIComponent(id)}/messages`)).json()
+}
+
+export async function renameBackendChatSession(id, title) {
+  return (await requestApi(`/api/chat/sessions/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ title }) })).json()
+}
+
+export async function deleteBackendChatSession(id) {
+  return (await requestApi(`/api/chat/sessions/${encodeURIComponent(id)}`, { method: 'DELETE' })).json()
+}
 
 // ---------------------------------------------------------------------
 // 对话助手（流式，SSE 协议）
@@ -37,7 +88,7 @@ const mock = (data, ms = 200) => new Promise(r => setTimeout(() => r(data), ms))
 //       if (line.startsWith('data:')) onChunk(JSON.parse(line.slice(5)).delta)
 //     }
 //   }
-export async function streamChatMessage(request, { onChunk, onActivity, onComplete, onError } = {}) {
+async function mockStreamChatMessage(request, { onChunk, onActivity, onComplete, onError } = {}) {
   const reply = buildMockReply(request)
   onActivity?.({ type: 'status', status: 'running', label: '正在生成回答' })
   for (const chunk of tokenize(reply)) {
@@ -50,15 +101,45 @@ export async function streamChatMessage(request, { onChunk, onActivity, onComple
   return result
 }
 
+export async function streamChatMessage(payload, { onChunk, onActivity, onComplete, onError } = {}) {
+  try {
+    const response = await requestApi('/api/chat', { method: 'POST', body: JSON.stringify(payload) })
+    if (!response.body) throw new Error('浏览器不支持流式响应')
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    let completion = {}
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const frames = buffer.split(/\r?\n\r?\n/)
+      buffer = frames.pop() || ''
+      for (const frame of frames) {
+        const event = frame.match(/^event:\s*(.+)$/m)?.[1]
+        const dataLine = frame.match(/^data:\s*(.+)$/m)?.[1]
+        if (!dataLine) continue
+        const data = JSON.parse(dataLine)
+        if (event === 'activity') onActivity?.({ type: 'status', ...data })
+        if (event === 'delta') onChunk?.(data.delta)
+        if (event === 'done') completion = data
+        if (event === 'error') throw new Error(data.message || '模型生成失败')
+      }
+    }
+    onActivity?.({ type: 'status', status: 'completed', label: '回答已生成' })
+    onComplete?.(completion)
+    return completion
+  } catch (error) {
+    onError?.(error)
+    throw error
+  }
+}
+
 /** POST /api/chat/attachments; mock 只返回待上传元数据，不读取或传输文件内容。 */
 export async function uploadChatAttachments(files) {
-  return mock({ files: files.map((file, index) => ({
-    id: `pending-${Date.now()}-${index}`,
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    status: 'pending_upload',
-  })) })
+  const form = new FormData()
+  files.forEach(file => form.append('files', file, file.name))
+  return (await requestApi('/api/chat/attachments', { method: 'POST', body: form })).json()
 }
 
 /** POST /api/chat/feedback */

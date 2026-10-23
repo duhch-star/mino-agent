@@ -28,6 +28,8 @@ export default function Composer() {
   const [tool, setTool] = useState('')
   const [files, setFiles] = useState([])
   const [menu, setMenu] = useState('')
+  const [sending, setSending] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const ref = useRef(null)
   const fileRef = useRef(null)
   const toolbarRef = useRef(null)
@@ -47,12 +49,20 @@ export default function Composer() {
     }
   }, [])
 
-  const submit = () => {
-    if ((!value.trim() && !files.length && !context) || running) return
-    sendMessage(value, { mode, depth, tool, attachments: files })
-    setValue('')
-    setFiles([])
-    ref.current?.focus()
+  const submit = async () => {
+    if ((!value.trim() && !files.length && !context) || running || sending) return
+    setSending(true)
+    setSubmitError('')
+    try {
+      await sendMessage(value, { mode, depth, tool, attachments: files })
+      setValue('')
+      setFiles([])
+      ref.current?.focus()
+    } catch (error) {
+      setSubmitError(error.message || '文件上传失败，请重试')
+    } finally {
+      setSending(false)
+    }
   }
 
   const onKeyDown = (event) => {
@@ -133,11 +143,12 @@ export default function Composer() {
               </div>}
             </div>
           </div>
-          <button className="sendBtn" onClick={submit} disabled={!canSend || running}>
-            <IconSend size={14} />{running ? '正在回复' : '发送'}
+          <button className="sendBtn" onClick={submit} disabled={!canSend || running || sending}>
+            <IconSend size={14} />{sending ? '上传中' : running ? '正在回复' : '发送'}
           </button>
         </div>
       </div>
+      {submitError && <div className="composerError" role="alert">{submitError}</div>}
       <div className="composerFootnote">支持 PDF、Word、TXT、Markdown；文件上传将在后端接入后启用</div>
     </div>
   )
