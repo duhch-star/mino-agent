@@ -1,0 +1,52 @@
+# ---------- 前端 ----------
+node_modules/
+dist/
+*.local
+
+# ---------- Python 后端 ----------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+*.egg-info/
+
+# 敏感配置与密钥（绝不入库）
+.env
+.env.*
+!.env.example
+
+# 本地数据库
+*.db
+*.sqlite3
+*.sqlite
+
+# ---------- 3D 源工程与超大文件（GitHub 单文件上限 100MB）----------
+*.blend
+*.blend1
+mascot_demo/
+rocket_rig/
+*.fbx
+*.max
+*.ma
+*.mb
+.avatar_tts_cache/
+
+# ---------- 临时 / 调试产物 ----------
+_api_*.txt
+_*.py
+_frontend_history.txt
+tmp/
+temp/
+*.log
+
+# ---------- 运行时上传与用户数据 ----------
+backend/app/uploads/
+backend/xiaomin.db
+backend/*.db
+
+# ---------- 系统 ----------
+.DS_Store
+Thumbs.db
+Desktop.ini

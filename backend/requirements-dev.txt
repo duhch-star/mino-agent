@@ -1,0 +1,4 @@
+# requirements-dev：测试与开发工具
+-r requirements.txt
+pytest>=8.0
+pytest-asyncio>=0.23

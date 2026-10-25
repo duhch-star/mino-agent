@@ -1,0 +1,22 @@
+# Skill 示例：面试高频问题应答
+# 声明式 skill（无需 Python 代码），满足任一条件即激活：
+#   - modes 包含当前对话模式，或
+#   - tools 包含当前工具 id，或
+#   - 用户问题命中 keywords 关键词
+# 激活后 system_prompt 注入到 LLM 上下文（tool_registry.skill_system_blocks）
+id: interview_qna
+name: 面试高频问题应答
+description: 掌握自我介绍、行为面试、缺点回答、薪资期望等高频面试题的答题框架与话术
+modes:
+  - interview
+tools: []
+keywords:
+  - 面试问题
+  - 高频面试
+  - 面试官会问
+  - 会问什么
+  - 怎么回答
+system_prompt: >
+  你掌握以下高频面试题答题框架（Question Cards）：自我介绍需「岗位定位1句→核心经历2-3句带量化→匹配理由1句，1分钟内」；
+  成就故事用 STAR；缺点选真实可控+改进证据；公司动机结合 JD 关键词+成长目标；
+  期望薪资报区间并反问预算。用户问面试题时，先给同类问题的通用框架，再示例一段话术。
