@@ -16,7 +16,8 @@ AI 求职辅导智能体：基于 AG-UI 声明式生成式 UI，本地多格式�
 │       ├── routers_fe/    # 前端适配 API（/api，camelCase + SSE）
 │       └── skills/        # Skill 热插拔（YAML/Python 声明式）
 ├── docs/                  # 产品与技术方案、API 接口设计（md + docx）
-└── assets/                # IP 设计参考（吉祥物概念图、3D GLB 成品）
+├── assets/                # IP 设计：3D GLB 成品 + 2D 素材（assets/ip/2d）
+└── rocket_rig/            # 2D IP 设计工程（吉祥物渲染图/表情/贴图 + 分析脚本）
 ```
 
 ## 快速开始
