@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
+import { Script } from 'node:vm';
+const source=readFileSync(new URL('../components/MinosBusiness.tsx',import.meta.url),'utf8');
+const ast=ts.createSourceFile('MinosBusiness.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+const node=ast.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='isMinosPath');
+const fn=new Script(ts.transpileModule(node.getText(ast).replace('export ',''),{compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText+';isMinosPath').runInNewContext();
+test('allows real business routes and refuses arbitrary paths',()=>{for(const p of ['/home','/chat','/resume','/knowledge','/knowledge/college/c1','/guide/star-structure','/interview/room','/career','/review'])assert.equal(fn(p),true,p);for(const p of ['https://evil.com','//evil','/api/files','/home?next=evil','/guide/../../auth',null,{},'x'.repeat(600)])assert.equal(fn(p),false,JSON.stringify(p));});
+test('bridge validates parent and business frame source and origin',()=>{assert.match(source,/event\.source === window\.parent/);assert.match(source,/event\.data\.origin !== event\.origin/);assert.match(source,/event\.origin === origin && event\.source === businessFrame\.current\?\.contentWindow/);});
+test('readiness ping sends no account token or user data',()=>{assert.match(source,/postMessage\(\{ type: 'minos:host-ready' \}, '\*'\)/);assert.doesNotMatch(source,/accessToken|bridgeSecret|localStorage/);});
