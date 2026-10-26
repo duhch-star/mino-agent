@@ -1,7 +1,7 @@
 """对话助手 ORM：会话（含分支）/ 消息 / 附件"""
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, Text, func
+from sqlalchemy import DateTime, Integer, LargeBinary, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
@@ -29,6 +29,36 @@ class ChatMessage(Base):
     # 附加元数据：references / attachments / options / task / usage / performance / citations
     meta_json: Mapped[str] = mapped_column(Text, default="{}")
     feedback: Mapped[str] = mapped_column(String(20), default="")   # helpful / unhelpful
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class ResumeDocument(Base):
+    """One document per account/conversation; cache is valid only at pdf_revision."""
+    __tablename__ = "resume_documents"
+
+    user_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    conversation_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    resume_json: Mapped[str] = mapped_column(Text, default='{}')
+    template: Mapped[str] = mapped_column(String(20), default='classic')
+    revision: Mapped[int] = mapped_column(Integer, default=0)
+    pdf_revision: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    pdf_data: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
+    warnings_json: Mapped[str] = mapped_column(Text, default='[]')
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class ResumeDocumentHistory(Base):
+    """Bounded text-only snapshots; consumed edits form a one-way undo stack."""
+    __tablename__ = "resume_document_history"
+
+    user_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    conversation_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    revision: Mapped[int] = mapped_column(Integer, primary_key=True)
+    resume_json: Mapped[str] = mapped_column(Text)
+    template: Mapped[str] = mapped_column(String(20))
+    action: Mapped[str] = mapped_column(String(20), default='edit')
+    consumed: Mapped[int] = mapped_column(Integer, default=0)
+    changes_json: Mapped[str] = mapped_column(Text, default='[]')
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

@@ -1,6 +1,7 @@
 """前端适配层：/api/interview/* 面试配置 / 会话 / 反馈"""
 import json
 import secrets
+from datetime import datetime
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -54,7 +55,9 @@ def fe_create_session(req: FeInterviewCreate, user: User | None = Depends(get_op
     session = interview_service.create_session(
         db, user.id if user else "", req.position, "校招", req.difficulty,
         req.durationMinutes, mode, None)
+    # 前端必须使用本会话的题目和 ID，不能另取题库后伪造对应关系。
     return {
+        "questions": json.loads(session.questions_json or "[]"),
         "id": session.id,
         "position": req.position,
         "difficulty": req.difficulty,
@@ -70,16 +73,38 @@ def fe_submit_answer(session_id: str, req: FeAnswerSubmit,
     session = interview_service.own_or_404(db, session_id, user.id if user else "")
     if session.status != "active":
         raise ApiException(40900, "会话未在进行中", status_code=409)
-    interview_service.submit_answer(db, session, req.questionId, req.answer)
-    feedback = fe_make_feedback(req.question or "", req.question, req.answer)
-    return {"sessionId": session_id, "feedback": feedback}
+    questions = json.loads(session.questions_json or "[]")
+    if not any(q.get("id") == req.questionId for q in questions):
+        raise ApiException(40000, "题目不属于当前面试", status_code=400)
+    # 每题保留最后一次提交；网络重试或反馈失败后的文字更正不会重复计数。
+    answers = json.loads(session.answers_json or "[]")
+    answers = [a for a in answers if a.get("question_id") != req.questionId]
+    answers.append({"question_id": req.questionId, "text": req.answer,
+                    "duration_sec": 0, "ts": datetime.utcnow().isoformat()})
+    session.answers_json = json.dumps(answers, ensure_ascii=False)
+    session.current_index = min(len(answers), len(questions))
+    db.commit()
+    return {"sessionId": session_id, "saved": True, "questionId": req.questionId}
 
 
 @router.post("/sessions/{session_id}/finish")
 def fe_finish_session(session_id: str, user: User | None = Depends(get_optional_fe_user),
                       db: Session = Depends(get_db)):
     session = interview_service.own_or_404(db, session_id, user.id if user else "")
-    report = interview_service.finish(db, session)
+    if session.status not in ("active", "finished"):
+        raise ApiException(40900, "会话已取消，无法结束", status_code=409)
+    # 报告生成失败不能提前提交 finished；已完成的重试也须幂等成功。
+    try:
+        if not session.report_id:
+            session.report_id = f"rp_{secrets.token_hex(6)}"
+        report = ai_service.build_report(session)
+        session.status = "finished"
+        if not session.ended_at:
+            session.ended_at = datetime.utcnow()
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise ApiException(50300, "面试报告暂不可用，记录已保留，请重试结束", status_code=502)
     return {"sessionId": session_id, "status": "completed", "report": report}
 
 

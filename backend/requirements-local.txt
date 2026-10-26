@@ -1,0 +1,12 @@
+# Complete local document parsing dependencies, in addition to the API core.
+-r requirements.txt
+pdfplumber
+pypdf
+python-docx
+openpyxl
+xlrd
+python-pptx
+striprtf
+lxml
+olefile
+PyYAML

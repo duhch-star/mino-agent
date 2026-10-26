@@ -4,6 +4,7 @@
 路由层负责把生成结果包装为 text/event-stream。
 """
 import json
+import logging
 import secrets
 import time
 
@@ -11,6 +12,8 @@ from sqlalchemy.orm import Session
 
 from app.models.chat import Attachment, ChatMessage, ChatSession
 from app.services import ai_service, qa_service
+
+logger = logging.getLogger(__name__)
 
 
 def new_id(prefix: str) -> str:
@@ -30,7 +33,38 @@ def create_session(db: Session, user_id: str, payload: dict) -> dict:
         parent_session_id=parent_id,
         branch_message_id=branch_msg,
     )
+    from app.core.responses import ApiException
+    from app.models.chat import ResumeDocument
+    from datetime import datetime, timedelta, timezone
+    copied = []
+    if parent_id or branch_msg:
+        if not user_id or not parent_id or not branch_msg or not get_session(db, user_id, parent_id):
+            raise ApiException(40400, '分支来源不存在或无权访问', status_code=404)
+        rows = db.query(ChatMessage).filter(ChatMessage.session_id == parent_id).order_by(ChatMessage.created_at.asc()).all()
+        for message in rows:
+            copied.append(message)
+            if message.id == branch_msg:
+                break
+        if not copied or copied[-1].id != branch_msg:
+            raise ApiException(40400, '分支消息不存在', status_code=404)
     db.add(session)
+    # Copy server-side messages atomically: the model sees exactly the same
+    # history as the UI. New message ids prevent feedback crossing sessions.
+    resume_snapshot = None
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    for index, message in enumerate(copied):
+        meta = json.loads(message.meta_json or '{}')
+        for call in meta.get('toolCalls') or []:
+            output = call.get('output') or {}
+            if call.get('status') == 'completed' and isinstance(output, dict) and 'resume' in output and 'template' in output:
+                resume_snapshot = output
+        db.add(ChatMessage(id=new_id('msg'), session_id=session.id, role=message.role,
+                           content=message.content, meta_json=message.meta_json,
+                           created_at=now - timedelta(seconds=len(copied) - index)))
+    if resume_snapshot:
+        db.add(ResumeDocument(user_id=user_id, conversation_id=session.id,
+                             resume_json=json.dumps(resume_snapshot['resume'], ensure_ascii=False),
+                             template=resume_snapshot['template'], revision=1))
     db.commit()
     db.refresh(session)
     return session_view(session)
@@ -76,6 +110,8 @@ def delete_session(db: Session, user_id: str, session_id: str) -> bool:
     s = get_session(db, user_id, session_id)
     if not s:
         return False
+    from app.services.resume_document_service import delete_document
+    delete_document(db, user_id, s.id)
     db.query(ChatMessage).filter(ChatMessage.session_id == s.id).delete()
     db.delete(s)
     db.commit()
@@ -216,6 +252,27 @@ def _active_skills(mode: str, tool: str | None, text: str) -> list:
         return []
 
 
+def _chat_history(db: Session, user_id: str, conversation_id: str, system: str, prompt: str) -> list:
+    messages = [{"role": "system", "content": system}]
+    if user_id and conversation_id and get_session(db, user_id, conversation_id):
+        rows = (db.query(ChatMessage).filter(ChatMessage.session_id == conversation_id)
+                .order_by(ChatMessage.created_at.desc()).limit(13).all())
+        rows.reverse()
+        # The router has already saved the current user message.
+        if rows and rows[-1].role == "user":
+            rows.pop()
+        budget = 16000
+        selected = []
+        for row in reversed(rows):
+            if len(row.content) > budget:
+                break
+            selected.append({"role": row.role, "content": row.content})
+            budget -= len(row.content)
+        messages.extend(reversed(selected))
+    messages.append({"role": "user", "content": prompt})
+    return messages
+
+
 def _prepare_chat(db: Session, request: dict) -> dict:
     """公共准备：抽取参数 + 知识库检索 + system/user prompt 构造"""
     text = (request.get("text") or "").strip()
@@ -242,15 +299,18 @@ def _prepare_chat(db: Session, request: dict) -> dict:
 
     system = _system_prompt(mode, tool, depth,
                             _active_skills(mode, tool, text))
-    user_prompt = _user_prompt(db, text, context, tool, attachmentIds, hits)
+    owned_ids = []
+    if request.get("userId"):
+        owned_ids = [a.id for a in db.query(Attachment).filter(
+            Attachment.id.in_(attachmentIds), Attachment.user_id == request["userId"]).all()]
+    user_prompt = _user_prompt(db, text, context, tool, owned_ids, hits)
     max_tokens = 1500 if depth == "deep" else 700
     return {
         "text": text, "mode": mode, "tool": tool, "depth": depth,
         "conversationId": conversationId, "hits": hits,
         "system": system, "user_prompt": user_prompt,
         "max_tokens": max_tokens,
-        "messages": [{"role": "system", "content": system},
-                     {"role": "user", "content": user_prompt}],
+        "messages": _chat_history(db, request.get("userId", ""), conversationId, system, user_prompt),
     }
 
 
@@ -296,19 +356,26 @@ async def stream_reply(db: Session, request: dict):
     t0 = time.time()
     first_at = None
     answer = ""
-    try:
-        async for chunk in llm.stream_chat(prep["messages"], temperature=0.6,
-                                           max_tokens=prep["max_tokens"]):
-            if not chunk:
-                continue
+    from app.core.config import settings
+    from app.services import harness_service
+    tool_calls = {}
+    if settings.llm_api_key and settings.llm_base_url:
+        source = harness_service.run(prep["messages"], request.get("userId", ""), max(5000, prep["max_tokens"]),
+                                     db=db, conversation_id=prep["conversationId"], resume_mode=prep["mode"] == "resume")
+    else:
+        async def mock_events():
+            async for chunk in llm.stream_chat(prep["messages"], temperature=0.6, max_tokens=prep["max_tokens"]):
+                yield {"type": "delta", "delta": chunk}
+        source = mock_events()
+    async for event in source:
+        if event["type"] == "tool_call":
+            tool_calls[event["id"]] = {k: v for k, v in event.items() if k != "type"}
+            yield event
+        elif event["type"] == "delta":
             if first_at is None:
                 first_at = time.time()
-            answer += chunk
-            yield {"type": "delta", "delta": chunk}
-    except Exception:
-        answer = _fallback_reply(prep["text"], request.get("context") or {},
-                                 prep["tool"])
-        yield {"type": "delta", "delta": answer}
+            answer += event["delta"]
+            yield event
 
     elapsed = (time.time() - t0) * 1000
     ui = _build_genui(db, prep["text"], prep["tool"], prep["mode"], prep["hits"])
@@ -329,6 +396,7 @@ async def stream_reply(db: Session, request: dict):
                        "title": h["title"]} for h in prep["hits"]],
         "ui": ui,
         "skills": [{"id": s["id"], "name": s["name"]} for s in activated],
+        "toolCalls": list(tool_calls.values()),
     }
 
 

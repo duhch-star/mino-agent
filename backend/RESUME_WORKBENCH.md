@@ -4,7 +4,7 @@
 
 前端：`http://127.0.0.1:5173/#/resume`，侧栏「LaTeX 简历」或职业辅导页面进入。
 
-1. 选择经典单栏、紧凑技术型或双栏侧边栏。
+1. 选择直接接入的 Sourabh Bajaj 原版单栏或 Deedy OpenFonts 原版双栏（仅增加中文字体兼容与安全内容填充）。
 2. 在对话框粘贴真实履历并描述修改要求，或展开结构化编辑，填写 JSON。
 3. AI 返回完整候选版本和待补充问题；逐字段显示前后差异。
 4. 点击确认应用后更新当前简历，放弃不会改变原文；可撤销上次应用。
@@ -27,7 +27,7 @@
 
 ## 依赖和安全
 
-本机已有 TeX Live 2024 的 XeLaTeX、ctex、Fandol、enumitem、titlesec。其他机器安装同等依赖后，可用 RESUME_XELATEX 环境变量指定编译器绝对路径。
+可用 RESUME_XELATEX 环境变量指定 XeLaTeX 编译器路径，或使用 PATH 中的 XeLaTeX。本机另准备了经官方 SHA256 校验的便携 Tectonic（XeTeX 引擎）；首次编译会下载所需 TeX 包和 Fandol 中文字体，后续使用缓存。原 Deedy class 与 Lato / Raleway 字体随源码包提供。
 
 - 用户/LLM 内容均视为纯文本，进行 TeX 特殊字符转义。
 - 不接受执行任意 .tex，不支持在网页直接编辑可执行源码。
@@ -39,4 +39,4 @@
 
 ## 来源
 
-两种 GitHub 参考来源，三套独立中文适配版式（非三个上游原模板）。详见 app/resume_templates/README.md 和 upstream 目录许可证存档。
+两套真实上游模板源码直接接入：sb2nov/resume 和 deedy/Deedy-Resume OpenFonts。固定版本、完整原文件、字体许可与修改范围详见 app/resume_templates/README.md；下载 /api/resume/bundle 源码包可获取全部编译资源。

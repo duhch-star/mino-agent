@@ -26,11 +26,8 @@ def get_current_user(authorization: str = Header(default=""), db: Session = Depe
 
 
 def get_optional_user(authorization: str = Header(default=""), db: Session = Depends(get_db)) -> User | None:
-    if authorization.startswith("Bearer "):
-        try:
-            payload = decode_token(authorization[7:])
-            if payload.get("type") == "access":
-                return user_service.get(db, payload["sub"])
-        except Exception:
-            return None
+    # Missing credentials may use guest features. Supplied but invalid
+    # credentials must never silently downgrade an account request to guest.
+    if authorization:
+        return get_current_user(authorization, db)
     return None

@@ -1,6 +1,8 @@
 # ---------- 前端 ----------
 node_modules/
 dist/
+.next/
+*.tsbuildinfo
 *.local
 
 # ---------- Python 后端 ----------
@@ -33,9 +35,15 @@ rocket_rig/
 *.mb
 .avatar_tts_cache/
 
+# 本机部署进程状态与日志
+.runtime/
+
+# Harness 会话产物（可能包含本机路径和用户材料）
+.dsh-artifacts/
+
 # ---------- 临时 / 调试产物 ----------
 _api_*.txt
-_*.py
+/_*.py
 _frontend_history.txt
 tmp/
 temp/
@@ -43,6 +51,7 @@ temp/
 
 # ---------- 运行时上传与用户数据 ----------
 backend/app/uploads/
+backend/app/workspaces/
 backend/xiaomin.db
 backend/*.db
 

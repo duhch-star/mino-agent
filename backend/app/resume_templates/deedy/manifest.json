@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/deedy/Deedy-Resume",
+  "clone_url": "https://github.com/deedy/Deedy-Resume.git",
+  "commit": "6d06ba7d8eee5fb8870bb00cb13a777f2083aa18",
+  "commit_url": "https://github.com/deedy/Deedy-Resume/commit/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18",
+  "commit_timestamp": "2015-12-02T10:39:03-05:00",
+  "acquired_at_utc": "2026-10-26T02:55:18.025295+00:00",
+  "extraction": "git archive commit objects; no checkout newline conversions",
+  "upstream_notice_present": false,
+  "upstream_standalone_font_licenses_present": false,
+  "font_license_audit": {
+    "status": "complete: all 19 original binaries declare OFL-1.1; actual embedded notices and full official license text included",
+    "font_count": 19,
+    "binary_modifications": false,
+    "lato_version": "1.104",
+    "raleway_version": "2.001"
+  },
+  "manifest_self_hash": "excluded to avoid self-reference",
+  "files": [
+    {
+      "path": "LICENSE",
+      "size_bytes": 11525,
+      "sha256": "47b3f8af497c63a097d97188fac5003028fc094759c9110a220e8493d34bdebf",
+      "kind": "upstream-unmodified",
+      "upstream_path": "LICENSE",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/LICENSE",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/LICENSE",
+      "git_blob_sha1": "85775d3ae70403ff5982fa9bb49dfd45f52ec6dd"
+    },
+    {
+      "path": "README.md",
+      "size_bytes": 3352,
+      "sha256": "c5982a725fc8066d0843e86ba91cf18e2819e22373f829b30015f8dbc4d581f0",
+      "kind": "local-provenance-documentation"
+    },
+    {
+      "path": "UPSTREAM-README.md",
+      "size_bytes": 4249,
+      "sha256": "d048157aa794dda3ea9530d88e324f35963740ec2cf66faba13570368efee8b0",
+      "kind": "upstream-unmodified",
+      "upstream_path": "README.md",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/README.md",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/README.md",
+      "git_blob_sha1": "7cf90eabe96bda9a9d181a608df89bfe57575ac2"
+    },
+    {
+      "path": "deedy-resume-openfont.cls",
+      "size_bytes": 2844,
+      "sha256": "94956ab5c2d016ab718f5efe86ba5b9827a7e8b6849c1d8c8db074bd6a1047d8",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/deedy-resume-openfont.cls",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy-resume-openfont.cls",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy-resume-openfont.cls",
+      "git_blob_sha1": "2e99ef85b3e02a73ce26817638979cae49336a81"
+    },
+    {
+      "path": "deedy_resume-openfont.pdf",
+      "size_bytes": 67608,
+      "sha256": "a839590a2de03b330cc3b3c1e73910d66408cb759c2d9bad64b76ca7ffa0de09",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/deedy_resume-openfont.pdf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy_resume-openfont.pdf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy_resume-openfont.pdf",
+      "git_blob_sha1": "7a5c75255119559e5d89a0669ab52b2149fa6109"
+    },
+    {
+      "path": "deedy_resume-openfont.tex",
+      "size_bytes": 7970,
+      "sha256": "0b206e869c940a89bc3444a8b406221f8e222b602ce190dd69453b7ece11454f",
+      "kind": "byte-identical-extension-alias",
+      "upstream_path": "OpenFonts/deedy_resume-openfont.xtx",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy_resume-openfont.xtx"
+    },
+    {
+      "path": "deedy_resume-openfont.xtx",
+      "size_bytes": 7970,
+      "sha256": "0b206e869c940a89bc3444a8b406221f8e222b602ce190dd69453b7ece11454f",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/deedy_resume-openfont.xtx",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy_resume-openfont.xtx",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/deedy_resume-openfont.xtx",
+      "git_blob_sha1": "9925fd8a26810d0e8e77948b0c6ab1fe7a832481"
+    },
+    {
+      "path": "fonts/lato/Lato-Bla.ttf",
+      "size_bytes": 114588,
+      "sha256": "8b32bc539ca95dda2d2206a43234b5f3b0fe964bd25966c860bc80ec7f06d702",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-Bla.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Bla.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Bla.ttf",
+      "git_blob_sha1": "6848db0d1acf36f95ee7dc0130eab9e6fb1d19a6"
+    },
+    {
+      "path": "fonts/lato/Lato-BlaIta.ttf",
+      "size_bytes": 111616,
+      "sha256": "09660c19f1773a761b2e56a05b666813dfd6e6196b4ad9d85ff881f29a30e839",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-BlaIta.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-BlaIta.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-BlaIta.ttf",
+      "git_blob_sha1": "5decf12973e90db8a9014fe9d42a67d8a03f9489"
+    },
+    {
+      "path": "fonts/lato/Lato-Bol.ttf",
+      "size_bytes": 121788,
+      "sha256": "14f7de6b616950395062902eb8f70f01c0a901223db5d40f2a05728ac4a830f6",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-Bol.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Bol.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Bol.ttf",
+      "git_blob_sha1": "74343694e2b2114272f38b1124813b972cb592e5"
+    },
+    {
+      "path": "fonts/lato/Lato-BolIta.ttf",
+      "size_bytes": 120312,
+      "sha256": "2101c00b9c973a666bf128b3a776a45df7107bd29116079ee00541a8863d50ce",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-BolIta.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-BolIta.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-BolIta.ttf",
+      "git_blob_sha1": "684aacf5b4f354722926994506d3737ef62f0283"
+    },
+    {
+      "path": "fonts/lato/Lato-Hai.ttf",
+      "size_bytes": 115316,
+      "sha256": "01ef8d755f412a945aa0b1221bfe98852200b549c4f16aad377e49937a30bd2f",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-Hai.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Hai.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Hai.ttf",
+      "git_blob_sha1": "288be29553a742b2a9caf6f2e37144507eace4c1"
+    },
+    {
+      "path": "fonts/lato/Lato-HaiIta.ttf",
+      "size_bytes": 91460,
+      "sha256": "95a84782e0797d27d079d9cc6ab9bb24ea67558953099bf4481c08e95b2ae70a",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-HaiIta.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-HaiIta.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-HaiIta.ttf",
+      "git_blob_sha1": "c2bfd3353e379da00617df0f8a12210e529f9a83"
+    },
+    {
+      "path": "fonts/lato/Lato-Lig.ttf",
+      "size_bytes": 122524,
+      "sha256": "05903540a0675491fda9015a78c05bb589769951befab12a58a5568175566b49",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-Lig.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Lig.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Lig.ttf",
+      "git_blob_sha1": "a958067a86f46b4b82b6b1ec43fa83f5875f3e43"
+    },
+    {
+      "path": "fonts/lato/Lato-LigIta.ttf",
+      "size_bytes": 91600,
+      "sha256": "b1af3a551a7e2d9fb640773197a00f6970a2b9c6699b0c786059a37453d5d12c",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-LigIta.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-LigIta.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-LigIta.ttf",
+      "git_blob_sha1": "5e45ad9a6c943fc034f8f177d07c552e5fceda77"
+    },
+    {
+      "path": "fonts/lato/Lato-Reg.ttf",
+      "size_bytes": 120196,
+      "sha256": "7ae714b63c2c8b940bdd211a0cc678f01168a34eea8aa13c0df25364f29238a7",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-Reg.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Reg.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-Reg.ttf",
+      "git_blob_sha1": "04ea8efb1367727b081dea87e63818be0a4d02f0"
+    },
+    {
+      "path": "fonts/lato/Lato-RegIta.ttf",
+      "size_bytes": 118352,
+      "sha256": "1a63dda1d2f019336e934e41d7ffa8f3e5f4cee0eb6a0c4734827dbe09ce5015",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/lato/Lato-RegIta.ttf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-RegIta.ttf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/lato/Lato-RegIta.ttf",
+      "git_blob_sha1": "3d3b7a2984aec7f247680b1fe7296700cd2a3e45"
+    },
+    {
+      "path": "fonts/lato/OFL.txt",
+      "size_bytes": 4802,
+      "sha256": "f501c093ac60c3f2fedfe29a1b773c2ce17c6dfae4710bfe20a4143084fc6036",
+      "kind": "generated-license-assembly",
+      "license_text_source_url": "https://openfontlicense.org/documents/OFL.txt",
+      "copyright_source": "original font name table IDs 0 and 13; exact strings retained"
+    },
+    {
+      "path": "fonts/raleway/OFL.txt",
+      "size_bytes": 4456,
+      "sha256": "b86a1fd61d7a7edb77f19f84c3183701891e788473510f4775b5d2baad253dfb",
+      "kind": "generated-license-assembly",
+      "license_text_source_url": "https://openfontlicense.org/documents/OFL.txt",
+      "copyright_source": "original font name table IDs 0 and 13; exact strings retained"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Bold.otf",
+      "size_bytes": 66088,
+      "sha256": "7004222230d77e6b59d8312c8d7decbcc080e67c3821f1cd7b7e3f34f41a69fb",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Bold.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Bold.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Bold.otf",
+      "git_blob_sha1": "2f840b7514d8e07ed465210e396ade1e76dcb675"
+    },
+    {
+      "path": "fonts/raleway/Raleway-ExtraBold.otf",
+      "size_bytes": 66336,
+      "sha256": "2b6e82870aba6a9089d341e67d7a7edacec2733ef0dab23e01d9d6c826cc6f52",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-ExtraBold.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-ExtraBold.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-ExtraBold.otf",
+      "git_blob_sha1": "133552cd32d39ef5ba0a2ec3cee88a3cfdca54f2"
+    },
+    {
+      "path": "fonts/raleway/Raleway-ExtraLight.otf",
+      "size_bytes": 63364,
+      "sha256": "a9b4536b59d8e041280b7c03ad3a182046a87ef6eb8a5f8879a7abc5615783da",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-ExtraLight.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-ExtraLight.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-ExtraLight.otf",
+      "git_blob_sha1": "4ab05bbd8e36279778588944eaf06514b8cc07a9"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Heavy.otf",
+      "size_bytes": 70484,
+      "sha256": "8a131abb3239b5cf7dcb3d500b16dc33cd0c66d423737be6a88cd3e3c00ea867",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Heavy.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Heavy.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Heavy.otf",
+      "git_blob_sha1": "63c952aaf19214697145dcb8f68e9307b0c73bc4"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Light.otf",
+      "size_bytes": 64488,
+      "sha256": "3554e667904ae6eba906af71da95ceac81f4610c18560d71b549ffe9f8f2f48b",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Light.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Light.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Light.otf",
+      "git_blob_sha1": "cb4ff4eda655470d5b0a5a2322037679e420127b"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Medium.otf",
+      "size_bytes": 64776,
+      "sha256": "31f892971f709c5e5d5a19b0a2445d3f90a9de42f2395a0ac113c4d7d933de06",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Medium.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Medium.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Medium.otf",
+      "git_blob_sha1": "79786fe4116ef7321caeffe91acba4e1e1a58647"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Regular.otf",
+      "size_bytes": 64368,
+      "sha256": "a1321362dc043b61962d04485022ce923d0a1c926c4dbf59ee6ea9ce6e520c4d",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Regular.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Regular.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Regular.otf",
+      "git_blob_sha1": "871e0f444024465c140446d72fa5bd4bb2a3d9bc"
+    },
+    {
+      "path": "fonts/raleway/Raleway-SemiBold.otf",
+      "size_bytes": 65696,
+      "sha256": "6d75566fed3b03036afe4f81a2d38ed1dfa3100a5c2e840abe4f8a875c73ee39",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-SemiBold.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-SemiBold.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-SemiBold.otf",
+      "git_blob_sha1": "33d19f6bb1384022113537b42e9d70dc6c8d0ef4"
+    },
+    {
+      "path": "fonts/raleway/Raleway-Thin.otf",
+      "size_bytes": 64256,
+      "sha256": "f2e1069b99f50e3c1d3b3c2aa54aebbd5d8eca97787df477a40389f7e2982efa",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/fonts/raleway/Raleway-Thin.otf",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Thin.otf",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/fonts/raleway/Raleway-Thin.otf",
+      "git_blob_sha1": "13a581d35e0057917426b0cb339da57fd7bfc37a"
+    },
+    {
+      "path": "licenses/OFL-1.1-original.txt",
+      "size_bytes": 4599,
+      "sha256": "1d361a8f8e8ce6e68457dcd93fb56e162e6baa3bbb7e7573a290d44399f6b57e",
+      "kind": "external-unmodified",
+      "source_url": "https://openfontlicense.org/documents/OFL.txt"
+    },
+    {
+      "path": "licenses/font-metadata.json",
+      "size_bytes": 19767,
+      "sha256": "2bbc0e705d362eec7060398e7ef8e58c51536e207edd862b68544117505e2cfc",
+      "kind": "generated-extracted-font-name-tables"
+    },
+    {
+      "path": "publications.bib",
+      "size_bytes": 647,
+      "sha256": "51bc5b3ec7085293b1e2e0bcd39b46a99a19d8535d5cc95fcd44380a9f316228",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/publications.bib",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/publications.bib",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/publications.bib",
+      "git_blob_sha1": "16d31fa80c4a27ad7a64b4536f54cfc7fc7a8da9"
+    },
+    {
+      "path": "sample-image.png",
+      "size_bytes": 180573,
+      "sha256": "19aec2f189eeeb8e9ba64df9d72fc4dc6f074b5276f70e670cee01a74ad24d31",
+      "kind": "upstream-unmodified",
+      "upstream_path": "OpenFonts/sample-image.png",
+      "source_url": "https://github.com/deedy/Deedy-Resume/blob/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/sample-image.png",
+      "raw_url": "https://raw.githubusercontent.com/deedy/Deedy-Resume/6d06ba7d8eee5fb8870bb00cb13a777f2083aa18/OpenFonts/sample-image.png",
+      "git_blob_sha1": "477a54911bea0ed06889705a17d5d29f07a6a2b5"
+    }
+  ]
+}
