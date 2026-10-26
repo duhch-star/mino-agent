@@ -1,0 +1,7 @@
+export_morph = True
+export_morph_animation = True
+export_morph_normal = True
+export_image_format = AUTO
+export_image_quality = 75
+export_animation_mode = ACTIONS
+export_force_sampling = True

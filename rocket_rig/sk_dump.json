@@ -1,0 +1,13 @@
+{
+ "names": [
+  "Big"
+ ],
+ "skip_flags": [
+  {
+   "name": "Big",
+   "is_first": true,
+   "relative_self": true,
+   "mute": false
+  }
+ ]
+}

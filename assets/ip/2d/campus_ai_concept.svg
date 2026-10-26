@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820">
+<defs>
+ <style>text{font-family:'Microsoft YaHei',sans-serif}.title{fill:#253449;font-size:30px;font-weight:700}.sub{fill:#788497;font-size:14px}.label{fill:#253449;font-size:17px;font-weight:700}.line{stroke:#304259;stroke-width:4;stroke-linejoin:round;stroke-linecap:round}</style>
+ <g id="face-shell">
+  <path class="line" fill="#dbe9e8" d="M68 82 Q50 66 46 87 L46 111 Q49 122 64 118 M232 82 Q250 66 254 87 L254 111 Q251 122 236 118"/>
+  <path class="line" fill="#fff9ed" d="M65 68 Q71 43 105 43 L112 35 Q119 38 123 44 Q155 37 190 46 Q226 48 235 72 L240 111 Q238 139 215 149 Q153 171 87 150 Q59 143 59 117 Z"/>
+  <path fill="#dbe9e8" d="M79 84 Q82 68 103 67 L197 67 Q219 69 220 87 L218 111 Q216 133 194 136 L107 136 Q82 134 80 113 Z"/>
+  <path fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" d="M91 81 Q94 76 108 76"/>
+  <path fill="#ec997f" d="M85 117 Q94 111 104 118 Q94 125 85 121 M197 118 Q207 111 216 117 L215 122 Q205 126 197 118"/>
+  <path class="line" fill="#648d92" d="M165 44 L174 27 Q181 24 188 31 L183 47"/>
+ </g>
+ <g id="smile" fill="#304259">
+  <path d="M108 91 Q116 86 121 93 L122 108 Q117 116 110 109 Z M178 91 Q186 86 191 93 L192 108 Q187 116 180 109 Z"/>
+  <path d="M139 113 Q151 125 164 112" fill="none" stroke="#304259" stroke-width="4" stroke-linecap="round"/>
+ </g>
+ <g id="head"><use href="#face-shell"/><use href="#smile"/></g>
+ <g id="body">
+  <ellipse cx="151" cy="298" rx="85" ry="10" fill="#dce3e0"/>
+  <path class="line" fill="#648d92" d="M111 250 L108 280 Q91 289 105 295 L130 294 Q139 287 135 254 M163 254 L165 283 Q164 294 177 294 L197 294 Q206 288 188 280 L187 249"/>
+  <path class="line" fill="#fff9ed" d="M99 169 Q81 162 69 178 L54 210 Q51 220 61 223 Q71 226 76 214 L91 198 M208 170 Q223 164 229 148 L235 131 Q243 124 249 133 Q251 142 244 151 Q235 184 215 196"/>
+  <path class="line" fill="#fff9ed" d="M105 147 Q150 138 195 149 Q210 174 212 224 Q212 254 189 260 Q151 268 112 259 Q90 256 91 229 Q92 181 105 147 Z"/>
+  <path class="line" fill="#648d92" d="M103 155 L129 178 L150 158 L173 178 L198 156 L192 146 Q149 138 110 147 Z"/>
+  <path fill="none" stroke="#304259" stroke-width="3" d="M150 159 L150 250"/>
+  <rect x="166" y="191" width="28" height="29" rx="8" fill="#edb265"/>
+  <path fill="none" stroke="#fff9ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M173 207 L173 200 L180 203 L187 200 L187 207 L180 210 Z"/>
+  <path fill="none" stroke="#d3dcd5" stroke-width="3" stroke-linecap="round" d="M105 232 Q117 237 130 234"/>
+ </g>
+ <g id="character"><use href="#body"/><use href="#head"/></g>
+</defs>
+<rect width="1200" height="820" fill="#f3f2ed"/>
+<text x="52" y="62" class="title">校园 AI 小助手 / 概念 B</text>
+<text x="52" y="93" class="sub">设计对比稿 · 非官方校徽 / 校色 · 暂名「小北」</text>
+<rect x="40" y="124" width="470" height="630" rx="26" fill="#e5ece7"/>
+<text x="70" y="165" class="label">01 / 全身角色</text>
+<text x="70" y="191" class="sub">短身体 · 软方脸 · 小手脚 · 校园制服领</text>
+<use href="#character" transform="translate(58 216) scale(1.38)"/>
+<text x="70" y="709" class="sub">暖白 × 灰青绿 × 杏黄，避免大面积机械黑脸。</text>
+<rect x="534" y="124" width="626" height="286" rx="26" fill="#fffdf8"/>
+<text x="564" y="165" class="label">02 / 头像使用效果</text>
+<use href="#head" transform="translate(568 180) scale(.95)"/>
+<text x="880" y="228" class="label">不是标准圆脸</text>
+<text x="880" y="260" class="sub">短额头 / 软方下颌</text>
+<text x="880" y="288" class="sub">五官集中 / 下巴留白少</text>
+<text x="880" y="316" class="sub">可独立用于语音通话</text>
+<rect x="534" y="434" width="626" height="320" rx="26" fill="#fffdf8"/>
+<text x="564" y="476" class="label">03 / 表情扩展</text>
+<g transform="translate(543 501) scale(.65)"><use href="#head"/></g>
+<g transform="translate(745 501) scale(.65)"><use href="#face-shell"/><path d="M107 106 Q116 93 125 106 M177 106 Q186 93 195 106" stroke="#304259" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M137 114 Q150 138 166 114 Z" fill="#304259"/></g>
+<g transform="translate(944 501) scale(.65)"><use href="#face-shell"/><path d="M107 105 L123 99 M177 99 L193 105 M142 119 Q153 114 161 120" stroke="#304259" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+<text x="627" y="648" text-anchor="middle" class="sub">倾听 / 微笑</text><text x="829" y="648" text-anchor="middle" class="sub">欢迎 / 开心</text><text x="1027" y="648" text-anchor="middle" class="sub">思考 / 回答</text>
+<text x="564" y="707" class="sub">保留完整角色，也能只展示头部；脸、嘴、手臂可分层制作动画。</text>
+<text x="52" y="792" class="sub">方向重点：更像亲切的校园同学，而不是硬壳机器人或标准圆形表情球。</text>
+</svg>

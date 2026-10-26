@@ -26,7 +26,6 @@ venv/
 *.blend
 *.blend1
 mascot_demo/
-rocket_rig/
 *.fbx
 *.max
 *.ma

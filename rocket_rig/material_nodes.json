@@ -1,0 +1,54 @@
+[
+ {
+  "mat": "pbr_material",
+  "node": "BSDF_PRINCIPLED",
+  "name": "Principled BSDF",
+  "inputs": {
+   "Base Color": "Image Texture.Color",
+   "Metallic": "Separate Color.Blue",
+   "Roughness": "Separate Color.Green"
+  },
+  "outputs": {
+   "BSDF": "Material Output.Surface"
+  }
+ },
+ {
+  "mat": "pbr_material",
+  "node": "OUTPUT_MATERIAL",
+  "name": "Material Output",
+  "inputs": {
+   "Surface": "Principled BSDF.BSDF"
+  },
+  "outputs": {}
+ },
+ {
+  "mat": "pbr_material",
+  "node": "TEX_IMAGE",
+  "name": "Image Texture",
+  "inputs": {},
+  "outputs": {
+   "Color": "Principled BSDF.Base Color"
+  }
+ },
+ {
+  "mat": "pbr_material",
+  "node": "SEPARATE_COLOR",
+  "name": "Separate Color",
+  "inputs": {
+   "Color": "Image Texture.001.Color"
+  },
+  "outputs": {
+   "Green": "Principled BSDF.Roughness",
+   "Blue": "Principled BSDF.Metallic"
+  }
+ },
+ {
+  "mat": "pbr_material",
+  "node": "TEX_IMAGE",
+  "name": "Image Texture.001",
+  "inputs": {},
+  "outputs": {
+   "Color": "Separate Color.Color"
+  }
+ }
+]
