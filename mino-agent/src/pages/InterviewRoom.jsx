@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import CharacterView from '../components/CharacterView.jsx'
 import { useInterviewSpeech } from '../lib/useInterviewSpeech.js'
 import { useInterviewRecognition } from '../lib/useInterviewRecognition.js'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { fetchInterviewFeedback, finishInterviewSession, submitInterviewAnswer } from '../api.js'
 import { useInterviewStore } from '../store.js'
 import { ensureChapterIndex, getChapterTitle } from '../lib/chapterIndex.js'
 
@@ -35,10 +36,81 @@ function Waveform() {
 
 export default function InterviewRoom() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const prefix = location.pathname.startsWith('/embedded/') ? '/embedded' : ''
+  const localPath = path => `${prefix}${path}`
   const st = useInterviewStore()
+
+  // 本页只消费真实会话接口，旧 store 的演示题库/模板追问不参与此流程。
+  const submitAnswer = async answer => {
+    const current = useInterviewStore.getState()
+    const clean = (answer || '').trim()
+    if (!clean || current.phase !== 'running' || current.stage !== 'asking' || current.paused || current.finishing) return false
+    if (clean.length > 4000) {
+      useInterviewStore.setState({ answerError: '回答最多 4000 字，请缩短后提交' })
+      return false
+    }
+    const { sessionId, index, position, questions, messages } = current
+    if (!sessionId) { useInterviewStore.setState({ answerError: '面试会话已失效，请返回重新创建' }); return false }
+    const q = questions[index]
+    const history = messages.at(-1)?.role === 'user' ? messages.slice(0, -1) : messages
+    useInterviewStore.setState({ stage: 'feedbacking', answerError: '', micOn: false, messages: [...history, { role: 'user', text: clean, time: Date.now() }] })
+    const isCurrent = () => useInterviewStore.getState().sessionId === sessionId && useInterviewStore.getState().phase === 'running'
+    try {
+      let pending = current.pendingAnswer
+      if (!pending || pending.index !== index || pending.answer !== clean) {
+        await submitInterviewAnswer(sessionId, { questionId: current.questionIds[index], question: q, answer: clean, answerMode: current.mode })
+        pending = { index, answer: clean }
+        if (!isCurrent()) return false
+        useInterviewStore.setState({ pendingAnswer: pending })
+      }
+      // answers 端点的启发式分数不能冒充大模型反馈。
+      const feedback = await fetchInterviewFeedback(position, q, clean, history)
+      if (!isCurrent()) return false
+      useInterviewStore.setState(s => ({
+        transcript: [...s.transcript, { q, a: clean, feedback }], stage: 'feedback', pendingAnswer: null,
+        messages: [...s.messages, { role: 'assistant', text: feedback.reply, time: Date.now() }],
+      }))
+      return true
+    } catch (error) {
+      if (isCurrent()) useInterviewStore.setState({ stage: 'asking', answerError: error.message || '提交失败，请重试；回答已保留' })
+      return false
+    }
+  }
+
+  const finish = async () => {
+    const current = useInterviewStore.getState()
+    if (current.finishing || current.stage === 'feedbacking' || current.finished) return
+    if (!current.sessionId) return
+    const sessionId = current.sessionId
+    useInterviewStore.setState({ finishing: true, finishError: '', paused: true, micOn: false })
+    try {
+      const result = await finishInterviewSession(sessionId)
+      if (useInterviewStore.getState().sessionId !== sessionId) return
+      useInterviewStore.setState({ phase: 'report', stage: 'asking', finished: true, serverReport: result.report, followup: null })
+    } catch (error) {
+      if (useInterviewStore.getState().sessionId === sessionId) useInterviewStore.setState({ finishError: error.message || '结束面试失败，请重试；当前记录已保留' })
+    } finally {
+      if (useInterviewStore.getState().sessionId === sessionId) useInterviewStore.setState({ finishing: false })
+    }
+  }
+
+  const nextQuestion = () => {
+    const current = useInterviewStore.getState()
+    if (current.stage !== 'feedback' || current.paused || current.finishing) return
+    if (current.index + 1 >= current.questions.length) { finish(); return }
+    useInterviewStore.setState(s => ({ index: s.index + 1, stage: 'asking', followup: null, micOn: false, answerError: '',
+      messages: [...s.messages, { role: 'assistant', text: s.questions[s.index + 1], time: Date.now() }] }))
+  }
+
+  const exit = () => {
+    const current = useInterviewStore.getState()
+    if (current.phase === 'report' || !current.sessionId) navigate(localPath('/interview'))
+    else finish()
+  }
   const [draft, setDraft] = useState('')
   const [micStatus, setMicStatus] = useState('')
-  const [saveRecord, setSaveRecord] = useState(false)
+
   const [voiceAuto, setVoiceAuto] = useState(true)
   const [editing, setEditing] = useState(false)
 
@@ -68,6 +140,10 @@ export default function InterviewRoom() {
   }, [])
 
   useEffect(() => {
+    if (st.phase === 'report' || st.paused) { streamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current = null; setCameraOn(false) }
+  }, [st.phase, st.paused])
+
+  useEffect(() => {
     if (cameraOn && videoRef.current && streamRef.current) {
       videoRef.current.srcObject = streamRef.current
     }
@@ -76,6 +152,7 @@ export default function InterviewRoom() {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      streamRef.current?.getTracks().forEach(t => t.stop())
       streamRef.current = stream
       setCameraOn(true)
       setCameraStatus('ok')
@@ -100,22 +177,22 @@ export default function InterviewRoom() {
 
   // 未配置直接进房间 → 回到配置页
   useEffect(() => {
-    if (st.phase === 'config' && st.questions.length === 0) navigate('/interview')
-  }, [st.phase, st.questions.length, navigate])
+    if (!st.sessionId || (st.phase === 'config' && st.questions.length === 0)) navigate(`${prefix}/interview`)
+  }, [st.phase, st.questions.length, st.sessionId, navigate, prefix])
 
   const total = st.questions.length
   const question = st.followup || st.questions[st.index] || ''
   const last = st.transcript[st.transcript.length - 1]
   const typing = draft.trim().length > 0
 
-  const spokenText = st.stage === 'feedback' ? (last?.feedback.reply || '') : question
+  const spokenText = st.stage === 'feedback' ? (last?.feedback?.reply || '') : question
   const speech = useInterviewSpeech({ phase: st.phase, stage: st.stage, question: spokenText, index: st.index,
     paused: st.paused, mode: st.mode, micOn: false, typing: editing })
   const recognition = useInterviewRecognition({
     active: voiceAuto && !editing && st.mode !== 'text' && st.phase === 'running' && st.stage === 'asking' && !st.paused && speech.readyForAnswer && !st.answerError,
     onText: setDraft,
     onListening: st.setMic,
-    onAnswer: async text => { const ok = await st.submitAnswer(text); if (ok) setDraft('') },
+    onAnswer: async text => { const ok = await submitAnswer(text); if (ok) setDraft('') },
   })
   useEffect(() => { setDraft(''); setEditing(false) }, [st.index, st.followup])
   const character = st.paused ? 'idle' : speech.status === 'generating' ? 'think'
@@ -124,7 +201,7 @@ export default function InterviewRoom() {
   const submit = async () => {
     if (!draft.trim()) return
     setVoiceAuto(false)
-    const ok = await st.submitAnswer(draft)
+    const ok = await submitAnswer(draft)
     if (ok) { setDraft(''); setEditing(false); setVoiceAuto(true) }
   }
 
@@ -136,7 +213,7 @@ export default function InterviewRoom() {
     return (
       <div className="interviewRoom">
         <header className="interviewTop">
-          <button className="iconButton" onClick={() => navigate('/interview')} aria-label="退出"><IconArrowLeft size={16} /></button>
+          <button className="iconButton" onClick={exit} aria-label="退出"><IconArrowLeft size={16} /></button>
           <div className="interviewTopTitle">{st.position} · 面试复盘</div>
           <div className="interviewTopMeta">{st.transcript.length} 题 · 平均 {avg} 分</div>
         </header>
@@ -145,10 +222,7 @@ export default function InterviewRoom() {
           <div className="reportHead">
             <h1>面试复盘</h1>
             <p className="pageSub">MINO AGENT 基于你的回答给出的训练建议（仅供参考，不构成录用判断）</p>
-            <div className="saveRecord">
-              <span className="formHint">保存本次转写与记录（仅本地）</span>
-              <button className={`switch${saveRecord ? ' on' : ''}`} onClick={() => setSaveRecord(v => !v)} role="switch" aria-checked={saveRecord} />
-            </div>
+            <p className="formHint">面试回答已保存至服务端；下方为本次真实大模型逐题反馈。</p>
           </div>
 
           {st.transcript.map((t, i) => (
@@ -172,7 +246,7 @@ export default function InterviewRoom() {
                   <div className="starExampleTitle">STAR 改写示例</div>
                   <pre>{t.feedback.starExample}</pre>
                 </div>
-                <Link to={`/guide/${t.feedback.chapterId}`} className="btn outline sm goStudy">
+                <Link to={localPath(`/guide/${t.feedback.chapterId}`)} className="btn outline sm goStudy">
                   <IconBook size={14} />去补课：{getChapterTitle(t.feedback.chapterId)}
                 </Link>
               </div>
@@ -184,8 +258,8 @@ export default function InterviewRoom() {
             {(st.messages || []).map((message, i) => <div key={i} className={`interviewMessage ${message.role}`}><strong>{message.role === 'user' ? '你' : '小北 · 面试官'}</strong><p>{message.text}</p></div>)}
           </section>
           <div className="reportActions">
-            <button className="btn primary" onClick={st.reset}>再来一次</button>
-            <button className="btn ghost" onClick={() => navigate('/knowledge')}>去知识库补课</button>
+            <button className="btn primary" onClick={() => { st.reset(); navigate(localPath('/interview')) }}>再来一次</button>
+            <button className="btn ghost" onClick={() => navigate(localPath('/knowledge'))}>去知识库补课</button>
           </div>
         </div>
       </div>
@@ -196,7 +270,7 @@ export default function InterviewRoom() {
   return (
     <div className="interviewRoom">
       <header className="interviewTop">
-        <button className="iconButton" onClick={() => navigate('/interview')} aria-label="退出"><IconArrowLeft size={16} /></button>
+        <button className="iconButton" onClick={exit} aria-label="退出"><IconArrowLeft size={16} /></button>
         <div className="interviewTopTitle">{st.position} · {st.difficulty}</div>
         <div className="interviewTopMeta">
           {st.phase === 'running' ? `第 ${st.index + 1}/${total} 题 · ${st.duration}` : st.duration}
@@ -204,15 +278,17 @@ export default function InterviewRoom() {
         {st.phase === 'running' && (
           <>
             <button className="btn ghost sm" onClick={st.togglePause}>{st.paused ? '继续' : '暂停'}</button>
-            <button className="btn ghost sm" onClick={st.end}>结束面试</button>
+            <button className="btn ghost sm" disabled={st.finishing || st.stage === 'feedbacking'} onClick={finish}>结束面试</button>
           </>
         )}
       </header>
 
+      {st.finishError && <p className="formHint" role="alert">结束失败：{st.finishError} <button className="btn ghost sm" disabled={st.finishing} onClick={finish}>重试结束</button></p>}
+      {st.finishing && <p className="formHint" role="status">正在保存并结束面试…</p>}
       <div className="interviewBody">
         <div className="interviewCharacter">
           <CharacterView state={character} audioUrl={speech.audioUrl}
-            onPlaybackEnd={() => { speech.onPlaybackEnd(); if (st.stage === 'feedback' && voiceAuto && !st.paused) st.nextQuestion() }} onPlaybackError={speech.onPlaybackError} />
+            onPlaybackEnd={() => { speech.onPlaybackEnd(); if (st.stage === 'feedback' && voiceAuto && !st.paused) nextQuestion() }} onPlaybackError={speech.onPlaybackError} />
           {st.mode === 'video' && cameraOn && (
             <video ref={videoRef} className="selfView" autoPlay muted playsInline />
           )}
@@ -245,7 +321,8 @@ export default function InterviewRoom() {
               {st.mode === 'video' ? (
                 <div className="cameraPrompt">
                   <button className="btn primary big" onClick={beginVideo}>开启摄像头并开始</button>
-                  <button className="btn ghost" onClick={() => st.setMode('text')}>改用文字/语音</button>
+                  <button className="btn ghost" onClick={() => st.setMode('text')}>改用文字</button>
+                  <button className="btn ghost" onClick={() => st.setMode('voice')}>改用语音</button>
                   {cameraStatus === 'fail' && <span className="fbLine hint">· 无法访问摄像头，请改用文字/语音</span>}
                 </div>
               ) : (
@@ -307,7 +384,7 @@ export default function InterviewRoom() {
                 )}
                 {st.mode !== 'text' && <div className="formHint">
                   {!recognition.supported ? '当前浏览器不支持语音识别，请使用支持的 Chrome/Edge 或文字作答。' : recognition.error || (st.micOn ? '正在识别；本次说话结束后自动提交。长回答建议使用文字更正后提交。' : '小北播报结束后自动开始收音。')}
-                  <button className="btn ghost sm" onClick={() => { setVoiceAuto(true); setEditing(false); recognition.retry() }}>重试收音</button>
+                  <button className="btn ghost sm" onClick={() => { useInterviewStore.setState({ answerError: '' }); setVoiceAuto(true); setEditing(false); recognition.retry() }}>重试收音</button>
                   <button className="btn ghost sm" onClick={() => { setEditing(true); setVoiceAuto(false) }}>文字更正 / 手动提交</button>
                 </div>}
                 <div className="answerInput">
@@ -315,24 +392,24 @@ export default function InterviewRoom() {
                     className="composerInput"
                     rows={3}
                     placeholder={st.stage === 'feedbacking' ? '反馈生成中…' : st.stage === 'feedback' ? '点击「下一题」继续…' : '输入你的回答…（文字兜底，随时可改）'}
+                    disabled={st.paused || st.finishing || st.stage !== 'asking'}
                     value={draft}
                     onFocus={() => { setEditing(true); setVoiceAuto(false) }}
                     onChange={e => setDraft(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit() } }}
                   />
                   <div className="answerActions">
                     <span className="formHint">{(st.mode === 'voice' || st.mode === 'video') ? '语音自动转写提交；点击输入框可停止收音并更正' : 'Enter 提交，Shift+Enter 换行'}</span>
                     {st.stage === 'feedback' ? (
                       <div className="btnRow">
-                        <button className="btn ghost" onClick={st.followUp}>追问</button>
-                        <button className="btn primary" onClick={st.nextQuestion}>
+                        <button className="btn primary" disabled={st.paused || st.finishing} onClick={nextQuestion}>
                           {st.index + 1 >= total ? '查看复盘' : '下一题'}
                         </button>
                       </div>
                     ) : st.stage === 'feedbacking' ? (
                       <span className="formHint">正在生成反馈…</span>
                     ) : (
-                      <button className="sendBtn" onClick={submit} disabled={!draft.trim()}>
+                      <button className="sendBtn" onClick={submit} disabled={!draft.trim() || st.paused || st.finishing || st.stage !== 'asking'}>
                         <IconSend size={14} />提交回答
                       </button>
                     )}
@@ -347,7 +424,7 @@ export default function InterviewRoom() {
                     <IconVideo size={14} />{cameraOn ? '关闭摄像头' : '开启摄像头'}
                   </button>
                 )}
-                <button className="btn ghost sm" onClick={st.end}><IconStop size={14} />结束</button>
+                <button className="btn ghost sm" disabled={st.finishing || st.stage === 'feedbacking'} onClick={finish}><IconStop size={14} />结束</button>
                 <button className="btn ghost sm" onClick={() => setDraft('')}><IconRefresh size={14} />清空</button>
               </div>
             </>

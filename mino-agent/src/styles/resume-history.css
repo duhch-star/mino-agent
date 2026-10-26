@@ -1,0 +1,16 @@
+.resumePdfStatus { margin: 0; padding: 0 18px 10px; color: var(--text-secondary, #667085); font-size: 12px; }
+.resumeRecentChange { margin: 0 16px 12px; padding: 12px; border: 1px solid var(--border-color, #dbe2eb); border-radius: 12px; background: var(--bg-secondary, #f8fafc); }
+.resumeRecentChangeHeading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.resumeRecentChange p, .resumeHistory p { margin: 8px 0; font-size: 13px; overflow-wrap: anywhere; }
+.resumeChangeDetails > summary { cursor: pointer; font-size: 13px; color: var(--text-secondary, #475569); }
+.resumeChangeDetails section { margin-top: 10px; }
+.resumeChangeDetails h4 { margin: 8px 0; font-size: 13px; }
+.resumeChangeComparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.resumeChangeComparison > div { min-width: 0; padding: 8px; border-radius: 6px; background: var(--bg-primary, #fff); border: 1px solid var(--border-color, #e2e8f0); }
+.resumeChangeComparison small { color: var(--text-secondary, #64748b); }
+.resumeChangeComparison pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: 12px; max-height: 220px; overflow: auto; margin-bottom: 0; }
+.resumeHistory > section { padding: 12px 0; border-top: 1px solid var(--border-color, #e2e8f0); }
+.resumeDraftConflict { padding: 10px; border: 1px solid #e9bf6a; border-radius: 8px; background: #fffaeb; color: #713f12; margin-bottom: 10px; }
+.resumeDraftConflict button { margin: 4px; }
+.resumeDownloadDisabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 480px) { .resumeChangeComparison { grid-template-columns: 1fr; } }

@@ -28,7 +28,7 @@ export default function MajorPage() {
   if (error) {
     return (
       <div className="page scrollable">
-        <p className="empty">未找到该专业</p>
+        <p className="empty" role="alert">{error}</p>
         <button className="btn ghost" onClick={() => navigate('/knowledge')}>返回知识库</button>
       </div>
     )

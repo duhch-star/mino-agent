@@ -19,16 +19,29 @@ const FALLBACK_TOOLS = [
 
 const ACCEPTED_FILES = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.json,.rtf,.html,.htm'
 
-export default function Composer() {
+export default function Composer({ resumeMode = false, onModeChange }) {
   const sendMessage = useChatStore(s => s.sendMessage)
   const running = useChatStore(s => s.running)
+  const activeId = useChatStore(s => s.activeId)
+  const drafts = useChatStore(s => s.drafts)
+  const setDraft = useChatStore(s => s.setDraft)
+  const stopGeneration = useChatStore(s => s.stopGeneration)
   const context = useChatStore(s => s.context)
   const clearContext = useChatStore(s => s.clearContext)
-  const [value, setValue] = useState('')
-  const [mode, setMode] = useState('career')
-  const [depth, setDepth] = useState('standard')
-  const [tool, setTool] = useState('')
-  const [files, setFiles] = useState([])
+  const draft = drafts[activeId] || {}
+  const value = draft.text || ''
+  const mode = draft.mode || 'career'
+  const depth = draft.depth || 'standard'
+  const tool = draft.tool || ''
+  const files = draft.attachments || []
+  const setValue = text => setDraft(activeId, { text })
+  const setMode = mode => setDraft(activeId, { mode })
+  const setDepth = depth => setDraft(activeId, { depth })
+  const setTool = value => setDraft(activeId, { tool: typeof value === 'function' ? value(tool) : value })
+  const setFiles = value => {
+    const next = typeof value === 'function' ? value(files) : value
+    setDraft(activeId, { attachments: next, attachmentIds: next.filter(file => file.id).map(file => file.id) })
+  }
   const [menu, setMenu] = useState('')
   const [sending, setSending] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -36,6 +49,8 @@ export default function Composer() {
   const ref = useRef(null)
   const fileRef = useRef(null)
   const toolbarRef = useRef(null)
+  const composing = useRef(false)
+  const submitLock = useRef(false)
 
   // 动态加载工具目录（后端 /api/chat/tools；失败则维持内置 fallback）
   useEffect(() => {
@@ -64,23 +79,24 @@ export default function Composer() {
   }, [])
 
   const submit = async () => {
-    if ((!value.trim() && !files.length && !context) || running || sending) return
+    if ((!value.trim() && !files.length && !context) || running || submitLock.current) return
+    submitLock.current = true
     setSending(true)
     setSubmitError('')
     try {
-      await sendMessage(value, { mode, depth, tool, attachments: files })
-      setValue('')
-      setFiles([])
+      const result = await sendMessage(value, { sessionId: activeId, mode: resumeMode ? 'resume' : mode, depth, tool, attachments: files, attachmentIds: draft.attachmentIds || [], context, draftRevision: draft.revision || 0 })
+      if (result?.error) { setSubmitError(result.error.message || '发送失败，请重试'); return }
       ref.current?.focus()
     } catch (error) {
       setSubmitError(error.message || '文件上传失败，请重试')
     } finally {
+      submitLock.current = false
       setSending(false)
     }
   }
 
   const onKeyDown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !composing.current && !event.nativeEvent?.isComposing && event.keyCode !== 229) {
       event.preventDefault()
       submit()
     }
@@ -119,11 +135,13 @@ export default function Composer() {
         <textarea
           ref={ref}
           className="composerInput"
-          placeholder="向 MINO AGENT 提问，或聊聊你的求职问题…（Enter 发送，Shift+Enter 换行）"
+          placeholder={resumeMode ? '填写真实经历或提出简历修改要求…（Enter 发送，Shift+Enter 换行）' : '向 MINO AGENT 提问，或聊聊你的求职问题…（Enter 发送，Shift+Enter 换行）'}
           rows={2}
           value={value}
           onChange={event => setValue(event.target.value)}
           onKeyDown={onKeyDown}
+          onCompositionStart={() => { composing.current = true }}
+          onCompositionEnd={() => { composing.current = false }}
         />
         <div className="composerToolbar" ref={toolbarRef}>
           <div className="composerControls">
@@ -133,10 +151,10 @@ export default function Composer() {
             </button>
             <div className="composerMenuWrap">
               <button className="composerControl" aria-expanded={menu === 'mode'} onClick={() => toggleMenu('mode')}>
-                {MODES.find(item => item.id === mode)?.label}<IconChevronDown size={13} />
+                {MODES.find(item => item.id === (resumeMode ? 'resume' : mode))?.label}<IconChevronDown size={13} />
               </button>
               {menu === 'mode' && <div className="composerMenu" role="menu" aria-label="求职模式">
-                {MODES.map(item => <button role="menuitemradio" aria-checked={mode === item.id} className={mode === item.id ? 'selected' : ''} key={item.id} onClick={() => { setMode(item.id); setMenu('') }}>{item.label}</button>)}
+                {MODES.map(item => <button role="menuitemradio" aria-checked={(resumeMode ? 'resume' : mode) === item.id} className={(resumeMode ? 'resume' : mode) === item.id ? 'selected' : ''} key={item.id} onClick={() => { setMode(item.id); onModeChange?.(item.id); setMenu('') }}>{item.label}</button>)}
               </div>}
             </div>
             <div className="composerMenuWrap">
@@ -157,12 +175,13 @@ export default function Composer() {
               </div>}
             </div>
           </div>
-          <button className="sendBtn" onClick={submit} disabled={!canSend || running || sending}>
-            <IconSend size={14} />{sending ? '上传中' : running ? '正在回复' : '发送'}
+          <button className="sendBtn" onClick={running ? () => stopGeneration() : submit} disabled={!running && (!canSend || sending)}>
+            <IconSend size={14} />{running ? '停止生成' : sending ? '发送中' : '发送'}
           </button>
         </div>
       </div>
       {submitError && <div className="composerError" role="alert">{submitError}</div>}
+      <div className="composerFootnote">文件工具 Harness：登录后可让 AI 在独立工作区列目录、读取、新建、修改与搜索文本；每次真实调用的入参与输出可展开查看，不开放电脑任意文件访问。</div>
       <div className="composerFootnote">支持 PDF、Word（doc/docx）、Excel（xls/xlsx）、PPT、TXT、Markdown、CSV、JSON、RTF、HTML；上传的附件由服务端本地解析，回答会针对附件内容逐条优化</div>
     </div>
   )
