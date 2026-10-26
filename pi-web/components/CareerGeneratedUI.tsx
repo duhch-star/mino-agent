@@ -15,12 +15,15 @@ const META: Record<CareerUIType, { label: string; mark: string; note: string }> 
   "interview-feedback": { label: "面试复盘", mark: "◈", note: "从回答证据出发，打磨下一次表达" },
   "action-plan": { label: "行动计划", mark: "✓", note: "把下一步，变成可以着手的小事" },
   "application-tracker": { label: "求职进度", mark: "▤", note: "用户信息，不自动投递" },
+  "learning-roadmap": { label: "成长路线", mark: "◷", note: "循序渐进，把目标拆解为有依据的里程碑" },
+  "offer-compare": { label: "机会对比", mark: "⇄", note: "比较事实与未知项，选择仅用于进一步讨论" },
+  "skill-matrix": { label: "能力矩阵", mark: "▦", note: "基于已有证据看优势，不把未知当作零分" },
 };
 const STATUS: Record<CareerUIStatus, string> = {
   strength: "优势", gap: "待提升", unknown: "待确认", todo: "待开始", doing: "进行中", done: "已完成",
 };
 function Evidence({ item }: { item: CareerUIItem }) {
-  return item.evidence ? <div className="career-evidence"><span>依据</span><p>{item.evidence}</p></div> : null;
+  return item.evidence ? <details className="career-evidence"><summary>查看依据</summary><p>{item.evidence}</p></details> : <span className="career-missing-evidence">尚无可核实依据</span>;
 }
 function Badge({ status }: { status?: CareerUIStatus }) {
   return <span className={`career-badge career-status-${status ?? "unknown"}`}>{STATUS[status ?? "unknown"]}</span>;
@@ -50,15 +53,34 @@ function Tracker({ data }: { data: CareerUIData }) {
   ];
   return <div className="career-tracker">{groups.filter((group) => group.items.length > 0).map((group) => <section className={`career-track-group career-track-${group.key}`} key={group.key}><h4><span className="career-dot" />{group.label}<span className="career-count">{group.items.length}</span></h4>{group.items.map((item) => <article className="career-track-item" key={item.id}><h5>{item.title}</h5><Description item={item} /><Evidence item={item} /></article>)}</section>)}</div>;
 }
+function Roadmap({ data }: { data: CareerUIData }) {
+  return <ol className="career-roadmap">{data.items.map((item, index) => <li key={item.id}><span className="career-milestone" aria-hidden="true">{index + 1}</span><article><ItemHeading item={item} /><Description item={item} /><Evidence item={item} /></article></li>)}</ol>;
+}
+function Compare({ data, onAction }: CareerGeneratedUIProps) {
+  const [selected, setSelected] = useState<string | null>(null);
+  return <><p className="career-notice">选择不会投递、接受 Offer 或修改业务记录。</p><div className="career-compare" role="group" aria-label="比较求职机会">{data.items.map(item => <article key={item.id} className={selected === item.id ? 'is-selected' : ''}><ItemHeading item={item} /><Description item={item} /><Score item={item} bar /><Evidence item={item} /><button type="button" aria-pressed={selected === item.id} onClick={() => setSelected(selected === item.id ? null : item.id)}>{selected === item.id ? '已选择 · 再次点击取消' : '选择深入比较'}</button></article>)}</div>{selected && onAction && <div className="career-compare-confirm"><button type="button" onClick={() => onAction(`请基于已有事实，进一步分析「${data.items.find(item => item.id === selected)?.title}」的优劣、未知项和需要向招聘方确认的问题。`)}>将比较问题填入草稿 ↗</button></div>}</>;
+}
+function SkillMatrix({ data }: { data: CareerUIData }) {
+  return <div className="career-skill-grid">{data.items.map(item => <article key={item.id}><ItemHeading item={item} /><Score item={item} bar /><Description item={item} /><Evidence item={item} /></article>)}</div>;
+}
 /** Render validated career data only; all model content remains escaped React text. */
 export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
   const headingId = useId();
+  const [collapsed, setCollapsed] = useState(false);
+  const [copyStatus, setCopyStatus] = useState('');
   const meta = META[data.type];
+  const copy = async () => {
+    const content = [data.title, data.summary || '', ...data.items.map(item => [item.title, item.description, item.before && `原文：${item.before}`, item.after && `建议：${item.after}`, item.evidence && `依据：${item.evidence}`].filter(Boolean).join('\n'))].join('\n\n');
+    try { await navigator.clipboard.writeText(content); setCopyStatus('已复制'); }
+    catch { setCopyStatus('复制失败，请手动选择文字'); }
+  };
   return <section className={`career-ui career-ui-${data.type}`} aria-labelledby={headingId}>
     <header className="career-header"><div className="career-kicker"><span aria-hidden="true">{meta.mark}</span><span>MINO / {meta.label}</span></div><h3 id={headingId}>{data.title}</h3><p>{data.summary ?? meta.note}</p></header>
+    <div className="career-toolbar"><span>{data.items.length} 个条目</span><button type="button" onClick={copy} aria-label={`复制${data.title}`}>复制内容</button><button type="button" aria-expanded={!collapsed} aria-controls={`${headingId}-content`} onClick={() => setCollapsed(v => !v)}>{collapsed ? '展开卡片' : '收起卡片'}</button><span role="status">{copyStatus}</span></div>
+    <div id={`${headingId}-content`} hidden={collapsed}>
     {data.type === "application-tracker" && <p className="career-notice">用户信息，不自动投递 · 状态来自本次对话，非平台同步</p>}
     <div className="career-body">
-      {data.items.length === 0 ? <p className="career-empty">暂无条目，补充信息后可以继续完善。</p> : data.type === "action-plan" ? <ActionPlan key={JSON.stringify(data)} data={data} /> : data.type === "application-tracker" ? <Tracker data={data} /> : <div className="career-items">{data.items.map((item, index) => <article className={`career-item career-status-${item.status ?? "unknown"}`} key={item.id}>
+      {data.items.length === 0 ? <p className="career-empty">暂无条目，补充信息后可以继续完善。</p> : data.type === "learning-roadmap" ? <Roadmap data={data} /> : data.type === "offer-compare" ? <Compare data={data} onAction={onAction} /> : data.type === "skill-matrix" ? <SkillMatrix data={data} /> : data.type === "action-plan" ? <ActionPlan key={JSON.stringify(data)} data={data} /> : data.type === "application-tracker" ? <Tracker data={data} /> : <div className="career-items">{data.items.map((item, index) => <article className={`career-item career-status-${item.status ?? "unknown"}`} key={item.id}>
         <ItemHeading item={item} index={data.type === "job-match" ? index : undefined} />
         <Description item={item} />
         {data.type === "resume-review" && (item.before || item.after) && <div className="career-revision"><div className="career-before"><span>原始表达</span><p>{item.before ?? "未提供原文"}</p></div><div className="career-after"><span>建议表达</span><p>{item.after ?? "待补充真实经历后改写"}</p></div></div>}
@@ -67,6 +89,7 @@ export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
       </article>)}</div>}
     </div>
     {onAction && !!data.actions?.length && <footer className="career-actions"><span>继续完善 · 仅填入草稿，确认后发送</span><div>{data.actions.map((action, index) => <button type="button" key={`${action.label}-${index}`} onClick={() => onAction(action.prompt)}>{action.label}<span aria-hidden="true">↗</span></button>)}</div></footer>}
+    </div>
     <div className="career-footnote">AI 辅助整理 · 请核对事实与依据</div>
   </section>;
 }

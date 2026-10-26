@@ -310,6 +310,17 @@ export function AppShell() {
     reclampRightPanelWidth();
   }, [reclampRightPanelWidth, reclampSidebarWidth, rightPanelOpen]);
   const chatInputRef = useRef<ChatInputHandle | null>(null);
+  useEffect(() => {
+    const compose = (event: Event) => {
+      const text = (event as CustomEvent<{ text?: unknown }>).detail?.text;
+      if (typeof text !== 'string' || !text.trim()) return;
+      business.navigate('/chat');
+      // Insert a draft only: business selections never auto-send a prompt.
+      requestAnimationFrame(() => { chatInputRef.current?.insertText(text); chatInputRef.current?.focus(); });
+    };
+    window.addEventListener('minos:compose', compose);
+    return () => window.removeEventListener('minos:compose', compose);
+  }, [business.navigate]);
   const [pendingQuotePrompt, setPendingQuotePrompt] = useState<{ sessionId: string; text: string } | null>(null);
   const topBarRef = useRef<HTMLDivElement>(null);
   const mobileToolbarRef = useRef<HTMLDivElement>(null);
@@ -2207,7 +2218,7 @@ export function AppShell() {
         />
       )}
 
-      {!business.isChat && <MinosBusinessContent path={business.path} origin={business.origin} frameRef={business.businessFrame} onSidebarToggle={handleSidebarToggle} />}
+      {!business.isChat && <MinosBusinessContent path={business.path} onNavigate={business.navigate} onSidebarToggle={handleSidebarToggle} />}
       {/* Center: chat (kept mounted while business pages are open) */}
       <div hidden={!business.isChat} inert={rightPanelFullWidth} style={{ flex: 1, display: business.isChat ? "flex" : "none", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
         {/* Top bar with sidebar toggle */}

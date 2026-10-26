@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { gatewayEnabled, cookieSessionId, loadAccount } from '@/lib/minos-gateway';
 import { minosEnabled, minosCookieName, verifyMinosCredential, isInternalSidecarRequest } from "@/lib/minos-auth";
 import {
   getAuthRetryAfterMs,
@@ -38,6 +39,30 @@ export async function proxy(request: NextRequest) {
       return new NextResponse("Untrusted request", { status: 403 });
     }
     return NextResponse.json({ error: "Untrusted API request" }, { status: 403 });
+  }
+
+  if (gatewayEnabled()) {
+    const path = request.nextUrl.pathname;
+    if (path === '/api/minos/account') return NextResponse.next();
+    const id = cookieSessionId(request.headers.get('cookie'));
+    const session = await loadAccount(id);
+    if (path === '/login') return NextResponse.next();
+    if (!session) return isApiRequest
+      ? NextResponse.json({ error: '登录已失效，请重新登录' }, { status: 401 })
+      : NextResponse.redirect(new URL('/login', request.url));
+    if (!isApiRequest || path.startsWith('/api/minos/') || path.startsWith('/api/business/')) return NextResponse.next();
+    if (!session.sidecar) return NextResponse.json({ error: '请先连接 Pi 工作区', reconnect: true }, { status: 409 });
+    // Preserve streaming/uploads and route every SDK API to this account's own
+    // process. Never accept a client-selected port, capability or forwarded auth.
+    const destination = new URL(`http://127.0.0.1:${session.sidecar.port}${path}${request.nextUrl.search}`);
+    const headers = new Headers(request.headers);
+    headers.set('cookie', session.sidecar.cookie);
+    headers.set('host', destination.host);
+    headers.delete('authorization');
+    headers.delete('x-minos-internal');
+    if (headers.has('origin')) headers.set('origin', destination.origin);
+    headers.delete('x-forwarded-host');
+    return NextResponse.rewrite(destination, { request: { headers } });
   }
 
   if (minosEnabled()) {

@@ -22,8 +22,8 @@ const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const render = (data, onAction) => renderToStaticMarkup(React.createElement(CareerGeneratedUI, { data, onAction }));
 
-test("all five scenarios use the exact v1 protocol", () => {
-  for (const type of ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker"]) {
+test("all eight scenarios use the exact v1 protocol", () => {
+  for (const type of ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker", "learning-roadmap", "offer-compare", "skill-matrix"]) {
     const data = { ...base, type, summary: "对照真实材料", actions: [{ label: "继续完善", prompt: "帮我完善这项经历" }] };
     assert.deepEqual(parseCareerUI(fence(data)), { segments: [{ kind: "ui", data }], pending: false });
   }
@@ -86,7 +86,7 @@ test("score fields must be finite bounded numbers with a valid range", () => {
   assert.equal(isUI('{"version":1,"type":"job-match","title":"x","items":[{"id":"x","title":"x","score":1e999}]}'), false);
 });
 test("all layouts render accessible content with evidence and literal escaped strings", () => {
-  for (const type of ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker"]) {
+  for (const type of ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker", "learning-roadmap", "offer-compare", "skill-matrix"]) {
     const html = render({ ...base, type, items: [{ ...base.items[0], before: "原始版本", after: "建议版本", score: 4, maxScore: 5 }] });
     assert.match(html, /用户提供的项目经历/);
     assert.match(html, /依据/);
@@ -111,7 +111,9 @@ test("visual scores require explicit score, maxScore and nonempty evidence", () 
 });
 test("actions are omitted without callback, and server render never invokes callback", () => {
   const data = { ...base, actions: [{ label: "完善经历", prompt: "请完善经历" }] };
-  assert.doesNotMatch(render(data), /<button/);
+  assert.doesNotMatch(render(data), /career-actions|完善经历/);
+  assert.match(render(data), /复制内容/);
+  assert.match(render(data), /aria-expanded="true"/);
   let calls = 0;
   const html = render(data, () => { calls++; });
   assert.match(html, /完善经历/);
@@ -121,7 +123,7 @@ test("actions are omitted without callback, and server render never invokes call
 test("model strings stay literal; no HTML/URL rendering or automatic actions", () => {
   assert.equal(isUI({ ...base, title: '<script>alert("x")</script> https://example.org' }), true);
   const component = readFileSync(new URL("../components/CareerGeneratedUI.tsx", import.meta.url), "utf8");
-  assert.doesNotMatch(component, /dangerouslySetInnerHTML|navigator\.clipboard|fetch\(|window\.open|href=/);
+  assert.doesNotMatch(component, /dangerouslySetInnerHTML|fetch\(|window\.open|href=/);
   assert.match(component, /onAction\(action\.prompt\)/);
   assert.match(component, /onAction &&/);
   assert.match(component, /本地勾选，不代表已执行/);

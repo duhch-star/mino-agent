@@ -1,5 +1,12 @@
 # Mobile and browser behavior
 
+## Native interview voice
+- `components/minos/lib/interview-audio.mjs` owns one cancellable voice turn. Abort fetch, pause/release HTMLAudio and cancel only the current speech synthesis on turn changes/unmount. The avatar consumes visual state only; it must not play the same audio again.
+- `auto` falls back to browser speech after a 6-second cloud deadline; browser/local voice choice is explicit. `playing` and `firstAudioMs` come from actual media `playing` / utterance `start`, not HTTP completion. These browser events are estimates of audible onset, not microphone-loopback measurements.
+- Recognition defaults to review-before-submit. Optional auto-submit waits 1.8 s after stable final results, never interim text. Cleanup must cancel submission timers. Changing mode, pausing, typing or replaying must stop the prior turn before opening the mic to avoid self-transcription.
+- Browser Web Speech recognition may use an online browser-vendor service; availability/latency vary. Neither this nor the current buffered HTTP MP3 provider is advertised as full-duplex/WebRTC streaming. Always retain manual text and explicit next-question controls.
+
+
 ## Mobile software keyboard (`hooks/useViewportHeight.ts`)
 - While an editor has focus and the visual viewport is more than `KEYBOARD_MIN_HEIGHT_PX` (60px) shorter than `innerHeight / scale`, the hook writes `visualViewport.height` to `--app-viewport-height`; smaller shrinks are Safari toolbars. Always compare against that zoom-corrected height, or iOS auto-zoom and pinch zoom leave the composer behind the keyboard.
 - WebKit settles the shrunken height only after the keyboard animation, often without another `resize` (bugs.webkit.org 265578), and an IME candidate bar resizes the keyboard with no viewport event at all. So every trigger, composition/input/keyup events on a focused editor included, starts one non-restarting chain of re-reads (`SETTLE_DELAYS_MS`). Reading once per event keeps the full-screen height, and `scrollTo(0, 0)` then fights the page scrolling to the caret: a jittering composer.

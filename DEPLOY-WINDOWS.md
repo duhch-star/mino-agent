@@ -7,7 +7,9 @@
 - API 文档：http://127.0.0.1:8000/docs
 - 双击 `stop-minos.cmd`：停止本部署脚本记录的进程，不按端口盲目终止其他程序。
 - 默认不设置开机自启动。重启电脑后再次双击启动即可。
-- 服务只监听本机回环地址，不开放局域网或公网。前端使用已构建的静态资源，由 Vite preview 提供，仅用于本机使用，不是公网生产方案。
+- 服务只监听本机回环地址，不开放局域网或公网。5173 由 Pi Web Next 生产服务提供，8000 为 Python 业务后端。
+- 登录、知识库、章节、面试、学习复盘、画像和内容审核已迁入 Pi Web 原生 React 工作区，不再嵌套旧前端 iframe。
+- `mino-agent` 只保留历史源码，不再安装、构建或启动。Pi SDK 依旧使用按账号隔离的后台进程，由统一入口同源转发。
 
 ## 演示账号
 
@@ -18,7 +20,11 @@
 
 ## 私有配置与功能边界
 
-后端配置保存在 `backend/.env`（Git 忽略），已生成独立随机 JWT 签名密钥。不要提交或分享此文件。
+后端配置保存在 `backend/.env`（Git 忽略），不要提交、分享或在更新时覆盖此文件。浏览器仅持有随机 HttpOnly/SameSite=Strict 账号 cookie；JWT、刷新令牌和 Pi 能力凭据保存在 `.runtime/gateway-sessions`，不要分享此目录。
+
+演示凭据仅适用于新初始化数据库，既有账号以实际密码为准。原版密码哈希依赖 JWT 签名密钥，历史密钥丢失可能使旧密码失效；新密码使用随机盐 PBKDF2，旧密码成功登录后自动升级。部署不会重置任何旧账号。
+
+Pi 可运行命令与访问文件，并非 OS 沙箱；仅用于可信本机环境。
 
 主要工作区现在使用真实 Pi SDK；Pi 对话、简历 AI 操作及面试反馈需要真实 LLM 配置。旧兼容聊天可能仍有演示逻辑，不应将其当作真实推理。首页直接进入智能对话，原求职首页和职业辅导独立入口已移除。
 
@@ -54,9 +60,8 @@ python -m venv .venv
 Set-Location pi-web
 npm.cmd ci
 npm.cmd run build
-Set-Location ..\mino-agent
-npm.cmd ci
-npm.cmd run build
+Set-Location ..
+# 不再需要构建 mino-agent
 ```
 
 使用 `npm.cmd` 避免 Windows 对 `npm.ps1` 的执行策略限制。双击脚本只对该次 PowerShell 进程使用 Bypass，不修改系统执行策略。

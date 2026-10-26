@@ -1,0 +1,22 @@
+.minos-unified-workspace { height:100dvh; display:flex; flex-direction:column; min-height:0; background:var(--bg); color:var(--text); }
+.minos-unified-workspace > :not(.minos-account-bar):not(.minos-permission-backdrop) { flex:1; min-height:0; height:auto !important; }
+.minos-account-bar { display:flex; flex:none; align-items:center; gap:12px; min-height:38px; padding:5px 14px; border-bottom:1px solid var(--border); background:var(--bg-panel); font-size:12px; }
+.minos-account-bar strong { margin-right:auto; letter-spacing:.08em; }
+.minos-account-bar strong span { color:var(--text-muted); font-weight:400; }
+.minos-account-bar button,.minos-offline-shell button,.minos-permission-backdrop button { padding:7px 10px; border:1px solid var(--border); border-radius:5px; background:var(--bg); color:var(--text); cursor:pointer; font:inherit; font-size:12px; }
+.minos-offline-shell { display:flex; overflow:hidden; }
+.minos-offline-shell > aside { width:208px; flex:none; display:flex; flex-direction:column; gap:6px; background:var(--bg-panel); padding:18px 12px; border-right:1px solid var(--border); }
+.minos-offline-shell > aside h2 { font-size:13px; margin:0 0 16px; }
+.minos-offline-shell > aside button { text-align:left; background:transparent; border-color:transparent; }
+.minos-offline-shell > aside button[aria-current=page] { background:var(--bg-selected); color:var(--accent); }
+.minos-offline-shell > section { display:flex; flex:1; min-width:0; min-height:0; }
+.minos-connect-state { margin:auto; max-width:580px; padding:32px; }
+.minos-connect-state h1 { font-size:24px; margin-bottom:18px; }
+.minos-connect-state p { font-size:13px; line-height:1.8; color:var(--text-muted); margin:14px 0; }
+.minos-connect-state [role=alert],.minos-permission-backdrop [role=alert] { color:#dc5656; }
+.minos-permission-backdrop { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:#0006; }
+.minos-permission-backdrop section { max-width:480px; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:24px; box-shadow:0 20px 80px #0004; }
+.minos-permission-backdrop h2 { font-size:18px; margin-bottom:16px; }
+.minos-permission-backdrop p { font-size:13px; line-height:1.8; margin:12px 0; color:var(--text-muted); }
+.minos-permission-backdrop footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+@media(max-width:640px) { .minos-offline-shell > aside { width:100px; padding:12px 6px; } .minos-account-bar { flex-wrap:wrap; } .minos-connect-state { padding:20px; } }

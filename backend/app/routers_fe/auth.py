@@ -27,6 +27,9 @@ def fe_login(req: FeLoginRequest, db: Session = Depends(get_db)):
         raise ApiException(40003, "账号或密码错误", status_code=401)
     if not user.is_active:
         raise ApiException(40300, "账号已禁用", status_code=403)
+    if not user.password_hash.startswith('pbkdf2_sha256$'):
+        user.password_hash = user_service.hash_password(req.password)
+        db.commit()
     tokens = user_service.issue_token_pair(db, user)
     return {
         "accessToken": tokens["access_token"],

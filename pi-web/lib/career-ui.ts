@@ -1,5 +1,5 @@
 /** Client-safe, data-only protocol. No HTML, links, styles, or executable actions. */
-export type CareerUIType = "job-match" | "resume-review" | "interview-feedback" | "action-plan" | "application-tracker";
+export type CareerUIType = "job-match" | "resume-review" | "interview-feedback" | "action-plan" | "application-tracker" | "learning-roadmap" | "offer-compare" | "skill-matrix";
 export type CareerUIStatus = "strength" | "gap" | "unknown" | "todo" | "doing" | "done";
 export interface CareerUIItem {
   id: string;
@@ -24,7 +24,7 @@ export interface CareerUIData {
 export type CareerUISegment = { kind: "text"; text: string } | { kind: "ui"; data: CareerUIData };
 export interface CareerUIParseResult { segments: CareerUISegment[]; pending: boolean }
 
-const TYPES: readonly string[] = ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker"];
+const TYPES: readonly string[] = ["job-match", "resume-review", "interview-feedback", "action-plan", "application-tracker", "learning-roadmap", "offer-compare", "skill-matrix"];
 const STATUSES: readonly string[] = ["strength", "gap", "unknown", "todo", "doing", "done"];
 const MAX_JSON = 64_000;
 function record(value: unknown): value is Record<string, unknown> {

@@ -35,14 +35,18 @@ foreach ($port in @(8000,5173)) {
 }
 $python = Join-Path $root '.venv\Scripts\python.exe'
 $node = (Get-Command node.exe -ErrorAction Stop).Source
-$vite = Join-Path $root 'mino-agent\node_modules\vite\bin\vite.js'
-if (-not (Test-Path $python) -or -not (Test-Path $vite) -or -not (Test-Path (Join-Path $root 'mino-agent\dist\index.html'))) { throw 'Dependencies or frontend build missing. See DEPLOY-WINDOWS.md.' }
+$next = Join-Path $root 'pi-web\node_modules\next\dist\bin\next'
+if (-not (Test-Path $python) -or -not (Test-Path $next) -or -not (Test-Path (Join-Path $root 'pi-web\.next\BUILD_ID'))) { throw 'Dependencies or Pi Web production build missing. See DEPLOY-WINDOWS.md.' }
 $started = @()
 try {
     $backend = Start-Process -FilePath $python -ArgumentList '-m uvicorn app.main:app --host 127.0.0.1 --port 8000' -WorkingDirectory (Join-Path $root 'backend') -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtime 'backend.log') -RedirectStandardError (Join-Path $runtime 'backend-error.log') -PassThru
     $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$($backend.Id)"
     $started += @{ name='backend'; pid=$backend.Id; created=$proc.CreationDate.ToUniversalTime().Ticks.ToString() }
-    $frontend = Start-Process -FilePath $node -ArgumentList "`"$vite`" preview --host 127.0.0.1 --port 5173 --strictPort" -WorkingDirectory (Join-Path $root 'mino-agent') -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtime 'frontend.log') -RedirectStandardError (Join-Path $runtime 'frontend-error.log') -PassThru
+    $env:MINOS_GATEWAY = '1'
+    $env:MINOS_GATEWAY_SESSION_DIR = Join-Path $runtime 'gateway-sessions'
+    $env:MINOS_API_BASE_URL = 'http://127.0.0.1:8000'
+    $env:NEXT_TELEMETRY_DISABLED = '1'
+    $frontend = Start-Process -FilePath $node -ArgumentList "`"$next`" start --hostname 127.0.0.1 --port 5173" -WorkingDirectory (Join-Path $root 'pi-web') -WindowStyle Hidden -RedirectStandardOutput (Join-Path $runtime 'frontend.log') -RedirectStandardError (Join-Path $runtime 'frontend-error.log') -PassThru
     $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$($frontend.Id)"
     $started += @{ name='frontend'; pid=$frontend.Id; created=$proc.CreationDate.ToUniversalTime().Ticks.ToString() }
     $started | ConvertTo-Json | Set-Content -Encoding UTF8 $statePath

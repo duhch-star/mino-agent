@@ -27,15 +27,15 @@
 ## 架构与目录
 
 ```text
-mino-agent/        React 18 + Vite 7：登录、路由、知识库和面试等业务页
-pi-web/            Next.js + React 19：Pi 原生 UI、API、SDK、MINOS 桥接与简历扩展
+pi-web/            唯一前端：Next.js + React 19，账号登录、原生业务页面、Pi UI/SDK
+mino-agent/        历史前端源码（仅作回退参考，不再安装、构建或启动）
 backend/           FastAPI + SQLite：账号、业务数据、简历文档、面试和 Pi 进程管理
 scripts/           Windows 本机启动/停止脚本
 docs/              产品与技术文档
 assets/            品牌与吉祥物资源
 ```
 
-入口 `127.0.0.1:5173`，业务 API `127.0.0.1:8000`。后端按账号启动独立的 Next **生产进程**（回环动态端口 `30141–30240`），隔离应用会话目录和工作区，通过一次性票据与 HttpOnly cookie 连接。业务页复用现有 React 组件，在 Pi 布局内承载，不是所有页面均重写为 Next.js。
+入口 `127.0.0.1:5173` 由 Pi Web Next 生产服务提供，业务 API 保留在 `127.0.0.1:8000`。登录、知识库、章节、面试、学习复盘与管理员审核已迁入 Pi Web，同一 React 工作区原生渲染，不再嵌套旧前端 iframe。Next 服务端持有业务 JWT/refresh token，浏览器仅有 HttpOnly 账号 cookie。后端仍按账号启动独立 Pi SDK 生产进程（回环端口 `30141–30240`），统一入口按服务端记录转发 SDK API/SSE，不暴露能力凭据或允许客户端选择目标端口。
 
 **账号数据目录分离不等于 OS 安全隔离。** 任意命令仍使用当前 Windows 用户权限。首次进入需要明确确认本地智能体权限；后端重启后请从主入口重新连接。
 
@@ -72,9 +72,6 @@ LLM_MODEL=your-model-id
 Set-Location pi-web
 npm.cmd ci
 npm.cmd run build
-Set-Location ..\mino-agent
-npm.cmd ci
-npm.cmd run build
 Set-Location ..
 ```
 
@@ -88,9 +85,9 @@ Pi 后端启动要求已存在生产构建。**不要在 `next dev` 运行时执
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\local-deploy.ps1 -Action Start -NoBrowser
 ```
 
-- 工作区：<http://127.0.0.1:5173/#/chat>
-- 知识库：<http://127.0.0.1:5173/#/knowledge>
-- AI 面试：<http://127.0.0.1:5173/#/interview>
+- 统一登录/工作区：<http://127.0.0.1:5173/>
+- 知识库：<http://127.0.0.1:5173/?businessPath=%2Fknowledge>
+- AI 面试：<http://127.0.0.1:5173/?businessPath=%2Finterview>
 - API 文档：<http://127.0.0.1:8000/docs>
 
 停止：双击 `stop-minos.cmd`。脚本只停止它记录且校验过的服务进程，不按端口盲杀其他程序。服务未设置开机自启。
@@ -107,7 +104,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\local-deploy.p
 
 SQLite、上传文件、账号工作区、Pi 凭据和运行日志均应留在本机，不加入版本控制。先停止服务再备份数据库；不要通过删除用户数据解决启动问题。前端使用生产静态资源，修改后需重新构建；修改 Pi 后需重新连接/重启对应生产进程。
 
-旧兼容入口：`/#/chat-legacy`、`/#/resume-legacy`。`/#/home` 与已移除的职业辅导入口转到智能对话。
+旧前端不再运行。求职业务迁入 Pi Web，旧聊天不与 Pi 聊天并行；历史源码保留供回退。新密码使用随机盐 PBKDF2，不再绑定 JWT 签名密钥；旧密码在成功验证后自动升级。若旧签名密钥丢失导致旧密码不可验证，应由操作者明确重置，不在部署时静默改写账号。
 
 ## 验证
 
