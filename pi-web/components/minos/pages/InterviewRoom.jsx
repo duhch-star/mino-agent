@@ -4,6 +4,7 @@ import { CareerGeneratedUI } from '../../CareerGeneratedUI'
 import CharacterView from '../components/CharacterView.jsx'
 import { useInterviewSpeech } from '../lib/useInterviewSpeech.js'
 import { useInterviewRecognition } from '../lib/useInterviewRecognition.js'
+import { createCameraRequest } from '../lib/camera-request.mjs'
 import { downloadInterviewReport } from '../lib/interview-report.mjs'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { fetchInterviewFeedback, finishInterviewSession, submitInterviewAnswer } from '../api.js'
@@ -43,6 +44,17 @@ export default function InterviewRoom() {
   const prefix = location.pathname.startsWith('/embedded/') ? '/embedded' : ''
   const localPath = path => `${prefix}${path}`
   const st = useInterviewStore()
+  useEffect(() => {
+    const pauseWhenHidden = () => {
+      const current = useInterviewStore.getState()
+      if (document.visibilityState === 'hidden' && current.phase === 'running' && current.mode !== 'text') {
+        useInterviewStore.setState({ paused: true, micOn: false })
+      }
+    }
+    document.addEventListener('visibilitychange', pauseWhenHidden)
+    pauseWhenHidden()
+    return () => document.removeEventListener('visibilitychange', pauseWhenHidden)
+  }, [])
   const [exportStatus, setExportStatus] = useState('')
   const [feedbackMs, setFeedbackMs] = useState(null)
   const [feedbackPreview, setFeedbackPreview] = useState(null)
@@ -137,7 +149,10 @@ export default function InterviewRoom() {
   const exit = () => {
     const current = useInterviewStore.getState()
     if (current.phase === 'report' || !current.sessionId) navigate(localPath('/interview'))
-    else finish()
+    else {
+      if (current.stage === 'feedbacking') cancelFeedback()
+      finish()
+    }
   }
   const [draft, setDraft] = useState('')
   const [micStatus, setMicStatus] = useState('')
@@ -164,15 +179,17 @@ export default function InterviewRoom() {
   // 视频面试：摄像头 + 自拍视图
   const videoRef = useRef(null)
   const streamRef = useRef(null)
+  const cameraRequest = useRef(null)
+  if (!cameraRequest.current) cameraRequest.current = createCameraRequest(options => navigator.mediaDevices.getUserMedia(options))
   const [cameraOn, setCameraOn] = useState(false)
   const [cameraStatus, setCameraStatus] = useState('')
 
   useEffect(() => {
-    return () => { streamRef.current?.getTracks().forEach(t => t.stop()) }
+    return () => { cameraRequest.current.invalidate(); streamRef.current?.getTracks().forEach(t => t.stop()) }
   }, [])
 
   useEffect(() => {
-    if (st.phase === 'report' || st.paused) { streamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current = null; setCameraOn(false) }
+    if (st.phase === 'report' || st.paused) { cameraRequest.current.invalidate(); streamRef.current?.getTracks().forEach(t => t.stop()); streamRef.current = null; setCameraOn(false) }
   }, [st.phase, st.paused])
 
   useEffect(() => {
@@ -183,7 +200,10 @@ export default function InterviewRoom() {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      if (document.visibilityState === 'hidden' || useInterviewStore.getState().paused) return false
+      const stream = await cameraRequest.current.acquire()
+      if (!stream) return false
+      if (document.visibilityState === 'hidden' || useInterviewStore.getState().paused) { stream.getTracks().forEach(t => t.stop()); return false }
       streamRef.current?.getTracks().forEach(t => t.stop())
       streamRef.current = stream
       setCameraOn(true)
@@ -197,6 +217,7 @@ export default function InterviewRoom() {
   }
 
   const stopCamera = () => {
+    cameraRequest.current.invalidate()
     streamRef.current?.getTracks().forEach(t => t.stop())
     streamRef.current = null
     setCameraOn(false)
@@ -331,9 +352,9 @@ export default function InterviewRoom() {
               <h1>准备开始</h1>
               <p className="pageSub">
                 {st.mode === 'video'
-                  ? '视频面试需要摄像头与麦克风权限，用于面对面交流，仅在你授权后开启。'
+                  ? '视频练习仅在授权后开启本地自拍预览，不上传视频、不分析表情或据此评分；语音作答需另外授权麦克风。'
                   : st.mode === 'voice'
-                    ? '请确认麦克风可用。录音仅在你明确授权后开启，可随时暂停、结束或删除。'
+                    ? '请确认麦克风可用。仅在授权后收音转写，可随时暂停或结束；本页面不提供音频录制文件。'
                     : `共 ${total} 道题，MINO AGENT 会逐题提问并给出反馈。`}
               </p>
               {st.mode !== 'text' && <p className="formHint">可选择本机/浏览器声音或曼波云端播报。云端模式会发送题目与反馈文字到语音供应商；浏览器声音标注“在线”时也可能使用网络服务。语音识别可能由浏览器供应商在线处理，转写后提交面试模型。仅在播报停止后收音，默认先核对再提交；可随时关闭播报或改用文字。建议佩戴耳机。</p>}

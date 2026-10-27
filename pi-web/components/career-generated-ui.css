@@ -106,7 +106,14 @@
 .career-roadmap li { position:relative; display:grid; grid-template-columns:30px minmax(0,1fr); gap:14px; padding-bottom:24px; }
 .career-roadmap li:not(:last-child)::before { content:''; position:absolute; top:28px; bottom:0; left:14px; border-left:1px dashed var(--career-line); }
 .career-milestone { display:grid; place-items:center; width:30px; height:30px; border-radius:50%; background:var(--career-tint); color:var(--career-accent); border:1px solid var(--career-line); font-size:12px; }
-.career-roadmap article { padding-top:3px; }
+.career-roadmap article { padding-top:3px; min-width:0; }
+.career-roadmap-progress { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; padding-top:14px; }
+.career-roadmap-progress .career-notice { margin:0; }
+.career-roadmap-progress button { min-height:44px; color:var(--career-text); background:transparent; border:1px solid var(--career-line); border-radius:8px; padding:8px 12px; font:inherit; font-size:12px; cursor:pointer; }
+.career-roadmap-progress button:disabled { opacity:.55; cursor:default; }
+.career-roadmap-progress button:focus-visible { outline:2px solid var(--career-accent); outline-offset:3px; }
+.career-roadmap-check { margin-top:12px; min-height:44px; font-size:12px; }
+.career-roadmap .is-completed .career-milestone { border-color:var(--career-accent); font-weight:700; }
 .career-compare,.career-skill-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; padding:20px 0; }
 .career-compare article,.career-skill-grid article { min-width:0; border:1px solid var(--career-line); border-radius:12px; padding:16px; background:var(--bg); }
 .career-compare article.is-selected { border-color:var(--career-accent); box-shadow:inset 0 0 0 1px var(--career-accent); background:var(--career-tint); }

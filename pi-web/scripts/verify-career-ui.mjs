@@ -31,6 +31,12 @@ try {
   await card.getByRole('button',{name:/复制生成式体验/}).click();await card.getByRole('status').filter({hasText:'已复制'}).waitFor();assert.match(await page.evaluate(()=>window.copied),/研发岗位 A/);
   if(type==='offer-compare') {await card.getByRole('button',{name:'选择深入比较'}).first().click();assert.equal(await page.evaluate(()=>window.drafts.length),0);await card.getByRole('button',{name:/将比较问题填入草稿/}).click();assert.equal(await page.evaluate(()=>window.drafts.length),1);}
   if(type==='action-plan') {await card.getByRole('checkbox').first().check();assert.match(await card.locator('.career-notice').textContent(),/1 \/ 2/);}
+  if(type==='learning-roadmap') {
+   const reset=card.getByRole('button',{name:'重置本地进度',exact:true});assert.equal(await reset.isDisabled(),true);
+   const check=card.getByRole('checkbox').first();await check.focus();await page.keyboard.press('Space');
+   await card.getByRole('status').filter({hasText:'本地练习进度 1 / 2'}).waitFor();assert.equal(await reset.isDisabled(),false);
+   await reset.click();assert.equal(await check.isChecked(),false);assert.equal(await reset.isDisabled(),true);
+  }
   if(type==='skill-matrix') {
    const gap=card.getByRole('button',{name:'待提升0',exact:true});await gap.focus();await page.keyboard.press('Enter');
    await card.getByText('当前筛选暂无项目，可切换“全部”查看。',{exact:true}).waitFor();assert.equal(await gap.getAttribute('aria-pressed'),'true');

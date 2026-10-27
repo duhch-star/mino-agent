@@ -68,6 +68,11 @@ test('recognition resume appends to preserved draft without duplicating cycles',
  const turn=recognize({initialText:'之前的回答'});turn.engine.result('补充');turn.engine.result('补充结果');
  assert.equal(turn.texts.at(-1),'之前的回答 补充结果');turn.controller.stop();
 });
+test('empty resumed engine never auto-submits preserved draft',async()=>{
+ const turn=recognize({autoSubmit:true,initialText:'已有草稿'});turn.engine.result('');await wait(30);assert.deepEqual(turn.answers,[]);
+ turn.engine.onend();await wait(280);assert.deepEqual(turn.answers,[]);
+ const next=Recognition.instances.at(-1);next.result('新的补充');await wait(30);assert.deepEqual(turn.answers,['已有草稿 新的补充']);turn.controller.stop();
+});
 test('late results from ended engine cannot corrupt restarted recognition',async()=>{
  const turn=recognize();turn.engine.result('第一段');turn.engine.onend();await wait(280);
  const next=Recognition.instances.at(-1);assert.notEqual(next,turn.engine);next.result('第二段');

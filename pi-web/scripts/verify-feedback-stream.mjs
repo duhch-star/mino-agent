@@ -2,7 +2,8 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const retryMode=process.argv.includes('--retry');
-const cancelMode=process.argv.includes('--cancel') || retryMode;
+const exitMode=process.argv.includes('--exit');
+const cancelMode=process.argv.includes('--cancel') || retryMode || exitMode;
 let answerWrites=0;
 
 const credentials=JSON.parse(readFileSync(new URL('../../.runtime/integration-test-account.json',import.meta.url),'utf8'));
@@ -29,11 +30,11 @@ try {
  await page.getByRole('button',{name:'AI 面试',exact:true}).click();await page.getByRole('button',{name:'语音',exact:true}).click();await page.getByRole('button',{name:/开始.*面试/}).click();await page.getByRole('button',{name:'开始面试',exact:true}).click();await page.getByLabel('声音来源').selectOption('browser');
  await page.locator('textarea.composerInput').fill('我用性能工具定位重复请求，并添加防抖与取消旧请求，验证最后输入结果正确。');await page.getByRole('button',{name:'提交回答',exact:true}).click();await page.waitForFunction(()=>window.__spoken.includes('你的职责清晰，可以补充真实结果。'));assert.equal(await page.getByText('本轮得分 4/5').isVisible(),false);
  if(cancelMode){
-  await page.getByRole('button',{name:'取消等待 · 保留回答',exact:true}).click();
+  await page.getByRole('button',{name:exitMode?'退出':'取消等待 · 保留回答',exact:true}).click();
   await page.waitForFunction(()=>window.__cancelled===true);
   await page.waitForTimeout(2200);
   assert.equal(await page.getByText('本轮得分 4/5').isVisible(),false);
-  assert.match(await page.locator('textarea.composerInput').inputValue(),/性能工具/);
+  if(!exitMode)assert.match(await page.locator('textarea.composerInput').inputValue(),/性能工具/);
   if(retryMode){
    assert.equal(answerWrites,1);
    await page.getByRole('button',{name:'提交回答',exact:true}).click();
@@ -41,7 +42,7 @@ try {
    assert.equal(answerWrites,1,'Retry must reuse saved pending answer');
    assert.equal(await page.evaluate(()=>window.__spoken.filter(t=>t==='你的职责清晰，可以补充真实结果。').length),2,'One preview narration per attempt');
   }
-  await page.getByRole('button',{name:'结束面试',exact:true}).click();
+  if(!exitMode)await page.getByRole('button',{name:'结束面试',exact:true}).click();
   await page.getByRole('heading',{name:'面试复盘',exact:true}).waitFor();
   assert.equal(await page.locator('.reportView .career-ui-interview-feedback').count(),retryMode?1:0);
   assert.deepEqual(errors,[]);console.log('Cancel: reader aborted, draft retained, late score excluded, finish available.');

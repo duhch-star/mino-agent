@@ -9,7 +9,8 @@ export function createInterviewRecognition({ Recognition, onText, onInterim, onL
     if (!finalText.trim()) return;
     submitted = true; clearTimeout(restartTimer); recognition?.abort(); onListening(false); onAnswer(finalText.trim());
   }
-  function schedule() { clearTimeout(idleTimer); if (autoSubmit && finalText.trim() && !partial.trim()) idleTimer = setTimeout(finish, silenceMs); }
+  const hasNewFinal = () => finalText.trim().length > initialText.trim().length;
+  function schedule() { clearTimeout(idleTimer); if (autoSubmit && hasNewFinal() && !partial.trim()) idleTimer = setTimeout(finish, silenceMs); }
   function start() {
     if (disposed || submitted || failed) return;
     let engine;
@@ -40,7 +41,7 @@ export function createInterviewRecognition({ Recognition, onText, onInterim, onL
       onListening(false);
       // Preserve interim text visibly, but never auto-submit unconfirmed words.
       if (partial) { onError('识别已暂停，未确认转写已保留，可手动更正提交。'); return; }
-      if (autoSubmit && finalText.trim()) { schedule(); return; }
+      if (autoSubmit && hasNewFinal()) { schedule(); return; }
       restartTimer = setTimeout(start, 250);
     };
     try { recognition.start(); } catch { failed = true; onListening(false); onError('无法启动语音识别，请重试。'); }

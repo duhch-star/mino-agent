@@ -1,4 +1,7 @@
-import {readFileSync,writeFileSync} from 'node:fs';
+import {readFileSync,writeFileSync,appendFileSync} from 'node:fs';
+import {summarizeInterviewSamples} from '../lib/interview-benchmark.mjs';
+const targets={firstAudioMs:Number(process.env.INTERVIEW_TARGET_FIRST_AUDIO_MS||3000),completeMs:Number(process.env.INTERVIEW_TARGET_COMPLETE_MS||15000)};
+summarizeInterviewSamples([],targets); // Validate before any provider request.
 import {chromium} from 'playwright';
 const root=new URL('../../.runtime/',import.meta.url),base='http://127.0.0.1:5173';
 const credentials=JSON.parse(readFileSync(new URL('integration-test-account.json',root),'utf8'));
@@ -36,5 +39,6 @@ try {
    return out;
   },{position,question,answer});result.samples.push(sample);
  }
- for(const metric of ['previewMs','firstAudioMs','voiceStartupMs','completeMs']){const values=result.samples.map(s=>s[metric]).filter(Number.isFinite).sort((a,b)=>a-b);result[metric]={n:values.length,min:values[0],median:values[Math.floor(values.length/2)],max:values.at(-1)};}
-}finally{await page.evaluate(()=>fetch('/api/minos/account',{method:'DELETE'})).catch(()=>{});await browser.close();writeFileSync(new URL('interview-e2e-measurement.json',root),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));}
+ result.summary=summarizeInterviewSamples(result.samples,targets);
+ if(process.argv.includes('--enforce')&&!result.summary.allPassed)process.exitCode=1;
+}finally{await page.evaluate(()=>fetch('/api/minos/account',{method:'DELETE'})).catch(()=>{});await browser.close();writeFileSync(new URL('interview-e2e-measurement.json',root),JSON.stringify(result,null,2));appendFileSync(new URL('interview-e2e-history.ndjson',root),JSON.stringify(result)+'\n');console.log(JSON.stringify(result,null,2));}

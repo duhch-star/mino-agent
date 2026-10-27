@@ -42,6 +42,19 @@ try {
   assert.ok((await page.evaluate(()=>window.__voice)).starts>=2);
   await page.locator('textarea.composerInput').fill('我的回答先保留为草稿，不自动发送。');
   assert.equal(await page.locator('textarea.composerInput').inputValue(),'我的回答先保留为草稿，不自动发送。');
+  await page.getByRole('button',{name:'文字更正 / 手动提交',exact:true}).click();
+  // End editing by restarting voice, then test hiding while playback is active.
+  await page.getByRole('button',{name:'重试收音',exact:true}).click();
+  await page.getByRole('button',{name:'重播当前内容',exact:true}).click();
+  await page.getByText('面试官正在播报',{exact:true}).waitFor();
+  const beforeHidden=await page.evaluate(()=>window.__voice.cancels);
+  await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));});
+  await page.getByRole('button',{name:'继续',exact:true}).waitFor();
+  assert.ok(await page.evaluate(()=>window.__voice.cancels)>beforeHidden);
+  await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'visible'});document.dispatchEvent(new Event('visibilitychange'));});
+  assert.equal(await page.getByRole('button',{name:'继续',exact:true}).isVisible(),true,'Returning visible must not auto resume');
+  assert.equal(await page.locator('textarea.composerInput').inputValue(),'我的回答先保留为草稿，不自动发送。');
+  await page.getByRole('button',{name:'继续',exact:true}).click();
   await page.screenshot({path:'../.runtime/interview-voice-desktop.png',fullPage:true});
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:'../.runtime/interview-voice-mobile.png',fullPage:true});

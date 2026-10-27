@@ -79,7 +79,16 @@ async def _openai_compatible_chat(messages, *, json_mode=False, temperature=0.7,
             "Authorization": f"Bearer {settings.llm_api_key}"}, json=body)
         resp.raise_for_status()
         data = resp.json()
-    return data["choices"][0]["message"]["content"]
+    choice = data["choices"][0]
+    finish = choice.get('finish_reason')
+    if finish == 'length':
+        raise LLMOutputTruncated('Model output exceeded generation budget')
+    if finish not in (None, 'stop'):
+        raise RuntimeError('Model response ended without a usable completion')
+    content = choice.get('message', {}).get('content')
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError('Model response contained no text')
+    return content
 
 
 async def _openai_compatible_stream(messages, *, json_mode=False, temperature=0.7,

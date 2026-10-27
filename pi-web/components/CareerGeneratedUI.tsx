@@ -55,7 +55,9 @@ function Tracker({ data }: { data: CareerUIData }) {
   return <div className="career-tracker">{groups.filter((group) => group.items.length > 0).map((group) => <section className={`career-track-group career-track-${group.key}`} key={group.key}><h4><span className="career-dot" />{group.label}<span className="career-count">{group.items.length}</span></h4>{group.items.map((item) => <article className="career-track-item" key={item.id}><h5>{item.title}</h5><Description item={item} /><Evidence item={item} /></article>)}</section>)}</div>;
 }
 function Roadmap({ data }: { data: CareerUIData }) {
-  return <ol className="career-roadmap">{data.items.map((item, index) => <li key={item.id}><span className="career-milestone" aria-hidden="true">{index + 1}</span><article><ItemHeading item={item} /><Description item={item} /><Evidence item={item} /></article></li>)}</ol>;
+  const [completed, setCompleted] = useState<Set<string>>(() => new Set());
+  const count = data.items.filter(item => completed.has(item.id)).length;
+  return <><div className="career-roadmap-progress"><p className="career-notice" role="status">本地练习进度 {count} / {data.items.length} · 不同步服务端，离开后不保留</p><button type="button" disabled={count === 0} onClick={() => setCompleted(new Set())}>重置本地进度</button></div><ol className="career-roadmap">{data.items.map((item, index) => <li key={item.id} className={completed.has(item.id) ? 'is-completed' : ''}><span className="career-milestone" aria-hidden="true">{completed.has(item.id) ? '✓' : index + 1}</span><article><ItemHeading item={item} /><Description item={item} /><Evidence item={item} /><label className="career-check career-roadmap-check"><input type="checkbox" checked={completed.has(item.id)} onChange={event => { const checked = event.target.checked; setCompleted(previous => { const next = new Set(previous); if(checked) next.add(item.id); else next.delete(item.id); return next; }); }} /><span>标记已练习：{item.title}</span></label></article></li>)}</ol></>;
 }
 function Compare({ data, onAction }: CareerGeneratedUIProps) {
   const [selected, setSelected] = useState<string | null>(null);
