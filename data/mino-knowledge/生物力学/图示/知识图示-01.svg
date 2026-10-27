@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="710" viewBox="0 0 830 710" role="img" aria-label="生物力学知识关系图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="830" height="710" rx="14" fill="#f6f9fc"/>
+<text x="415.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">生物力学知识关系图</text>
+<path d="M207.5,134 C207.5,172.0 276.6666666666667,172.0 276.6666666666667,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M207.5,134 C207.5,172.0 553.3333333333334,172.0 553.3333333333334,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M276.6666666666667,284 C276.6666666666667,322.0 553.3333333333334,322.0 553.3333333333334,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M553.3333333333334,284 C553.3333333333334,322.0 276.6666666666667,322.0 276.6666666666667,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,134 C415.0,247.0 276.6666666666667,247.0 276.6666666666667,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,134 C415.0,247.0 553.3333333333334,247.0 553.3333333333334,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M276.6666666666667,434 C276.6666666666667,472.0 415.0,472.0 415.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M553.3333333333334,434 C553.3333333333334,472.0 415.0,472.0 415.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M622.5,134 C622.5,172.0 276.6666666666667,172.0 276.6666666666667,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M622.5,134 C622.5,172.0 553.3333333333334,172.0 553.3333333333334,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="100.5" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="207.5" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">解剖结构</text>
+<rect x="169.66666666666669" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="276.6666666666667" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">组织材料</text>
+<rect x="446.33333333333337" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="553.3333333333334" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">运动学</text>
+<rect x="308.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">外力与肌力</text>
+<rect x="169.66666666666669" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="276.6666666666667" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">动力学</text>
+<rect x="446.33333333333337" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="553.3333333333334" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">组织变形</text>
+<rect x="515.5" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="622.5" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">实验测量</text>
+<rect x="308.0" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">临床与工程应用</text>
+</svg>
