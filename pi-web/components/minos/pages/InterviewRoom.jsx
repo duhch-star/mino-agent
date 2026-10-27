@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import '../styles/interview-live.css'
+import { CareerGeneratedUI } from '../../CareerGeneratedUI'
 import CharacterView from '../components/CharacterView.jsx'
 import { useInterviewSpeech } from '../lib/useInterviewSpeech.js'
 import { useInterviewRecognition } from '../lib/useInterviewRecognition.js'
+import { downloadInterviewReport } from '../lib/interview-report.mjs'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { fetchInterviewFeedback, finishInterviewSession, submitInterviewAnswer } from '../api.js'
 import { useInterviewStore } from '../store.js'
@@ -41,7 +43,11 @@ export default function InterviewRoom() {
   const prefix = location.pathname.startsWith('/embedded/') ? '/embedded' : ''
   const localPath = path => `${prefix}${path}`
   const st = useInterviewStore()
+  const [exportStatus, setExportStatus] = useState('')
   const [feedbackMs, setFeedbackMs] = useState(null)
+  const [feedbackPreview, setFeedbackPreview] = useState(null)
+  const feedbackAbort = useRef(null)
+  useEffect(() => () => feedbackAbort.current?.abort(), [])
   const [waitingSeconds, setWaitingSeconds] = useState(0)
   useEffect(() => {
     if (st.stage !== 'feedbacking') return
@@ -63,8 +69,13 @@ export default function InterviewRoom() {
     if (!sessionId) { useInterviewStore.setState({ answerError: '面试会话已失效，请返回重新创建' }); return false }
     const q = questions[index]
     const history = messages.at(-1)?.role === 'user' ? messages.slice(0, -1) : messages
+    setFeedbackPreview(null)
+    feedbackAbort.current?.abort()
+    const controller = new AbortController(); feedbackAbort.current = controller
+    const answerSubmittedAt = performance.now()
+    const deadline = setTimeout(() => controller.abort(), 30000)
     useInterviewStore.setState({ stage: 'feedbacking', answerError: '', micOn: false, messages: [...history, { role: 'user', text: clean, time: Date.now() }] })
-    const isCurrent = () => useInterviewStore.getState().sessionId === sessionId && useInterviewStore.getState().phase === 'running'
+    const isCurrent = () => feedbackAbort.current === controller && !controller.signal.aborted && useInterviewStore.getState().sessionId === sessionId && useInterviewStore.getState().phase === 'running'
     try {
       let pending = current.pendingAnswer
       if (!pending || pending.index !== index || pending.answer !== clean) {
@@ -75,7 +86,7 @@ export default function InterviewRoom() {
       }
       // answers 端点的启发式分数不能冒充大模型反馈。
       const feedbackStarted = performance.now()
-      const feedback = await fetchInterviewFeedback(position, q, clean, history)
+      const feedback = await fetchInterviewFeedback(position, q, clean, history, { signal: controller.signal, onPreview: preview => { if (isCurrent()) setFeedbackPreview({ ...preview, elapsedMs: Math.round(performance.now() - answerSubmittedAt), serverElapsedMs: preview.elapsedMs }) } })
       if (!isCurrent()) return false
       setFeedbackMs(Math.round(performance.now() - feedbackStarted))
       useInterviewStore.setState(s => ({
@@ -84,9 +95,18 @@ export default function InterviewRoom() {
       }))
       return true
     } catch (error) {
-      if (isCurrent()) useInterviewStore.setState({ stage: 'asking', answerError: error.message || '提交失败，请重试；回答已保留' })
+      if (feedbackAbort.current === controller && useInterviewStore.getState().sessionId === sessionId && useInterviewStore.getState().phase === 'running') useInterviewStore.setState({ stage: 'asking', answerError: controller.signal.aborted ? '反馈已超时或中断，回答已保留，请重试' : error.message || '提交失败，请重试；回答已保留' })
       return false
-    }
+    } finally { clearTimeout(deadline) }
+  }
+
+  const cancelFeedback = () => {
+    const current = useInterviewStore.getState()
+    if (current.stage !== 'feedbacking') return
+    const controller = feedbackAbort.current
+    feedbackAbort.current = null // Invalidate before abort so late handlers cannot mutate the turn.
+    controller?.abort()
+    useInterviewStore.setState({ stage: 'asking', micOn: false, answerError: '已取消反馈生成，回答与已有预览已保留；可重试或结束面试，预览不计入评分。' })
   }
 
   const finish = async () => {
@@ -197,17 +217,19 @@ export default function InterviewRoom() {
   const last = st.transcript[st.transcript.length - 1]
   const typing = draft.trim().length > 0
 
-  const spokenText = st.stage === 'feedback' ? (last?.feedback?.reply || '') : question
-  const speech = useInterviewSpeech({ phase: st.phase, stage: st.stage, question: spokenText, index: st.index,
-    paused: st.paused, mode: st.mode, micOn: false, typing: editing })
+  // Keep one stable feedback turn across preview -> validated report to avoid replay.
+  const speechStage = st.stage === 'feedbacking' && feedbackPreview ? 'feedback' : st.stage
+  const spokenText = speechStage === 'feedback' ? (feedbackPreview?.reply || last?.feedback?.reply || '') : question
+  const speech = useInterviewSpeech({ phase: st.phase, stage: speechStage, question: spokenText, index: st.index,
+    paused: st.paused, mode: st.mode, typing: st.stage === 'asking' && editing })
   const recognition = useInterviewRecognition({
     active: voiceAuto && !editing && st.mode !== 'text' && st.phase === 'running' && st.stage === 'asking' && !st.paused && speech.readyForAnswer && !st.answerError,
-    autoSubmit,
+    autoSubmit, initialText: draft,
     onText: setDraft,
     onListening: st.setMic,
     onAnswer: async text => { const ok = await submitAnswer(text); if (ok) setDraft('') },
   })
-  useEffect(() => { setDraft(''); setEditing(false) }, [st.index, st.followup])
+  useEffect(() => { setDraft(''); setEditing(false); setFeedbackPreview(null); setFeedbackMs(null) }, [st.index, st.followup])
   const character = st.paused ? 'idle' : speech.status === 'generating' ? 'think'
     : speech.status === 'playing' ? 'talk' : characterFor(st.phase, st.stage, st.micOn, typing)
 
@@ -238,21 +260,15 @@ export default function InterviewRoom() {
             <p className="formHint">面试回答已保存至服务端；下方为本次真实大模型逐题反馈。</p>
           </div>
 
+          <div className="interviewReportOverview"><div><span>已完成练习</span><strong>{st.transcript.length}<small> 题</small></strong></div><div><span>本次参考均分</span><strong>{avg}<small> / 5</small></strong></div><div><span>反馈来源</span><strong className="interviewReportSource">逐题模型分析</strong></div></div>
+          {st.transcript.length === 0 && <p className="formHint">本次尚无完成评分的回答，可重新开始练习。未完成反馈不会算作零分。</p>}
           {st.transcript.map((t, i) => (
             <div key={i} className="reportItem">
               <div className="reportQ"><span className="reportIdx">Q{i + 1}</span>{t.q}</div>
               <div className="reportA">{t.a}</div>
               <div className="reportFb">
+                <CareerGeneratedUI data={{version:1,type:'interview-feedback',title:`第 ${i + 1} 题 · 表达能力复盘`,summary:t.feedback.reply,items:t.feedback.dimensions.map((d,j)=>({id:`dimension-${j}`,title:d.name,description:d.note,score:d.stars,maxScore:5,evidence:`你的回答：${t.a}`,status:d.stars>=4?'strength':'gap'}))}} />
                 <div className="reportScore">综合 {t.feedback.score}/5</div>
-                <div className="dims">
-                  {t.feedback.dimensions.map((d, j) => (
-                    <div key={j} className="dimRow">
-                      <span className="dimName">{d.name}</span>
-                      <Stars n={d.stars} />
-                      <span className="dimNote">{d.note}</span>
-                    </div>
-                  ))}
-                </div>
                 {t.feedback.strengths.map((s, j) => <div key={j} className="fbLine good"><IconCheck size={14} />{s}</div>)}
                 {t.feedback.suggestions.map((s, j) => <div key={j} className="fbLine hint">· {s}</div>)}
                 <div className="starExample">
@@ -270,7 +286,10 @@ export default function InterviewRoom() {
             <div className="questionLabel">本次完整对话记录</div>
             {(st.messages || []).map((message, i) => <div key={i} className={`interviewMessage ${message.role}`}><strong>{message.role === 'user' ? '你' : '小北 · 面试官'}</strong><p>{message.text}</p></div>)}
           </section>
+          <p className="formHint">导出包含本次问答与练习反馈，请妥善保管个人经历；仅在点击后生成本地文件。</p>
+          {exportStatus && <p className="formHint" role="status">{exportStatus}</p>}
           <div className="reportActions">
+            <button className="btn outline" onClick={() => { try { downloadInterviewReport(st); setExportStatus('已请求下载复盘 Markdown') } catch { setExportStatus('导出失败，请手动复制本页内容') } }}>导出复盘 Markdown</button>
             <button className="btn primary" onClick={() => { st.reset(); navigate(localPath('/interview')) }}>再来一次</button>
             <button className="btn ghost" onClick={() => navigate(localPath('/knowledge'))}>去知识库补课</button>
           </div>
@@ -317,7 +336,7 @@ export default function InterviewRoom() {
                     ? '请确认麦克风可用。录音仅在你明确授权后开启，可随时暂停、结束或删除。'
                     : `共 ${total} 道题，MINO AGENT 会逐题提问并给出反馈。`}
               </p>
-              {st.mode !== 'text' && <p className="formHint">提问将由曼波语音播报，题目文字会发送至第三方语音服务；可在面试中关闭播报。用户语音由浏览器识别服务转成文字后提交大模型；仅在小北停止播报后收音。请使用支持语音识别的浏览器，并尽量佩戴耳机。</p>}
+              {st.mode !== 'text' && <p className="formHint">可选择本机/浏览器声音或曼波云端播报。云端模式会发送题目与反馈文字到语音供应商；浏览器声音标注“在线”时也可能使用网络服务。语音识别可能由浏览器供应商在线处理，转写后提交面试模型。仅在播报停止后收音，默认先核对再提交；可随时关闭播报或改用文字。建议佩戴耳机。</p>}
               <ul className="md-ul">
                 <li>岗位：{st.position} · {st.difficulty}</li>
                 <li>时长：约 {st.duration}</li>
@@ -355,9 +374,10 @@ export default function InterviewRoom() {
                   <button className="btn ghost sm" disabled={!speech.enabled || st.paused || !['asking','feedback'].includes(st.stage)} onClick={speech.replay}>重播当前内容</button>
                   <button className="btn outline sm" disabled={speech.status === 'idle'} onClick={speech.stop}>停止播报 · 我要回答</button>
                   <span className="interviewLiveStatus" role="status"><i data-state={speech.status} />{speech.status === 'generating' ? '正在准备声音' : speech.status === 'playing' ? '面试官正在播报' : st.micOn ? '正在收音' : '语音就绪'}</span>
-                  <label>声音来源<select aria-label="声音来源" value={speech.provider} onChange={e => speech.setProvider(e.target.value)}><option value="auto">自动 · 云端失败后本机兜底</option><option value="browser">浏览器语音 · 快速响应</option><option value="mambo">曼波云端语音</option></select></label>
+                  <label>声音来源<select aria-label="声音来源" value={speech.provider} onChange={e => speech.setProvider(e.target.value)}><option value="auto">自动 · 根据可用服务选择</option><option value="browser">浏览器语音 · 快速响应</option><option value="mambo">曼波云端语音</option></select></label>
                   <label>语速<select aria-label="播报语速" value={speech.rate} onChange={e => speech.setRate(Number(e.target.value))}><option value={0.85}>0.85×</option><option value={1}>1×</option><option value={1.15}>1.15×</option><option value={1.3}>1.3×</option></select></label>
-                  {speech.provider === 'browser' && speech.voices.length > 0 && <label>音色<select aria-label="浏览器音色" value={speech.voiceURI} onChange={e => speech.setVoiceURI(e.target.value)}><option value="">自动选择中文声音</option>{speech.voices.map(v => <option key={v.voiceURI} value={v.voiceURI}>{v.name}{v.localService ? ' · 本机' : ' · 在线'}</option>)}</select></label>}
+                  {speech.provider === 'auto' && <span className="formHint">{speech.configuration?.configured ? '云端已配置 · 网络失败自动使用浏览器声音' : '云端未配置或状态未知 · 自动直接使用浏览器声音'}</span>}
+                  {(speech.provider === 'browser' || (speech.provider === 'auto' && !speech.configuration?.configured)) && speech.voices.length > 0 && <label>音色<select aria-label="浏览器音色" value={speech.voiceURI} onChange={e => speech.setVoiceURI(e.target.value)}><option value="">自动选择中文声音</option>{speech.voices.map(v => <option key={v.voiceURI} value={v.voiceURI}>{v.name}{v.localService ? ' · 本机' : ' · 在线'}</option>)}</select></label>}
                   {speech.metrics.firstAudioMs !== null && <span className="interviewLatency">本轮首响 {speech.metrics.firstAudioMs} ms · {speech.metrics.provider === 'browser' ? '浏览器' : '云端'}</span>}
                 </div>}
                 {speech.error && <p className="formHint" role="status">{speech.error}</p>}
@@ -365,9 +385,10 @@ export default function InterviewRoom() {
 
               {/* 反馈生成中 */}
               {st.stage === 'feedbacking' && (
-                <div className="feedbacking" role="status"><span className="runningDot" />正在分析回答 · 已等待 {waitingSeconds} 秒<span className="formHint">{waitingSeconds >= 10 ? '模型响应较慢，回答已保留；超时后可重试。' : '正在整理表达结构、行动证据与改进建议。'}</span></div>
+                <div className="feedbacking"><div role="status"><span className="runningDot" />正在分析回答 · 已等待 {waitingSeconds} 秒<span className="formHint">{waitingSeconds >= 10 ? '模型响应较慢，回答已保留；可取消等待后重试或结束。' : '正在整理表达结构、行动证据与改进建议。'}</span></div><button className="btn outline sm" onClick={cancelFeedback}>取消等待 · 保留回答</button></div>
               )}
 
+              {feedbackPreview && <div className="feedbackCard" role="status"><div className="questionLabel">{st.stage === 'feedback' ? '首段反馈' : '口语预览 · 详细报告尚未完成'}</div><p>{feedbackPreview.reply}</p><span className="interviewLatency">首段反馈 {(feedbackPreview.elapsedMs / 1000).toFixed(1)} 秒</span></div>}
               {/* 本轮反馈 */}
               {st.stage === 'feedback' && last && (
                 <div className="feedbackCard">
@@ -411,6 +432,9 @@ export default function InterviewRoom() {
                 <div className="answerInput">
                   <textarea
                     className="composerInput"
+                    aria-label="本题回答"
+                    aria-describedby="interview-answer-length"
+                    maxLength={4000}
                     rows={3}
                     placeholder={st.stage === 'feedbacking' ? '反馈生成中…' : st.stage === 'feedback' ? '点击「下一题」继续…' : '输入你的回答…（文字兜底，随时可改）'}
                     disabled={st.paused || st.finishing || st.stage !== 'asking'}
@@ -419,6 +443,7 @@ export default function InterviewRoom() {
                     onChange={e => setDraft(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit() } }}
                   />
+                  <span id="interview-answer-length" className="formHint">{draft.length} / 4000 字 · 仅完整提交后生成反馈</span>
                   <div className="answerActions">
                     <span className="formHint">{(st.mode === 'voice' || st.mode === 'video') ? '语音转写可先核对；点击输入框停止收音并更正' : 'Enter 提交，Shift+Enter 换行'}</span>
                     {st.stage === 'feedback' ? (

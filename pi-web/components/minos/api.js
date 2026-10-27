@@ -1,3 +1,4 @@
+import { readFeedbackStream } from './lib/feedback-stream.mjs'
 // Same-origin business API. JWT/refresh credentials stay in the Next server.
 export const AUTH_EXPIRED_EVENT = 'mino:auth-expired'
 export async function requestApi(path, options = {}) {
@@ -28,7 +29,12 @@ export const fetchQuestions = (position, difficulty) => data(`/api/interview/que
 export const createInterviewSession = config => data('/api/interview/sessions', { method: 'POST', body: JSON.stringify(config) })
 export const submitInterviewAnswer = (id, payload) => data(`/api/interview/sessions/${encodeURIComponent(id)}/answers`, { method: 'POST', body: JSON.stringify(payload) })
 export const finishInterviewSession = id => data(`/api/interview/sessions/${encodeURIComponent(id)}/finish`, { method: 'POST', body: '{}' })
-export const fetchInterviewFeedback = (position, question, answer, history = []) => data('/api/interview/feedback', { method: 'POST', body: JSON.stringify({ position, question, answer, history: history.slice(-40) }) })
+export async function fetchInterviewFeedback(position, question, answer, history = [], options = {}) {
+  const signal = options.signal || AbortSignal.timeout(30000)
+  const response = await requestApi('/api/interview/feedback/stream', { method: 'POST', body: JSON.stringify({ position, question, answer, history: history.slice(-40) }), signal })
+  return readFeedbackStream(response, { onPreview: options.onPreview, signal })
+}
+export const fetchInterviewSpeechConfig = signal => data('/api/interview/speech/config', { signal })
 export async function generateInterviewSpeech(text, signal) { return (await requestApi('/api/interview/speech', { method: 'POST', body: JSON.stringify({ text }), signal })).blob() }
 export const fetchReviewDrafts = () => data('/api/review/drafts')
 export const reviewDraft = (id, decision, reason = '') => data(`/api/review/drafts/${encodeURIComponent(id)}/decision`, { method: 'POST', body: JSON.stringify({ decision, reason }) })

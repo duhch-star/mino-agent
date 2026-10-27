@@ -6,8 +6,12 @@ import { createRequire } from "node:module";
 import { runInNewContext } from "node:vm";
 import ts from "typescript";
 
-const { parseCareerUI } = await createJiti(import.meta.url).import("./career-ui.ts");
+const { parseCareerUI, careerUIPlainText } = await createJiti(import.meta.url).import("./career-ui.ts");
 const base = { version: 1, type: "job-match", title: "产品经理 · 岗位匹配", items: [{ id: "one", title: "需求分析", status: "strength", evidence: "用户提供的项目经历" }] };
+test('copy snapshot retains status, evidence-backed score and local-only notice',()=>{
+ const text=careerUIPlainText({...base,items:[{...base.items[0],score:4,maxScore:5},{id:'unknown',title:'未知项目',score:3,maxScore:5}]});
+ assert.match(text,/状态：优势/);assert.match(text,/参考评分：4 \/ 5/);assert.match(text,/状态：待确认/);assert.doesNotMatch(text,/参考评分：3/);assert.match(text,/不代表已执行/);
+});
 const fence = (data) => `\`\`\`minos-ui\n${typeof data === "string" ? data : JSON.stringify(data)}\n\`\`\``;
 const isUI = (data) => parseCareerUI(fence(data)).segments[0]?.kind === "ui";
 
@@ -16,7 +20,7 @@ const require = createRequire(import.meta.url);
 const componentModule = { exports: {} };
 const componentSource = readFileSync(new URL("../components/CareerGeneratedUI.tsx", import.meta.url), "utf8");
 const { outputText } = ts.transpileModule(componentSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX } });
-runInNewContext(outputText, { exports: componentModule.exports, module: componentModule, require: (id) => id.endsWith(".css") ? {} : require(id) });
+runInNewContext(outputText, { exports: componentModule.exports, module: componentModule, require: (id) => id.endsWith(".css") ? {} : id === '../lib/career-ui' ? {careerUIPlainText} : require(id) });
 const { CareerGeneratedUI } = componentModule.exports;
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");

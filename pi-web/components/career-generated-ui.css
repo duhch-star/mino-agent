@@ -89,9 +89,19 @@
   .career-plan-top { flex-wrap: wrap; gap: 6px; }
   .career-actions button { min-height: 44px; }
 }
-.career-ui-learning-roadmap { --career-accent: #5b9fd7; }
-.career-ui-offer-compare { --career-accent: #b193db; }
-.career-ui-skill-matrix { --career-accent: #56b4a5; }
+@supports(color:light-dark(black,white)) {
+  .career-ui-learning-roadmap { --career-accent: light-dark(#226297, #8abce8); }
+  .career-ui-offer-compare { --career-accent: light-dark(#7446a0, #c5a6e8); }
+  .career-ui-skill-matrix { --career-accent: light-dark(#21695d, #7bd0bc); }
+}
+/* Respect OS/browser forced-colors rather than relying on tint alone. */
+@media(forced-colors:active) { .career-ui { --career-accent:LinkText; --career-line:CanvasText; } .career-compare article.is-selected { outline:2px solid Highlight; } }
+.career-filters { display:flex; flex-wrap:wrap; gap:8px; padding-top:18px; }
+.career-filters button { min-height:44px; padding:8px 12px; border:1px solid var(--career-line); border-radius:999px; background:transparent; color:var(--career-text); cursor:pointer; font:inherit; font-size:12px; }
+.career-filters button span { margin-left:8px; font-variant-numeric:tabular-nums; }
+.career-filters button[aria-pressed=true] { color:var(--career-accent); border-color:var(--career-accent); background:var(--career-tint); font-weight:600; }
+.career-filters button:focus-visible { outline:2px solid var(--career-accent); outline-offset:3px; }
+.career-filter-result { font-size:11px; color:var(--career-muted); margin:12px 0 0; }
 .career-roadmap { list-style:none; padding:20px 0; margin:0; }
 .career-roadmap li { position:relative; display:grid; grid-template-columns:30px minmax(0,1fr); gap:14px; padding-bottom:24px; }
 .career-roadmap li:not(:last-child)::before { content:''; position:absolute; top:28px; bottom:0; left:14px; border-left:1px dashed var(--career-line); }

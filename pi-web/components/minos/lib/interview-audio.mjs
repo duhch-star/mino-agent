@@ -10,16 +10,18 @@ export function createInterviewAudio({ fetchAudio, createAudio = url => new Audi
       if (!live()) return;
       if (!synthesis || !Utterance) { onError('当前浏览器无可用语音，请使用文字作答。'); onState('idle'); return; }
       const utterance = new Utterance(text); utterance.lang = 'zh-CN'; utterance.rate = rate;
-      const available = synthesis.getVoices();
+      let available = [];
+      try { available = synthesis.getVoices() || []; } catch { /* Some browsers expose voices only after activation. */ }
       const voice = available.find(v => v.voiceURI === voiceURI) || available.find(v => /^zh/i.test(v.lang) && v.localService) || available.find(v => /^zh/i.test(v.lang));
       if (voice) utterance.voice = voice;
       let watchdog = setTimeout(() => { if (live()) { synthesis.cancel(); onError('浏览器未开始播报，请点击重播或使用文字。'); onState('idle'); } }, 8000);
       const finish = () => { clearTimeout(watchdog); if (live()) onState('idle'); };
-      utterance.onstart = () => { clearTimeout(watchdog); watchdog = setTimeout(() => { if (live()) { synthesis.cancel(); onError('播报超时，已停止。'); onState('idle'); } }, Math.max(20000, text.length * 900)); startedPlaying('browser'); };
+      utterance.onstart = () => { if (!live()) return; clearTimeout(watchdog); watchdog = setTimeout(() => { if (live()) { synthesis.cancel(); onError('播报超时，已停止。'); onState('idle'); } }, Math.max(20000, text.length * 900)); startedPlaying('browser'); };
       utterance.onend = finish;
       utterance.onerror = () => { if (live()) { onError('浏览器播报被阻止或中断，请手动重播。'); finish(); } };
       cleanup = () => { clearTimeout(watchdog); utterance.onstart = utterance.onend = utterance.onerror = null; synthesis.cancel(); };
-      synthesis.speak(utterance);
+      try { synthesis.speak(utterance); }
+      catch { clearTimeout(watchdog); utterance.onstart = utterance.onend = utterance.onerror = null; onError('浏览器无法启动播报，请重播或使用文字。'); if (live()) onState('idle'); }
     };
     onState('generating'); onMetrics({ provider, firstAudioMs: null });
     if (provider === 'browser') { browser(); return; }

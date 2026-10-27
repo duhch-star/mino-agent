@@ -29,6 +29,17 @@
 .minos-native .campusAvatarName span,.minos-native .characterState { color:var(--text-muted); font-size:11px; }
 .minos-native .reportView { overflow:auto; padding:24px; }
 .minos-native .reportHead h1 { font-size:24px; }
+.minos-native .interviewReportOverview { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:24px 0; max-width:900px; }
+.minos-native .interviewReportOverview > div { border:1px solid var(--border); padding:18px; border-radius:12px; background:var(--bg-panel); }
+.minos-native .interviewReportOverview span { display:block; font-size:11px; color:var(--text-muted); }
+.minos-native .interviewReportOverview strong { display:block; font-size:26px; font-variant-numeric:tabular-nums; margin-top:8px; }
+.minos-native .interviewReportOverview small { font-size:12px; font-weight:400; }
+.minos-native .interviewReportOverview .interviewReportSource { font-size:14px; margin-top:16px; }
+.minos-native .reportItem { max-width:900px; margin:24px 0; padding:20px; border:1px solid var(--border); border-radius:14px; }
+.minos-native .reportQ { font-size:16px; font-weight:600; line-height:1.7; }
+.minos-native .reportA { padding:14px; background:var(--bg-panel); border-radius:9px; white-space:pre-wrap; line-height:1.7; margin:12px 0; }
+.minos-native .reportFb .career-ui { max-width:none; }
+@media(max-width:540px) { .minos-native .reportView { padding:16px; } .minos-native .interviewReportOverview { grid-template-columns:minmax(0,1fr); } .minos-native .reportItem { padding:14px; } }
 .minos-native .prepareView h1 { font-size:24px; }
 .minos-native .interviewControls { display:flex; gap:8px; flex-wrap:wrap; }
 @media(max-width:800px) { .minos-native .interviewBody { flex-direction:column; overflow:auto; } .minos-native .interviewCharacter { flex:none; border-right:0; border-bottom:1px solid var(--border); } .minos-native .campusAvatarFrame { height:190px; } .minos-native .interviewFlow { flex:none; overflow:visible; } .minos-native .questionText { font-size:17px; } }

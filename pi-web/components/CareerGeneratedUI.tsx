@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { careerUIPlainText } from "../lib/career-ui";
 import type { CareerUIData, CareerUIItem, CareerUIStatus, CareerUIType } from "../lib/career-ui";
 import "./career-generated-ui.css";
 
@@ -61,7 +62,11 @@ function Compare({ data, onAction }: CareerGeneratedUIProps) {
   return <><p className="career-notice">选择不会投递、接受 Offer 或修改业务记录。</p><div className="career-compare" role="group" aria-label="比较求职机会">{data.items.map(item => <article key={item.id} className={selected === item.id ? 'is-selected' : ''}><ItemHeading item={item} /><Description item={item} /><Score item={item} bar /><Evidence item={item} /><button type="button" aria-pressed={selected === item.id} onClick={() => setSelected(selected === item.id ? null : item.id)}>{selected === item.id ? '已选择 · 再次点击取消' : '选择深入比较'}</button></article>)}</div>{selected && onAction && <div className="career-compare-confirm"><button type="button" onClick={() => onAction(`请基于已有事实，进一步分析「${data.items.find(item => item.id === selected)?.title}」的优劣、未知项和需要向招聘方确认的问题。`)}>将比较问题填入草稿 ↗</button></div>}</>;
 }
 function SkillMatrix({ data }: { data: CareerUIData }) {
-  return <div className="career-skill-grid">{data.items.map(item => <article key={item.id}><ItemHeading item={item} /><Score item={item} bar /><Description item={item} /><Evidence item={item} /></article>)}</div>;
+  const [filter, setFilter] = useState('all');
+  const options = [{id:'all',label:'全部'}, {id:'strength',label:'优势'}, {id:'gap',label:'待提升'}, {id:'unknown',label:'待确认'}];
+  const status = (item: CareerUIItem) => ['strength','gap'].includes(item.status || '') ? item.status : 'unknown';
+  const visible = data.items.filter(item => filter === 'all' || status(item) === filter);
+  return <><div className="career-filters" role="group" aria-label="筛选能力状态">{options.map(option => <button key={option.id} type="button" aria-pressed={filter === option.id} onClick={() => setFilter(option.id)}>{option.label}<span>{data.items.filter(item => option.id === 'all' || status(item) === option.id).length}</span></button>)}</div><p className="career-filter-result" role="status">显示 {visible.length} / {data.items.length} 项能力 · 仅筛选展示，不修改评估</p>{visible.length ? <div className="career-skill-grid">{visible.map(item => <article key={item.id}><ItemHeading item={item} /><Score item={item} bar /><Description item={item} /><Evidence item={item} /></article>)}</div> : <p className="career-empty">当前筛选暂无项目，可切换“全部”查看。</p>}</>;
 }
 /** Render validated career data only; all model content remains escaped React text. */
 export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
@@ -70,7 +75,7 @@ export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
   const [copyStatus, setCopyStatus] = useState('');
   const meta = META[data.type];
   const copy = async () => {
-    const content = [data.title, data.summary || '', ...data.items.map(item => [item.title, item.description, item.before && `原文：${item.before}`, item.after && `建议：${item.after}`, item.evidence && `依据：${item.evidence}`].filter(Boolean).join('\n'))].join('\n\n');
+    const content = careerUIPlainText(data);
     try { await navigator.clipboard.writeText(content); setCopyStatus('已复制'); }
     catch { setCopyStatus('复制失败，请手动选择文字'); }
   };

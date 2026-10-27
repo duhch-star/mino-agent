@@ -5,6 +5,8 @@ const credentials=JSON.parse(readFileSync(new URL('../../.runtime/integration-te
 const browser=await chromium.launch({channel:'msedge',headless:true});
 const page=await browser.newPage({viewport:{width:1366,height:900}});
 const errors=[]; page.on('pageerror',e=>errors.push(e.message));
+let cloudRequests=0;
+page.on('request',request=>{if(new URL(request.url()).pathname==='/api/business/interview/speech')cloudRequests++;});
 try {
   // Deterministic media adapters: validate real UI wiring, not provider performance.
   await page.addInitScript(()=>{
@@ -15,6 +17,7 @@ try {
     class Recognition { start(){this.onstart?.();} abort(){this.onend?.();} }
     window.SpeechRecognition=Recognition;
   });
+  await page.route('**/api/business/interview/speech/config',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({configured:false})}));
   await page.route('**/api/business/interview/speech',route=>route.fulfill({status:502,contentType:'application/json',body:JSON.stringify({error:{message:'验收模拟云端故障'}})}));
   await page.goto('http://127.0.0.1:5173/login');
   await page.locator('#minos-username').fill(credentials.username);await page.locator('#minos-password').fill(credentials.password);
@@ -26,9 +29,13 @@ try {
   await page.getByRole('button',{name:/开始.*面试/}).click();
   await page.getByRole('button',{name:'开始面试',exact:true}).click();
   await page.getByText('本轮首响', {exact:false}).waitFor();
+  assert.equal(cloudRequests,0,'Auto mode must not call unconfigured cloud');
+  await page.getByLabel('声音来源').selectOption('mambo');
+  await page.getByText('云端语音未就绪，请改用浏览器语音或文字。',{exact:true}).waitFor();
+  assert.equal(cloudRequests,1,'Explicit cloud selection should remain available');
   assert.equal(await page.getByRole('checkbox',{name:/开启停顿自动提交/}).isChecked(),false);
-  await page.getByRole('button',{name:'停止播报 · 我要回答'}).click();
   await page.getByLabel('声音来源').selectOption('browser');
+  await page.getByRole('button',{name:'停止播报 · 我要回答'}).click();
   await page.waitForTimeout(100);
   await page.getByRole('button',{name:'重播当前内容'}).click();
   await page.waitForTimeout(100);

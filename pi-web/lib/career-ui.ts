@@ -21,6 +21,14 @@ export interface CareerUIData {
   items: CareerUIItem[];
   actions?: CareerUIAction[];
 }
+/** Plain-text snapshot; never claims local checks or choices are backend changes. */
+export function careerUIPlainText(data: CareerUIData): string {
+  const status: Record<CareerUIStatus,string> = {strength:'优势',gap:'待提升',unknown:'待确认',todo:'待开始',doing:'进行中',done:'已完成'};
+  return [data.title, data.summary || '', ...data.items.map(item => {
+    const scored = typeof item.score === 'number' && Number.isFinite(item.score) && typeof item.maxScore === 'number' && Number.isFinite(item.maxScore) && item.score >= 0 && item.score <= item.maxScore && item.maxScore > 0 && item.evidence?.trim();
+    return [item.title, `状态：${status[item.status ?? 'unknown']}`, item.description, scored ? `参考评分：${item.score} / ${item.maxScore}` : '', item.before && `原文：${item.before}`, item.after && `建议：${item.after}`, item.evidence ? `依据：${item.evidence}` : '尚无可核实依据'].filter(Boolean).join('\n');
+  }), 'AI 辅助整理，仅供参考；勾选和选择只影响本地展示，不代表已执行、投递或修改业务记录。'].filter(Boolean).join('\n\n');
+}
 export type CareerUISegment = { kind: "text"; text: string } | { kind: "ui"; data: CareerUIData };
 export interface CareerUIParseResult { segments: CareerUISegment[]; pending: boolean }
 

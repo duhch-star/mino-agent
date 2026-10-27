@@ -2,6 +2,7 @@
 from functools import lru_cache
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +30,10 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_base_url: str = ""
     llm_model: str = "glm-4-flash"
+    # Optional same-provider interview override; no additional key or endpoint.
+    interview_llm_model: str = Field(default="", max_length=200)
+    interview_max_tokens: int = Field(default=1000, ge=512, le=2400)
+    interview_temperature: float = Field(default=0.2, ge=0, le=1)
     stt_provider: str = "mock"
     tts_provider: str = "mock"
 

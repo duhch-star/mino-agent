@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 
 # ---------- LLM ----------
 
+class LLMOutputTruncated(ValueError):
+    """Upstream explicitly exhausted its output budget; never treat partial text as final."""
+
+
 class LLMProvider:
     async def chat(self, messages: list[dict], *, json_mode: bool = False,
                    temperature: float = 0.7, max_tokens: int = 1200) -> str:
@@ -58,11 +62,11 @@ class MockLLM(LLMProvider):
 
 
 async def _openai_compatible_chat(messages, *, json_mode=False, temperature=0.7,
-                                  max_tokens=1200) -> str:
+                                  max_tokens=1200, model=None) -> str:
     """GLM/DeepSeek/通义 均兼容 OpenAI ChatCompletions"""
     url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     body = {
-        "model": settings.llm_model,
+        "model": model or settings.llm_model,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
@@ -79,11 +83,11 @@ async def _openai_compatible_chat(messages, *, json_mode=False, temperature=0.7,
 
 
 async def _openai_compatible_stream(messages, *, json_mode=False, temperature=0.7,
-                                    max_tokens=1200) -> AsyncIterator[str]:
+                                    max_tokens=1200, model=None) -> AsyncIterator[str]:
     """真流式：OpenAI SSE 逐 chunk 解析 content delta"""
     url = settings.llm_base_url.rstrip("/") + "/chat/completions"
     body = {
-        "model": settings.llm_model,
+        "model": model or settings.llm_model,
         "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
@@ -95,36 +99,48 @@ async def _openai_compatible_stream(messages, *, json_mode=False, temperature=0.
         async with client.stream("POST", url, headers={
             "Authorization": f"Bearer {settings.llm_api_key}"}, json=body) as resp:
             resp.raise_for_status()
+            terminated = False
             async for line in resp.aiter_lines():
                 if not line or not line.startswith("data:"):
                     continue
                 payload = line[len("data:"):].strip()
                 if payload == "[DONE]":
+                    terminated = True
                     break
                 try:
                     chunk = json.loads(payload)
                 except json.JSONDecodeError:
                     continue
-                delta = (chunk.get("choices") or [{}])[0].get("delta") or {}
+                choice = (chunk.get("choices") or [{}])[0]
+                delta = choice.get("delta") or {}
                 content = delta.get("content")
                 if content:
                     yield content
+                finish = choice.get('finish_reason')
+                if finish == 'length':
+                    raise LLMOutputTruncated('Model output exceeded generation budget')
+                if finish in ('stop', 'tool_calls', 'function_call'):
+                    terminated = True
+                elif finish:
+                    raise RuntimeError('Model stream ended without a usable completion')
+            if not terminated:
+                raise RuntimeError('Model stream disconnected before completion')
 
 
-def get_llm() -> LLMProvider:
+def get_llm(*, model=None) -> LLMProvider:
     if settings.llm_api_key and settings.llm_base_url:
         class _OpenAICompat(LLMProvider):
             async def chat(self, messages, *, json_mode=False, temperature=0.7,
                            max_tokens=1200):
                 return await _openai_compatible_chat(
                     messages, json_mode=json_mode, temperature=temperature,
-                    max_tokens=max_tokens)
+                    max_tokens=max_tokens, model=model)
 
             async def stream_chat(self, messages, *, json_mode=False, temperature=0.7,
                                   max_tokens=1200):
                 async for chunk in _openai_compatible_stream(
                         messages, json_mode=json_mode, temperature=temperature,
-                        max_tokens=max_tokens):
+                        max_tokens=max_tokens, model=model):
                     yield chunk
         return _OpenAICompat()
     return MockLLM()

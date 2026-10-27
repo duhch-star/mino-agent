@@ -1,8 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
-import { generateInterviewSpeech } from '../api.js'
+import { generateInterviewSpeech, fetchInterviewSpeechConfig } from '../api.js'
+import { effectiveSpeechProvider } from './speech-policy.mjs'
 import { createInterviewAudio } from './interview-audio.mjs'
 
 export function useInterviewSpeech({ phase, stage, question, index, paused, mode, typing }) {
+  const [configuration, setConfiguration] = useState(null)
+  const configRef = useRef(null)
+  useEffect(() => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 3000)
+    fetchInterviewSpeechConfig(controller.signal).then(value => { configRef.current = value; setConfiguration(value) }).catch(() => { if (!controller.signal.aborted) setConfiguration({ configured: false, unavailable: true }) }).finally(() => clearTimeout(timeout))
+    return () => { clearTimeout(timeout); controller.abort() }
+  }, [])
   const [enabled, setEnabled] = useState(true)
   const [provider, setProvider] = useState('auto')
   const [rate, setRate] = useState(1)
@@ -29,12 +38,12 @@ export function useInterviewSpeech({ phase, stage, question, index, paused, mode
       onMetrics: value => { if (!disposed) setMetrics(value) },
     })
     player.current = controller; setError(''); setSettled('')
-    controller.speak(question.slice(0, 1000), { provider, rate, voiceURI })
+    controller.speak(question.slice(0, 1000), { provider: effectiveSpeechProvider(provider, configRef.current), rate, voiceURI })
     return () => { disposed = true; controller.stop(); if (player.current === controller) player.current = null }
   }, [phase, stage, question, index, paused, mode, typing, enabled, replay, provider, rate, voiceURI])
   const stop = () => { player.current?.stop(); setStatus('idle'); setSettled(turn) }
   return { enabled, setEnabled, provider, setProvider, rate, setRate, voiceURI, setVoiceURI, voices,
-    status, error, metrics, stop,
+    status, error, metrics, stop, configuration,
     readyForAnswer: !enabled || (status === 'idle' && settled === turn),
     replay: () => setReplay(n => n + 1),
   }
