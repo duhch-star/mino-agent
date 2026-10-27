@@ -18,7 +18,7 @@ export default function Interview() {
   const [position, setPosition] = useState(DIRECTION_POSITION[profile.direction] || positions[0])
   const [difficulty, setDifficulty] = useState(difficulties[0])
   const [duration, setDuration] = useState(durations[1])
-  const [mode, setMode] = useState('video') // video voice-first | voice | text
+  const [mode, setMode] = useState('video') // text | voice | video；默认面对面练习
 
   const start = async () => {
     if (busy) return
@@ -47,14 +47,14 @@ export default function Interview() {
     <div className="page scrollable">
       <header className="pageHeader">
         <h1>AI 模拟面试</h1>
-        <p className="pageSub">MINO AGENT 当面试官，逐题提问、追问、给反馈。全程可暂停，可切文字兜底。</p>
+        <p className="pageSub">逐题练习，即时反馈。</p>
       </header>
 
       <section className="formSection">
         <div className="sectionTitle">目标岗位</div>
         <div className="chipRow">
           {positions.map(p => (
-            <button key={p} className={`chip${position === p ? ' on' : ''}`} onClick={() => setPosition(p)}>{p}</button>
+            <button key={p} aria-pressed={position === p} className={`chip${position === p ? ' on' : ''}`} onClick={() => setPosition(p)}>{p}</button>
           ))}
         </div>
       </section>
@@ -69,31 +69,32 @@ export default function Interview() {
       </section>
 
       <section className="formSection">
+        <div className="sectionTitle">作答方式</div>
+        <div className="chipRow">
+          <button aria-pressed={mode === 'video'} className={`chip${mode === 'video' ? ' on' : ''}`} onClick={() => setMode('video')}>面对面 · 视频</button>
+          <button aria-pressed={mode === 'voice'} className={`chip${mode === 'voice' ? ' on' : ''}`} onClick={() => setMode('voice')}>语音</button>
+          <button aria-pressed={mode === 'text'} className={`chip${mode === 'text' ? ' on' : ''}`} onClick={() => setMode('text')}>文字</button>
+        </div>
+        {mode !== 'text' && (
+          <div className="formHint">
+            <p>{mode === 'video' ? '面对面模式展示面试官与本机摄像头预览。' : ''}语音通过浏览器真实实时转写，面试官按轮播报；请等播报结束、显示收音状态后回答。不是全双工实时通话，暂不支持边播报边打断。</p>
+            <p>{mode === 'video' ? '需分别允许摄像头与麦克风权限。' : '需允许麦克风权限。'}请使用支持语音识别的浏览器（如 Chrome / Edge），并通过 HTTPS 或 localhost 访问；麦克风测试通过不代表在线语音识别服务可用。</p>
+            <p>语音识别可能将音频发送至浏览器厂商的在线服务，需可用网络；面试反馈和云端播报也依赖网络。转写文字提交模型并保留问答记录。识别不可用时可重试、用文字更正或切换文字作答；摄像头仅用于本机预览。</p>
+          </div>
+        )}
+      </section>
+
+      <details className="formSection">
+        <summary className="sectionTitle">高级选项 · {duration}</summary>
         <div className="sectionTitle">时长</div>
         <div className="chipRow">
           {durations.map(d => (
             <button key={d} className={`chip${duration === d ? ' on' : ''}`} onClick={() => setDuration(d)}>{d}</button>
           ))}
         </div>
-      </section>
+      </details>
 
-      <section className="formSection">
-        <div className="sectionTitle">作答方式</div>
-        <div className="chipRow">
-          <button className={`chip${mode === 'voice' ? ' on' : ''}`} onClick={() => setMode('voice')}>语音</button>
-          <button className={`chip${mode === 'video' ? ' on' : ''}`} onClick={() => setMode('video')}>视频</button>
-          <button className={`chip${mode === 'text' ? ' on' : ''}`} onClick={() => setMode('text')}>文字</button>
-        </div>
-        <p className="formHint">
-          {mode === 'video'
-            ? '默认视频语音对话：小北播报，你开口回答；转写后提交大模型，并保留双方聊天记录。进入房间时请求授权。'
-            : mode === 'voice'
-              ? '语音作答需授权麦克风；识别可随时用文字更正。'
-              : '文字作答最稳，适合安静练习。'}
-        </p>
-      </section>
-
-      {error && <p className="formHint" role="alert">{error}</p>}
+      {error && <p className="formHint" role="alert">{error} 配置已保留，可重试。</p>}
       <button className="btn primary big" disabled={busy} onClick={start}>{busy ? '正在创建面试…' : error ? '重试开始面试' : '开始面试'}</button>
     </div>
   )

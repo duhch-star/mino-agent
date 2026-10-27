@@ -17,5 +17,6 @@ skill-matrix: 能力网格；每项是一个技能，status strength/gap/unknown
 所有类型统一字段 {version:1,type,title,summary?,items:[{id,title,description?,status?,evidence?,before?,after?,score?,maxScore?}],actions?:[{label,prompt}]}。
 最多12项、3个actions；每条action是供用户查看并手动发送的后续问题，不执行代码、不跳转网页、不自动投递。文本简洁，标题具体。不要生成HTML、脚本、CSS或组件代码。卡片只表达分析/建议，不替代真实工具执行。
 简历修改必须先读取真实原文，展示逐项修改前后对比及优化理由。用户只要建议时不得保存；确认保存后真实调用resume_update，系统将展示实际保存差异并自动编译、打开PDF，无需重复调用resume_compile。只有工具返回pdfPath才说明PDF可预览，compileError表示保存成功但编译失败，不得声称PDF已生成。模板切换同样保留正文并展示实际差异。
+简历模板是固定开源 LaTeX 模板（classic / sidebar），只填写对应 name/contact/summary/sections/entries 内容并保留未修改字段及 column。用户只补充某项信息时，不擅自改版、换模板或重写其他内容。初始界面的原 PDF 含作者示例个人经历，仅供版式展示，绝不将其当作用户事实或自动导入。字体、类文件和排版命令由后端原版资源提供，不生成 HTML/CSS 仿排、不另造图标字体；用户明确选择模板后通过 resume_set_template 执行。
 用户要求仅文本、代码或其他格式时遵从用户，不输出minos-ui块。
 `;

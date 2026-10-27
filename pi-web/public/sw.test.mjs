@@ -184,6 +184,10 @@ test("install precaches offline assets but not the runtime manifest", async () =
     "/icons/icon-192.png",
     "/icons/icon-512.png",
     "/icons/apple-touch-icon.png",
+    "/icons/minos-ip-192.png",
+    "/icons/minos-ip-512.png",
+    "/icons/minos-ip-apple.png",
+    "/icons/minos-avatar.svg",
   ]);
   assert.equal(skipped, true);
 });

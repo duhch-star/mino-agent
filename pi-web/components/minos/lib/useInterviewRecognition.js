@@ -10,7 +10,7 @@ export function useInterviewRecognition({ active, autoSubmit = false, initialTex
   const [retry, setRetry] = useState(0)
   const supported = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition)
   useEffect(() => {
-    if (!active || !supported) return
+    if (!active || !supported) { setInterim(''); callbacks.current.onListening(false); return }
     setError(''); setInterim('')
     const controller = createInterviewRecognition({ Recognition: window.SpeechRecognition || window.webkitSpeechRecognition,
       onText: text => callbacks.current.onText(text), onInterim: setInterim,

@@ -35,10 +35,12 @@ FE_PREFIX = "/api"
 async def lifespan(app: FastAPI):
     # 开发环境自动建表（生产使用 Alembic 迁移）
     Base.metadata.create_all(bind=engine)
-    from app.db.seed import seed
-    from app.db.session import SessionLocal
-    with SessionLocal() as session:
-        seed(session)
+    # Demo accounts have known credentials: never seed them implicitly.
+    if settings.seed_demo_data:
+        from app.db.seed import seed
+        from app.db.session import SessionLocal
+        with SessionLocal() as session:
+            seed(session)
     yield
     from app.services.pi_web_service import manager as pi_web_manager
     pi_web_manager.shutdown()

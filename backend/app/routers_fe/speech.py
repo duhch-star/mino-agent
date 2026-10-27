@@ -13,6 +13,7 @@ from fastapi import APIRouter
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from app.core.responses import ApiException
+from app.core.config import settings
 
 router = APIRouter(prefix='/interview', tags=['FE-面试语音'])
 _lock = threading.Lock()
@@ -28,8 +29,8 @@ class SpeechRequest(BaseModel):
 
 
 def _credentials():
-    api = os.getenv('MAMBO_TTS_API', 'https://api.milorapart.top/apis/mbAIscvip')
-    key = os.getenv('MAMBO_TTS_KEY', '')
+    api = os.getenv('MAMBO_TTS_API', settings.mambo_tts_api)
+    key = os.getenv('MAMBO_TTS_KEY', settings.mambo_tts_key)
     if not key:
         raise ValueError('Missing speech credentials')
     parsed = urllib.parse.urlparse(api)
@@ -96,7 +97,7 @@ def _audio(api: str, key: str, text: str):
 
 @router.get('/speech/config')
 def speech_config():
-    return {'provider': 'mambo', 'configured': bool(os.getenv('MAMBO_TTS_KEY')),
+    return {'provider': 'mambo', 'configured': bool(os.getenv('MAMBO_TTS_KEY', settings.mambo_tts_key)),
             'browserFallback': True, 'streaming': False, 'maxTextLength': 1000}
 
 

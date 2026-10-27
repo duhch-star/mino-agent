@@ -23,14 +23,16 @@ export function useInterviewSpeech({ phase, stage, question, index, paused, mode
   const [replay, setReplay] = useState(0)
   const [settled, setSettled] = useState('')
   const player = useRef(null)
-  const turn = `${index}:${stage}:${question}:${replay}:${provider}:${rate}:${voiceURI}`
+  // Readiness belongs to the entire playback lifecycle, not only its text.
+  // A resumed/unmuted turn must close the mic before its new speech effect runs.
+  const turn = JSON.stringify([phase, index, stage, question, replay, provider, rate, voiceURI, paused, mode, typing, enabled])
   useEffect(() => {
     const update = () => setVoices(window.speechSynthesis?.getVoices().filter(v => /^zh/i.test(v.lang)) || [])
     update(); window.speechSynthesis?.addEventListener('voiceschanged', update)
     return () => window.speechSynthesis?.removeEventListener('voiceschanged', update)
   }, [])
   useEffect(() => {
-    if (phase !== 'running' || !['asking', 'feedback'].includes(stage) || paused || typing || mode === 'text' || !enabled || !question) { setStatus('idle'); return }
+    if (phase !== 'running' || !['asking', 'feedback'].includes(stage) || paused || typing || mode === 'text' || !enabled || !question) { setStatus('idle'); setSettled(''); return }
     let disposed = false
     const controller = createInterviewAudio({ fetchAudio: generateInterviewSpeech,
       onState: value => { if (!disposed) { setStatus(value); if (value === 'idle') setSettled(turn) } },

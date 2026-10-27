@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-dynamic";
 
 export default function manifest(): MetadataRoute.Manifest {
-  const appName = process.env.PI_WEB_APP_NAME?.trim() || "MINO AGENT";
+  const appName = process.env.PI_WEB_APP_NAME?.trim() || "MINOS";
   return {
     id: "/",
     name: appName,
@@ -18,13 +18,13 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "zh-CN",
     icons: [
       {
-        src: "/icons/icon-192.png",
+        src: "/icons/minos-ip-192.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512.png",
+        src: "/icons/minos-ip-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any",

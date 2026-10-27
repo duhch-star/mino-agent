@@ -26,7 +26,7 @@ class PiWebTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
-        self.manager = service.PiWebManager(self.root)
+        self.manager = service.PiWebManager(self.root, runtime=self.root / '.runtime' / 'pi-web')
         self.engine = create_engine('sqlite:///' + str(self.root / 'test.db'), connect_args={'check_same_thread': False})
         Base.metadata.create_all(self.engine, tables=[User.__table__, ChatSession.__table__])
         self.db = sessionmaker(self.engine, expire_on_commit=False)()
@@ -59,6 +59,23 @@ class PiWebTests(unittest.TestCase):
 
     def login(self, user='alice'):
         return self.manager.verify(self.db, ticket=self.ticket(user), bridge_secret='secret-' + user)
+
+    def test_empty_model_does_not_block_settings(self):
+        agent = self.root / 'empty-agent'
+        agent.mkdir()
+        with patch.object(service, 'settings', SimpleNamespace(llm_api_key='', llm_base_url='', llm_model='')):
+            self.manager._configure(agent)
+        self.assertFalse((agent / 'models.json').exists())
+
+    def test_existing_pi_config_is_never_overwritten(self):
+        agent = self.root / 'configured-agent'
+        agent.mkdir()
+        for name in ('models.json', 'auth.json', 'settings.json'):
+            (agent / name).write_text('user-owned-' + name)
+        with patch.object(service, 'settings', SimpleNamespace(llm_api_key='server-key', llm_base_url='https://example.test', llm_model='server-model')):
+            self.manager._configure(agent)
+        for name in ('models.json', 'auth.json', 'settings.json'):
+            self.assertEqual((agent / name).read_text(), 'user-owned-' + name)
 
     def test_ack_required_and_single_process(self):
         with self.assertRaises(ApiException) as exc:
@@ -163,7 +180,8 @@ class PiWebTests(unittest.TestCase):
             self.manager.launch('alice', True)
         args, kwargs = popen.call_args
         self.assertFalse(kwargs['shell'])
-        self.assertEqual(kwargs['cwd'], str(self.root))
+        self.assertEqual(kwargs['cwd'], str(project))
+        self.assertEqual(kwargs['env']['MINOS_PI_WORKSPACE'], str(self.root))
         self.assertIn(str(project), args[0])
         self.assertEqual(args[0][-4:-2], ['-H', '127.0.0.1'])
         env = kwargs['env']

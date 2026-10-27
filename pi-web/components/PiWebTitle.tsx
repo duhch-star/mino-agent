@@ -11,7 +11,7 @@ import { useI18n } from "@/hooks/useI18n";
  * VERSION_SHOWN_MS, or at once on a second click.
  */
 
-export const BRAND_TEXT = "MINO AGENT";
+export const BRAND_TEXT = "MINOS";
 /** How long the versions stay, counted from the click that showed them. */
 export const VERSION_SHOWN_MS = 3000;
 /** The text settles left to right over its length times this many frames. */
@@ -122,7 +122,7 @@ export function PiWebTitle({ onWidthChange }: {
       aria-label={t("sidebar.brandLabel", { app: appVersion ?? "0.0.0", pi: piVersion ?? "0.0.0" })}
       onClick={handleClick}
     >
-      <img src="/icons/minos-mark.svg" width="25" height="25" alt="" />
+      <img src="/icons/minos-avatar.svg" width="25" height="25" alt="" />
       <span>{text}</span>
     </button>
   );

@@ -82,7 +82,7 @@ export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
     catch { setCopyStatus('复制失败，请手动选择文字'); }
   };
   return <section className={`career-ui career-ui-${data.type}`} aria-labelledby={headingId}>
-    <header className="career-header"><div className="career-kicker"><span aria-hidden="true">{meta.mark}</span><span>MINO / {meta.label}</span></div><h3 id={headingId}>{data.title}</h3><p>{data.summary ?? meta.note}</p></header>
+    <header className="career-header"><div className="career-kicker"><span aria-hidden="true">{meta.mark}</span><span>MINOS / {meta.label}</span></div><h3 id={headingId}>{data.title}</h3><p>{data.summary ?? meta.note}</p></header>
     <div className="career-toolbar"><span>{data.items.length} 个条目</span><button type="button" onClick={copy} aria-label={`复制${data.title}`}>复制内容</button><button type="button" aria-expanded={!collapsed} aria-controls={`${headingId}-content`} onClick={() => setCollapsed(v => !v)}>{collapsed ? '展开卡片' : '收起卡片'}</button><span role="status">{copyStatus}</span></div>
     <div id={`${headingId}-content`} hidden={collapsed}>
     {data.type === "application-tracker" && <p className="career-notice">用户信息，不自动投递 · 状态来自本次对话，非平台同步</p>}

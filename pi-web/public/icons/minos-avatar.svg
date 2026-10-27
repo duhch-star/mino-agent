@@ -1,0 +1,28 @@
+<svg id="avatar" class="avatar" viewBox="16 0 264 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MINOS AI 面试助手"><style>.body,.fx{display:none}.blink-eye{transform-box:fill-box;transform-origin:center;animation:minos-blink 6s infinite}@keyframes minos-blink{0%,44%,48%,100%{transform:scaleY(1)}46%{transform:scaleY(.08)}}@media(prefers-reduced-motion:reduce){.blink-eye{animation:none}}</style>
+<g id="character" stroke="#304259" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+<g class="body"><ellipse cx="151" cy="298" rx="85" ry="10" fill="#dce3e0" stroke="none"/>
+<path fill="#648d92" d="M111 250 L108 280 Q91 289 105 295 L130 294 Q139 287 135 254 M163 254 L165 283 Q164 294 177 294 L197 294 Q206 288 188 280 L187 249"/>
+<path fill="#fff9ed" d="M99 169 Q81 162 69 178 L54 210 Q51 220 61 223 Q71 226 76 214 L91 198"/>
+<path id="right-arm" fill="#fff9ed" d="M208 170 Q223 164 229 148 L235 131 Q243 124 249 133 Q251 142 244 151 Q235 184 215 196"/>
+<path fill="#fff9ed" d="M105 147 Q150 138 195 149 Q210 174 212 224 Q212 254 189 260 Q151 268 112 259 Q90 256 91 229 Q92 181 105 147 Z"/>
+<path fill="#648d92" d="M103 155 L129 178 L150 158 L173 178 L198 156 L192 146 Q149 138 110 147 Z"/><path d="M150 159 L150 250" fill="none" stroke-width="3"/>
+<rect x="166" y="191" width="28" height="29" rx="8" fill="#edb265" stroke="none"/><path fill="none" stroke="#fff9ed" stroke-width="3" d="M173 207 L173 200 L180 203 L187 200 L187 207 L180 210 Z"/></g>
+<path fill="#dbe9e8" d="M68 82 Q50 66 46 87 L46 111 Q49 122 64 118 M232 82 Q250 66 254 87 L254 111 Q251 122 236 118"/>
+<path fill="#fff9ed" d="M65 68 Q71 43 105 43 L112 35 Q119 38 123 44 Q155 37 190 46 Q226 48 235 72 L240 111 Q238 139 215 149 Q153 171 87 150 Q59 143 59 117 Z"/>
+<path fill="#dbe9e8" stroke="none" d="M79 84 Q82 68 103 67 L197 67 Q219 69 220 87 L218 111 Q216 133 194 136 L107 136 Q82 134 80 113 Z"/>
+<path fill="none" stroke="#fff" d="M91 81 Q94 76 108 76"/>
+<path fill="#648d92" d="M165 44 L174 27 Q181 24 188 31 L183 47"/>
+<g id="face"><g id="cheeks" fill="#ec997f" stroke="none" opacity=".65"><ellipse cx="96" cy="119" rx="9" ry="4"/><ellipse cx="206" cy="119" rx="9" ry="4"/></g>
+<g fill="none" stroke-width="3" id="brows" opacity="0"><path id="browL" d="M107 85 Q116 79 125 85"/><path id="browR" d="M177 85 Q186 79 195 85"/></g>
+<path id="eyeL" class="blink-eye" fill="#304259" stroke="#304259" d="M108 91 Q116 86 121 93 L122 108 Q117 116 110 109 Z"/>
+<path id="eyeR" class="blink-eye" fill="#304259" stroke="#304259" d="M178 91 Q186 86 191 93 L192 108 Q187 116 180 109 Z"/>
+<path id="mouth" d="M139 113 Q151 125 164 112" fill="none" stroke-width="4"/>
+</g></g>
+<g class="fx" fill="none" stroke="#648d92" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+<g class="fx-item fx-listen"><path d="M37 83 Q27 98 37 113 M263 83 Q273 98 263 113"/><path d="M28 77 Q13 98 28 119 M272 77 Q287 98 272 119"/></g>
+<g class="fx-item fx-think" fill="#648d92" stroke="none"><circle cx="209" cy="26" r="3"/><circle cx="223" cy="20" r="4"/><circle cx="239" cy="17" r="5"/></g>
+<g class="fx-item fx-speak"><path d="M36 139 Q150 188 265 139" opacity=".5"/><path d="M47 147 Q150 198 253 147" opacity=".3"/></g>
+<g class="fx-item fx-cheer" stroke="#d8a14e" fill="#edb265"><path d="M34 46 L37 55 L46 58 L37 61 L34 70 L31 61 L22 58 L31 55 Z"/><path d="M261 33 L264 40 L271 43 L264 46 L261 53 L258 46 L251 43 L258 40 Z"/></g>
+<g class="fx-item fx-smile" stroke="#d8a14e"><path d="M259 57 L259 69 M253 63 L265 63"/></g>
+<g class="fx-item fx-surprise" stroke="#d8a14e" stroke-width="3.5"><path d="M48 28 L43 18 M61 23 L61 12 M74 28 L79 18"/></g>
+</g></svg>

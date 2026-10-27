@@ -7,5 +7,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     return await connectAccount(id, body.acknowledgeLocalAgent === true);
-  } catch { return NextResponse.json({ error: { message: 'Pi 工作区连接失败，请检查后端和生产构建' } }, { status: 502 }); }
+  } catch (error) {
+    const name = error instanceof Error ? error.name : '';
+    const timedOut = name === 'TimeoutError' || name === 'AbortError';
+    // Never log backend response bodies, ticket URLs, cookies or provider secrets.
+    console.error('[MINOS connect]', timedOut ? 'startup-timeout' : 'connection-unavailable');
+    return NextResponse.json({ error: { message: timedOut
+      ? '工作区首次启动较慢，请稍候再试。你仍可继续浏览其他页面。'
+      : '工作区连接中断，请重试；若仍失败，请从顶栏菜单打开日志目录查看服务状态。' } }, { status: timedOut ? 504 : 502 });
+  }
 }

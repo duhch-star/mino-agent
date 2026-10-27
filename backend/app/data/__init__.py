@@ -1,8 +1,8 @@
 """Load the bundled frontend-compatible knowledge and interview datasets."""
 import json
-from pathlib import Path
+from app.core.paths import resource_path
 
-_DATA_DIR = Path(__file__).resolve().parent
+_DATA_DIR = resource_path('data')
 
 
 def _load(name: str):

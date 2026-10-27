@@ -5,7 +5,7 @@ import os
 import stat
 from pathlib import Path, PureWindowsPath
 
-from app.core.config import BASE_DIR
+from app.core.paths import DATA_DIR
 
 MAX_BYTES = 128 * 1024
 MAX_OUTPUT = 16000
@@ -15,7 +15,7 @@ def workspace_for(user_id: str) -> Path:
     if not user_id:
         raise ValueError('文件工具需要先登录')
     key = hashlib.sha256(user_id.encode()).hexdigest()[:32]
-    root = BASE_DIR / 'workspaces' / key
+    root = DATA_DIR / 'workspaces' / key
     root.mkdir(parents=True, exist_ok=True)
     return root.resolve()
 

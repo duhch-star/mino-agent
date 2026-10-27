@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import '../styles/resume-template-gallery.css'
+import ResumeOriginalPdf, { originalPdfUrl } from './ResumeOriginalPdf.jsx'
 
 // Metadata is rendered as text only. Never embed upstream README / HTML.
 const text = value => typeof value === 'string' && value.trim() ? value : ''
@@ -80,7 +81,7 @@ export default function ResumeTemplateGallery({ templates = [], value, onChange,
     </div>
     {!templates.length && <p className="rtg-empty" role="status">暂无可展示的模板，请等待模板信息加载或检查后端连接。</p>}
     <dialog className="rtg-dialog" ref={dialogRef} aria-labelledby={dialogTitleId} aria-describedby={dialogNoteId} onClose={afterClose} onClick={event => { if (event.target === event.currentTarget) closePreview() }}>
-      {preview && <div className="rtg-dialogContent"><header className="rtg-dialogHeader"><h2 id={dialogTitleId}>{text(preview.title) || text(preview.name)} · 上游原版预览</h2><button type="button" className="rtg-close" autoFocus onClick={closePreview} aria-label="关闭原版大图预览">关闭 ×</button></header><p id={dialogNoteId}>上游原版示例，含作者个人信息，仅供版式展示，不导入我的简历。可按 Escape 或点击背景关闭。</p><div className="rtg-links"><ExternalLink href={preview.originalPdfUrl}>在新窗口查看上游原 PDF</ExternalLink><ExternalLink href={preview.source}>上游项目</ExternalLink></div><div className="rtg-largePreview"><PreviewImage key={`${preview.id}:${preview.previewUrl}`} template={preview} large/></div></div>}
+      {preview && <div className="rtg-dialogContent"><header className="rtg-dialogHeader"><h2 id={dialogTitleId}>{text(preview.title) || text(preview.name)} · 上游原版预览</h2><button type="button" className="rtg-close" autoFocus onClick={closePreview} aria-label="关闭原版大图预览">关闭 ×</button></header><p id={dialogNoteId}>上游原版示例，含作者个人信息，仅供版式展示，不导入我的简历。可按 Escape 或点击背景关闭。</p><div className="rtg-links"><ExternalLink href={preview.originalPdfUrl}>在新窗口查看上游原 PDF</ExternalLink><ExternalLink href={preview.source}>上游项目</ExternalLink></div><div className="rtg-largePreview">{originalPdfUrl(preview) ? <ResumeOriginalPdf template={preview}/> : <PreviewImage key={`${preview.id}:${preview.previewUrl}`} template={preview} large/>}</div></div>}
     </dialog>
   </section>
 }

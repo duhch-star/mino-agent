@@ -7,7 +7,10 @@ import subprocess
 import tempfile
 import zipfile
 
-TEMPLATE_ROOT = Path(__file__).resolve().parent.parent / 'resume_templates'
+from app.core.config import settings
+from app.core.paths import resource_path
+
+TEMPLATE_ROOT = resource_path('resume_templates')
 TEMPLATES = [
     {'id': 'classic', 'name': 'Sourabh Bajaj · 原版单栏', 'description': '直接使用 sb2nov/resume 原模板的页边距、横线标题与履历命令。', 'source': 'https://github.com/sb2nov/resume', 'license': 'MIT', 'adaptation': '保留上游导言与命令；仅将 pdfTeX 专用指令改为条件执行，加入中文字体支持并填充个人内容。', 'upstream': '7b70fe14876f97180034787f2a7f661597416a17'},
     {'id': 'sidebar', 'name': 'Deedy · 原版 OpenFonts 双栏', 'description': '直接加载官方 class、Lato / Raleway 原字体及 0.33 / 0.66 双栏结构。', 'source': 'https://github.com/deedy/Deedy-Resume', 'license': 'Apache-2.0', 'adaptation': '原 class 与拉丁字体不修改；仅加入中文回退字体、填充内容。中文标题不等同于原英文字形。', 'upstream': '6d06ba7d8eee5fb8870bb00cb13a777f2083aa18'},
@@ -26,7 +29,7 @@ TEMPLATE_DETAILS = {
         'features': ['原版横线章节标题与紧凑留白', '机构、地点、职位与时间按左右对齐排列', '自定义 resumeSubheading / resumeItem 等命令统一格式', '单栏信息顺序，面向软件开发者的教育、经历与项目展示'],
         'sections': ['Education / 教育经历', 'Experience / 工作经历', 'Projects / 项目经历', 'Skills / 技能（原源码提供可选区块）'],
         'limitations': ['单页是原设计目标，不代表任意长度内容都会自动压缩为一页。', '原版示例中的作者履历属于作者个人数据，不会自动导入用户简历。', '版式许可不等于作者个人信息可自由复用；不承诺所有招聘系统都能正确解析。'],
-        'adaptation': '直接读取原导言与命令，保留 Letter / 11pt、页边距和横线标题。pdfTeX 专有指令改为条件执行，加入中文字体回退；页眉联系方式容器允许换行。替换个人内容，不复用作者经历。',
+        'adaptation': '直接读取原导言与命令，保留 Letter / 11pt、页边距、横线标题与原两行 tabular 页眉，不引入固定宽度 minipage。联系方式的显式换行填入原右侧两行；过长内容仍可能溢出。pdfTeX 专有指令改为条件执行，加入中文字体回退。替换个人内容，不复用作者经历。',
         'files': {'preview': ('resume_preview.png', 'image/png'), 'original.pdf': ('sourabh_bajaj_resume.pdf', 'application/pdf'), 'readme': ('UPSTREAM-README.md', 'text/plain; charset=utf-8'), 'license': ('LICENSE', 'text/plain; charset=utf-8')},
         'sourcePath': 'sourabh_bajaj_resume.tex',
     },
@@ -110,12 +113,16 @@ def _classic_section(section):
     return out
 
 
-def _deedy_section(section):
+def _deedy_section(section, *, left_column=False):
     out = '\\section{' + escape(section.title) + '}\n'
     for entry in _entries(section):
-        out += '\\runsubsection{' + escape(entry.heading) + '}\n'
+        # Upstream left-column institutions use subsection, not the inline
+        # runsubsection used for employers in the right column.
+        command = '\\subsection{' if left_column else '\\runsubsection{'
+        out += command + escape(entry.heading) + '}\n'
         if entry.subtitle:
-            out += '\\descript{' + escape(entry.subtitle) + '}\n'
+            descriptor = entry.subtitle if left_column else '| ' + entry.subtitle
+            out += '\\descript{' + escape(descriptor) + '}\n'
         if entry.dates or entry.location:
             out += '\\location{' + escape(' | '.join(v for v in [entry.dates, entry.location] if v)) + '}\n'
         if entry.items:
@@ -137,9 +144,15 @@ def render(resume, template):
         out = ''.join('% ' + line + '\n' for line in license_text.splitlines())
         out += '% MINOS modification: content replacement and XeTeX/CJK compatibility; upstream layout/macros retained.\n'
         out += preamble + CJK + '\\begin{document}\n'
-        # Keep the original two-column tabular heading, permit long contact text to wrap.
+        # Preserve the upstream two-row, natural-width tabular geometry. Contact
+        # is plain text: explicit newlines select its two original right cells;
+        # do not infer personal fields or introduce a different wrapping layout.
+        contacts = str(resume.contact or '').splitlines()
+        first = contacts[0] if contacts else ''
+        second = ' | '.join(contacts[1:])
         out += r'\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}' + '\n'
-        out += r'\textbf{\Large ' + escape(resume.name or '姓名') + r'} & \begin{minipage}[b]{0.62\textwidth}\raggedleft ' + escape(resume.contact) + r'\end{minipage} \\' + '\n\\end{tabular*}\n'
+        out += r'  \textbf{\Large ' + escape(resume.name or '姓名') + '} & ' + escape(first) + r'\\' + '\n'
+        out += '   & ' + escape(second) + r' \\' + '\n\\end{tabular*}\n'
         if resume.summary:
             out += '\\section{个人简介}\n' + escape(resume.summary) + '\n'
         out += ''.join(_classic_section(section) for section in resume.sections)
@@ -156,7 +169,7 @@ def render(resume, template):
     out += '\\begin{minipage}[t]{0.33\\textwidth}\n'
     if resume.summary:
         out += '\\section{个人简介}\n' + escape(resume.summary) + '\n\\sectionsep\n'
-    out += ''.join(_deedy_section(s) for s in left)
+    out += ''.join(_deedy_section(s, left_column=True) for s in left)
     out += '\\end{minipage}\n\\hfill\n\\begin{minipage}[t]{0.66\\textwidth}\n'
     out += ''.join(_deedy_section(s) for s in right)
     return out + '\\end{minipage}\n\\end{document}\n'
@@ -181,7 +194,7 @@ def source_bundle(resume, template):
 
 
 def compiler():
-    configured = os.getenv('RESUME_XELATEX', '')
+    configured = os.getenv('RESUME_XELATEX', settings.resume_xelatex)
     if configured and Path(configured).is_file():
         return configured
     xelatex = shutil.which('xelatex')

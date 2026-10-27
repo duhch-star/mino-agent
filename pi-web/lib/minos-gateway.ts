@@ -76,7 +76,7 @@ export async function accountRequest(id: string, path: string, init: RequestInit
   return send(refreshed.accessToken);
 }
 export async function connectAccount(id: string, acknowledge: boolean) {
-  const launch = await accountRequest(id, '/api/pi-web/launch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acknowledgeLocalAgent: acknowledge }) });
+  const launch = await accountRequest(id, '/api/pi-web/launch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acknowledgeLocalAgent: acknowledge }), signal: AbortSignal.timeout(120000) });
   if (!launch.ok) return launch;
   const result = await launch.json();
   const url = new URL(result.url);

@@ -43,7 +43,7 @@ export async function proxy(request: NextRequest) {
 
   if (gatewayEnabled()) {
     const path = request.nextUrl.pathname;
-    if (path === '/api/minos/account') return NextResponse.next();
+    if (path === '/api/minos/account' || path === '/api/minos/setup') return NextResponse.next();
     const id = cookieSessionId(request.headers.get('cookie'));
     const session = await loadAccount(id);
     if (path === '/login') return NextResponse.next();

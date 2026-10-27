@@ -16,21 +16,21 @@ const notoSansMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "MINO AGENT",
-  description: "MINO AGENT 求职助手：简历优化、岗位匹配、面试准备与求职规划", 
-  applicationName: "MINO AGENT",
+  title: "MINOS",
+  description: "MINOS 求职助手：简历优化、岗位匹配、面试准备与求职规划",
+  applicationName: "MINOS",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
       {
-        url: "/icons/icon-192.png",
+        url: "/icons/minos-ip-192.png",
         sizes: "192x192",
         type: "image/png",
       },
     ],
     apple: [
       {
-        url: "/icons/apple-touch-icon.png",
+        url: "/icons/minos-ip-apple.png",
         sizes: "180x180",
         type: "image/png",
       },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "MINO AGENT",
+    title: "MINOS",
   },
   formatDetection: {
     telephone: false,

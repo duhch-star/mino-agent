@@ -2,9 +2,9 @@
 .minos-native .interviewTop { height:auto; min-height:56px; flex-wrap:wrap; padding:10px 16px; gap:10px; }
 .minos-native .interviewTopTitle { font-size:14px; font-weight:600; }
 .minos-native .interviewTopMeta { font-size:12px; font-variant-numeric:tabular-nums; }
-.minos-native .interviewCharacter { flex-basis:32%; background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--accent) 8%,var(--bg)),var(--bg)); }
+.minos-native .interviewCharacter { flex-basis:24%; max-width:280px; background:var(--bg); }
 .minos-native .interviewFlow { padding:24px clamp(16px,3vw,36px); }
-.minos-native .questionCard { border:1px solid var(--border); border-radius:16px; padding:22px; background:var(--bg-panel); box-shadow:0 8px 28px #00000005; }
+.minos-native .questionCard { border:1px solid var(--border); border-radius:8px; padding:18px; background:var(--bg-panel); box-shadow:none; }
 .minos-native .questionLabel { font-size:11px; font-weight:600; letter-spacing:.08em; color:var(--text-muted); }
 .minos-native .questionText { font-size:19px; line-height:1.7; margin:12px 0 18px; }
 .minos-native .interviewSpeechControls { display:flex; flex-wrap:wrap; gap:9px; align-items:center; padding-top:14px; border-top:1px solid var(--border); }
@@ -23,8 +23,20 @@
 .minos-native .interviewMessage strong { font-size:11px; color:var(--text-muted); }
 .minos-native .interviewMessage p { margin-top:6px; white-space:pre-wrap; }
 .minos-native .interviewMessage.user { margin-left:24px; border-left:2px solid var(--accent); }
-.minos-native .interviewChat { max-height:340px; overflow:auto; }
-.minos-native .campusAvatarFrame { width:100%; height:min(55vh,480px); border:0; display:block; }
+.minos-native .interviewChat { flex:none; min-height:150px; max-height:none; overflow:visible; display:block; }
+.minos-native .interviewConversationLog { max-height:300px; min-height:90px; overflow:auto; padding:4px 0; }
+.minos-native .interviewFlow > * { flex-shrink:0; }
+.minos-native .interviewFlow { min-height:0; }
+.minos-native .interviewFaceStatus { display:flex; align-items:center; flex-wrap:wrap; gap:9px; padding:12px 14px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg-panel); }
+.minos-native .interviewFaceStatus small { flex-basis:100%; color:var(--text-muted); font-size:11px; }
+.minos-native .feedbacking { flex-wrap:wrap; line-height:1.7; }
+.minos-native .feedbacking .formHint { display:block; }
+.minos-native .interviewCharacter { flex-basis:30%; max-width:360px; }
+.minos-native .campusAvatarFrame { height:300px; }
+.minos-native .selfView { position:static; width:calc(100% - 32px); max-height:220px; object-fit:cover; border-radius:10px; margin:12px 16px; }
+@media(max-width:800px) { .minos-native .interviewCharacter { max-width:none; flex-basis:auto; } .minos-native .campusAvatarFrame { height:160px; } .minos-native .selfView { max-height:160px; } }
+
+.minos-native .campusAvatarFrame { width:100%; height:300px; border:0; display:block; }
 .minos-native .campusAvatarName,.minos-native .characterState { text-align:center; margin:10px; font-size:13px; }
 .minos-native .campusAvatarName span,.minos-native .characterState { color:var(--text-muted); font-size:11px; }
 .minos-native .reportView { overflow:auto; padding:24px; }
@@ -42,5 +54,12 @@
 @media(max-width:540px) { .minos-native .reportView { padding:16px; } .minos-native .interviewReportOverview { grid-template-columns:minmax(0,1fr); } .minos-native .reportItem { padding:14px; } }
 .minos-native .prepareView h1 { font-size:24px; }
 .minos-native .interviewControls { display:flex; gap:8px; flex-wrap:wrap; }
-@media(max-width:800px) { .minos-native .interviewBody { flex-direction:column; overflow:auto; } .minos-native .interviewCharacter { flex:none; border-right:0; border-bottom:1px solid var(--border); } .minos-native .campusAvatarFrame { height:190px; } .minos-native .interviewFlow { flex:none; overflow:visible; } .minos-native .questionText { font-size:17px; } }
+@media(max-width:800px) { .minos-native .interviewBody { flex-direction:column; overflow:auto; } .minos-native .interviewCharacter { flex:none; max-width:none; border-right:0; border-bottom:1px solid var(--border); } .minos-native .campusAvatarFrame { height:160px; } .minos-native .interviewFlow { flex:none; overflow:visible; } .minos-native .questionText { font-size:17px; } }
+.minos-native .interviewChat summary,.minos-native .interviewVoiceSettings summary,.minos-native .page details summary { cursor:pointer; color:var(--text-muted); font-size:12px; padding:10px 0; }
+.minos-native .interviewVoiceSettings { flex-basis:100%; }
+.minos-native .interviewVoiceSettingsBody { display:flex; flex-wrap:wrap; gap:10px; padding:8px 0; }
+.minos-native .interviewFeedbackReply { font-size:13px; line-height:1.7; margin:10px 0; }
+.minos-native .interviewFlow { width:100%; max-width:900px; }
+.minos-native .answerArea { border-radius:8px; padding:14px; }
+.minos-native .prepareView .md-ul { font-size:12px; line-height:1.8; }
 @media(prefers-reduced-motion:reduce) { .minos-native .waveform .bar,.minos-native .runningDot { animation:none !important; } }

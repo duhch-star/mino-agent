@@ -1,4 +1,4 @@
-const CACHE_PREFIX = "pi-web";
+const CACHE_PREFIX = "minos";
 const CACHE_VERSION = new URL(self.location.href).searchParams.get("v") || "dev";
 const STATIC_CACHE = `${CACHE_PREFIX}-static-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline.html";
@@ -7,6 +7,10 @@ const PRECACHE_URLS = [
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/apple-touch-icon.png",
+  "/icons/minos-ip-192.png",
+  "/icons/minos-ip-512.png",
+  "/icons/minos-ip-apple.png",
+  "/icons/minos-avatar.svg",
 ];
 // A reachable port backed by a dead upstream accepts the connection and then
 // never answers: fetch() neither resolves nor rejects, so the navigation hangs
@@ -30,7 +34,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key.startsWith(`${CACHE_PREFIX}-`) && key !== STATIC_CACHE)
+            .filter((key) => (key.startsWith(`${CACHE_PREFIX}-`) || key.startsWith('pi-web-')) && key !== STATIC_CACHE)
             .map((key) => caches.delete(key)),
         ),
       )

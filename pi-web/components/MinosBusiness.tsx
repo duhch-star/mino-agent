@@ -37,5 +37,5 @@ export function MinosBusinessNavigation({ path, onNavigate }: { path: string; on
 }
 export function MinosBusinessContent({ path, onNavigate, onSidebarToggle }: { path: string; onNavigate: (path: string) => void; onSidebarToggle: () => void }) {
   const label = PAGES.find(p => p.path === path)?.label ?? (path.startsWith('/guide/') ? '知识章节' : '求职工作区');
-  return <section className="minos-business-content"><header><button aria-label="展开或收起导航" onClick={onSidebarToggle}>☰</button><span>{label}</span><small>MINO AGENT</small></header><BusinessPages path={path} onNavigate={onNavigate} /></section>;
+  return <section className="minos-business-content"><header><button aria-label="展开或收起导航" onClick={onSidebarToggle}>☰</button><span>{label}</span><small>MINOS</small></header><BusinessPages path={path} onNavigate={onNavigate} /></section>;
 }

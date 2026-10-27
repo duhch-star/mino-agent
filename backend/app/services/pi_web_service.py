@@ -24,12 +24,13 @@ from dataclasses import dataclass, field
 from sqlalchemy.exc import IntegrityError
 
 from app.core.config import settings
+from app.core.paths import DATA_DIR, INSTALL_ROOT
 from app.core.responses import ApiException
 from app.models.chat import ChatSession
 from app.models.user import User
 from app.services.workspace_tools import workspace_for
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(os.environ.get('MINOS_APP_ROOT', str(INSTALL_ROOT))).resolve()
 TICKET_TTL = 60
 TOKEN_TTL = 8 * 60 * 60
 
@@ -153,10 +154,10 @@ class Sidecar:
 
 
 class PiWebManager:
-    def __init__(self, root: Path = ROOT, readiness_timeout: float = 45):
+    def __init__(self, root: Path = ROOT, readiness_timeout: float = 90, runtime: Path | None = None):
         self.root = Path(root).resolve()
         self.project = self.root / 'pi-web'
-        self.runtime = self.root / '.runtime' / 'pi-web'
+        self.runtime = Path(runtime).resolve() if runtime is not None else DATA_DIR / 'runtime' / 'pi-web'
         self.timeout = readiness_timeout
         self.lock = threading.RLock()
         self.processes: dict[str, Sidecar] = {}
@@ -181,8 +182,14 @@ class PiWebManager:
         self.initialized = True
 
     def _configure(self, agent: Path):
+        # ModelsConfig owns account-local Pi settings. Never overwrite user edits,
+        # credentials, or even malformed files (the native editor reports those).
+        if any((agent / name).exists() or (agent / name).is_symlink()
+               for name in ('models.json', 'auth.json', 'settings.json')):
+            return
+        # A model is not a prerequisite for opening the workspace/settings UI.
         if not settings.llm_api_key or not settings.llm_base_url or not settings.llm_model:
-            _error(503, '请先配置后端真实模型服务')
+            return
         _write_json(agent / 'models.json', {'providers': {'minos': {
             'name': 'MINOS', 'api': 'openai-completions',
             'baseUrl': settings.llm_base_url.rstrip('/'),
@@ -260,10 +267,12 @@ class PiWebManager:
                    PI_SKIP_VERSION_CHECK='1', DO_NOT_TRACK='1', OTEL_SDK_DISABLED='true')
         command = [node, str(entry), 'start', str(self.project), '-H', '127.0.0.1', '-p', str(port)]
         try:
-            process = subprocess.Popen(command, cwd=workspace, env=env, shell=False,
-                                       stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                       stderr=subprocess.DEVNULL,
-                                       creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            # Account-private diagnostic log, never command args/bridge secrets.
+            with (private / 'sidecar.log').open('ab') as output:
+                process = subprocess.Popen(command, cwd=str(self.project), env=env, shell=False,
+                                           stdin=subprocess.DEVNULL, stdout=output,
+                                           stderr=output,
+                                           creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         except OSError:
             _error(503, 'Pi Web 进程启动失败')
         sidecar = Sidecar(user_id, port, secret, workspace, process, private / 'state.json',

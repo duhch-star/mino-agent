@@ -1,10 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ModelsConfig } from './ModelsConfig';
 import { AppShell } from './AppShell';
 import BusinessPages from './minos/BusinessPages';
 import { activateAccount } from './minos/store';
 import { AUTH_EXPIRED_EVENT } from './minos/api';
 import './minos-workspace.css';
+import './minos-welcome.css';
 
 type User = { id: string; name?: string; username?: string; role: string };
 export function MinosWorkspace() {
@@ -14,12 +16,23 @@ export function MinosWorkspace() {
   const [permission, setPermission] = useState(false);
   const [error, setError] = useState('');
   const [path, setPath] = useState('/chat');
-  const connect = async (acknowledge = false) => {
+  const [configuration, setConfiguration] = useState(false);
+  const browse = () => { setPermission(false); setError(''); };
+  const configuring = useRef(false);
+  const configure = () => {
+    configuring.current = true;
+    if (connected) setConfiguration(true);
+    else void connect();
+  };
+  const connecting = useRef(false);
+  const connect = async (acknowledge = false, promptPermission = true) => {
+    if (connecting.current) return;
+    connecting.current = true;
     setBusy(true); setError('');
     try {
       const response = await fetch('/api/minos/connect', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ acknowledgeLocalAgent: acknowledge }) });
       const data = await response.json();
-      if (response.status === 409) { setPermission(true); return; }
+      if (response.status === 409) { if (promptPermission) setPermission(true); return; }
       if (response.status === 401) { window.location.replace('/login'); return; }
       if (!response.ok) throw new Error(data.error?.message || data.error || '工作区连接失败');
       if (typeof data.cwd === 'string') {
@@ -28,8 +41,9 @@ export function MinosWorkspace() {
         window.history.replaceState(null, '', url);
       }
       setPermission(false); setConnected(true);
+      if (configuring.current) { setConfiguration(true); configuring.current = false; }
     } catch (e) { setError(e instanceof Error ? e.message : '连接失败'); }
-    finally { setBusy(false); }
+    finally { connecting.current = false; setBusy(false); }
   };
   useEffect(() => {
     let alive = true;
@@ -43,7 +57,9 @@ export function MinosWorkspace() {
       setUser(account.user); await activateAccount(account.user);
       const route = new URL(window.location.href).searchParams.get('businessPath');
       if (route && /^\/(knowledge|guide|interview|review|onboarding|admin\/review)(\/|$)/.test(route)) setPath(route);
-      await connect();
+      // Entry is never gated by local-agent consent or a configured model.
+      // Reconnect previously authorized sessions silently; ask only on explicit enable.
+      await connect(false, false);
     }).catch(e => { if (alive) setError(e.message); });
     return () => { alive = false; window.removeEventListener(AUTH_EXPIRED_EVENT, expired); };
   }, []);
@@ -66,8 +82,15 @@ export function MinosWorkspace() {
     window.location.replace('/login');
   };
   return <div className="minos-unified-workspace">
-    <header className="minos-account-bar"><strong>MINO <span>AGENT · Pi</span></strong><span>{user?.name || user?.username || '正在验证账号…'}</span>{user?.role === 'admin' && <button onClick={() => window.dispatchEvent(new CustomEvent('minos:account-navigate', { detail: '/admin/review' }))}>内容审核</button>}<button onClick={logout}>退出账号</button></header>
-    {connected ? <AppShell /> : <div className="minos-offline-shell"><aside><h2>求职工作区</h2>{[['/chat','智能对话'],['/knowledge','知识库'],['/interview','AI 面试'],['/review','学习复盘'],['/onboarding','求职画像']].map(([route, label]) => <button key={route} aria-current={path === route ? 'page' : undefined} onClick={() => setPath(route)}>{label}</button>)}</aside><section>{path !== '/chat' ? <BusinessPages path={path} onNavigate={setPath} /> : <div className="minos-connect-state"><h1>Pi Agent 工作区</h1><p>账号、知识库和业务页面已统一迁入 Pi Web。</p>{error && <p role="alert">{error}</p>}<p>真实对话需在后端配置模型服务。未配置时仍可浏览知识库和学习记录。</p><button disabled={busy || !user} onClick={() => connect()}>{busy ? '正在连接…' : '重新连接 Pi Agent'}</button></div>}</section></div>}
-    {permission && <div className="minos-permission-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="minos-permission-title"><h2 id="minos-permission-title">启用本地 Pi Agent</h2><p>智能体可以当前 Windows 用户权限读写文件、运行命令和终端。账号目录分离不等于操作系统安全沙箱，请仅在可信本机使用。</p>{error && <p role="alert">{error}</p>}<footer><button onClick={() => setPermission(false)}>暂不启用</button><button disabled={busy} onClick={() => connect(true)}>{busy ? '正在连接…' : '我理解并启用'}</button></footer></section></div>}
+    <header className="minos-account-bar"><strong>MINOS</strong><span>{user?.name || user?.username || '正在验证账号…'}</span>{user?.role === 'admin' && <button onClick={() => window.dispatchEvent(new CustomEvent('minos:account-navigate', { detail: '/admin/review' }))}>内容审核</button>}<button onClick={configure}>模型设置</button><button onClick={logout}>退出账号</button></header>
+    {connected ? <AppShell /> : <div className="minos-offline-shell"><aside><h2>求职工作区</h2>{[['/chat','智能对话'],['/knowledge','知识库'],['/interview','AI 面试'],['/review','学习复盘'],['/onboarding','求职画像']].map(([route, label]) => <button key={route} aria-current={path === route ? 'page' : undefined} onClick={() => setPath(route)}>{label}</button>)}</aside><section>{path !== '/chat' ? <BusinessPages path={path} onNavigate={setPath} /> : <div className="minos-connect-state minos-welcome">
+      <div className="minos-welcome-eyebrow"><span /> YOUR NEXT CHAPTER</div>
+      <div className="minos-welcome-hero"><div><h1>下一步，<br/><em>更接近理想。</em></h1><p>从一次对话、一份准备开始。<br/>让每一步求职，都有清晰的方向。</p><div className="minos-welcome-actions"><button className="minos-primary" disabled={busy || !user} onClick={configure}>{busy ? '正在准备工作区…' : '配置模型，开始对话'}<span>↗</span></button><button onClick={() => setPath('/knowledge')}>先逛逛知识库 →</button></div></div><div className="minos-welcome-art" aria-hidden="true"><div className="minos-orbit"/><img src="/icons/minos-avatar.svg" alt=""/><span>MINOS · 为下一步而准备</span></div></div>
+      {error && <p role="alert">{error}</p>}
+      <div className="minos-welcome-rule"><span>你的求职工作台</span><small>无需模型，也可以从这里开始</small></div>
+      <div className="minos-quick-grid">{[['01','知识库','把零散的信息，变成准备。','/knowledge'],['02','AI 面试','提前练习，让表达更从容。','/interview'],['03','学习复盘','看见积累，也看见下一步。','/review']].map(([n,title,desc,route]) => <button key={route} onClick={() => setPath(route)}><span className="minos-quick-index">{n} <span>↗</span></span><strong>{title}</strong><p>{desc}</p></button>)}</div>
+    </div>}</section></div>}
+    {configuration && <div className="minos-model-settings"><ModelsConfig onClose={() => setConfiguration(false)} /></div>}
+    {permission && <div className="minos-permission-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="minos-permission-title"><h2 id="minos-permission-title">启用本地 MINOS 智能体</h2><p>智能体可以当前 Windows 用户权限读写文件、运行命令和终端。账号目录分离不等于操作系统安全沙箱，请仅在可信本机使用。</p>{error && <p role="alert">{error}</p>}<footer><button onClick={browse}>稍后启用，继续浏览</button><button onClick={configure}>去配置模型</button><button disabled={busy} onClick={() => connect(true)}>{busy ? '正在连接…' : '我理解并启用'}</button></footer></section></div>}
   </div>;
 }

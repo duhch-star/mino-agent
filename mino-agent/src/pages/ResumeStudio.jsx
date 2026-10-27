@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { fetchResumeTemplates, editResumeByChat, fetchResumeSource, compileResumePdf, downloadResumeBundle } from '../api.js'
 import ResumeTemplateGallery from '../components/ResumeTemplateGallery.jsx'
+import ResumeOriginalPdf, { hasResumeContent } from '../components/ResumeOriginalPdf.jsx'
 import '../styles/resume.css'
 
 const EMPTY = { name: '', contact: '', summary: '', sections: ['教育经历', '项目经历', '技能'].map(title => ({ title, items: [], entries: [], column: 'auto' })) }
@@ -74,6 +75,8 @@ export default function ResumeStudio() {
     if ((hasContent || json !== serialize(resume)) && !window.confirm('加载示例将覆盖当前简历及未应用的 JSON 编辑。示例不代表真实履历，是否继续？')) return
     commit(JSON.parse(serialize(EXAMPLE)))
   }
+  const selectedTemplate = templates.find(item => item.id === template)
+  const showOriginal = !pdf && !hasResumeContent(resume)
   return <div className="page scrollable resumeStudio">
     <header className="pageHeader"><h1>LaTeX 简历工作台</h1><p className="pageSub">对话修改 · 差异确认 · 原模板 PDF / LaTeX 源码导出</p></header>
     <p className="formHint">不会自动编造经历或成果。对话内容会发送至已配置的大模型；PDF 在本地后端编译。默认不持久保存个人简历。</p>
@@ -87,10 +90,10 @@ export default function ResumeStudio() {
       <details><summary>直接编辑结构化内容 / 导入 JSON</summary><p className="formHint">章节支持 items 和 entries 履历数组；履历支持 heading、subtitle、location、dates、items。column 可选 auto / left / right（用于双栏 PDF）。旧 JSON 可省略 entries / column。</p><textarea aria-label="简历JSON" rows={14} value={json} onChange={e => setJson(e.target.value)} disabled={!!busy || !!proposal}/><button className="btn outline sm" onClick={applyJson} disabled={!!busy || !!proposal}>应用手动编辑</button></details>
       <div className="btnRow"><button className="btn outline sm" onClick={loadExample} disabled={!!busy || !!proposal}>加载结构示例（非真实履历）</button><button className="btn ghost sm" disabled={!previous || !!busy || !!proposal} onClick={() => { setResume(previous); setPrevious(null) }}>撤销上次应用</button><button className="btn ghost sm" onClick={() => download(serialize(resume), 'resume.json','application/json')} disabled={!!busy}>备份 JSON</button></div>
       <label className="formHint"><input type="checkbox" checked={localSave} onChange={e => { setLocalSave(e.target.checked); if (!e.target.checked) localStorage.removeItem('mino-resume-draft') }}/>允许保存草稿到本机浏览器</label><button className="btn ghost sm" disabled={!!busy || !!proposal} onClick={() => { try { const s = localStorage.getItem('mino-resume-draft'); if(s) { setJson(s); setError('草稿已载入编辑框，请展开结构化编辑检查后应用。') } else setError('没有本地草稿') } catch { setError('无法读取草稿') } }}>载入本机草稿</button>
-    </section><section className="resumePanel"><h2>当前已确认版本 · 内容预览</h2><div className="resumePaper"><h1>{resume.name || '你的姓名'}</h1><p>{resume.contact || '联系方式'}</p>{resume.summary && <p>{resume.summary}</p>}{resume.sections.map((s,i) => <section key={i}><h3>{s.title}</h3><small>PDF 分栏：{{ auto: '自动', left: '左栏', right: '右栏' }[s.column ?? 'auto']}</small>{s.items.length > 0 && <ul>{s.items.map((item,j) => <li key={j}>{item}</li>)}</ul>}{(s.entries ?? []).map((entry,j) => <div key={j}><h4>{entry.heading}</h4>{entry.subtitle && <p>{entry.subtitle}</p>}{(entry.location || entry.dates) && <p>{[entry.location, entry.dates].filter(Boolean).join(' · ')}</p>}{entry.items?.length > 0 && <ul>{entry.items.map((item,k) => <li key={k}>{item}</li>)}</ul>}</div>)}</section>)}</div><p className="formHint">上方只展示内容及分栏设置，不模拟模板版式；PDF 保留原模板排版，请生成 PDF 检查实际分页和溢出。单栏模板不使用左右分栏设置。</p>
+    </section><section className="resumePanel"><h2>{showOriginal ? '所选模板 · 完整原版 PDF 示例' : pdf ? '当前已确认版本 · 实际 PDF' : '当前已确认版本 · 内容预览'}</h2>{pdf ? <iframe className="resumePdf" title="LaTeX PDF实际预览" src={pdf}/> : showOriginal ? <ResumeOriginalPdf template={selectedTemplate}/> : <><div className="resumePaper"><h1>{resume.name || '你的姓名'}</h1><p>{resume.contact || '联系方式'}</p>{resume.summary && <p>{resume.summary}</p>}{resume.sections.map((s,i) => <section key={i}><h3>{s.title}</h3><small>PDF 分栏：{{ auto: '自动', left: '左栏', right: '右栏' }[s.column ?? 'auto']}</small>{s.items.length > 0 && <ul>{s.items.map((item,j) => <li key={j}>{item}</li>)}</ul>}{(s.entries ?? []).map((entry,j) => <div key={j}><h4>{entry.heading}</h4>{entry.subtitle && <p>{entry.subtitle}</p>}{(entry.location || entry.dates) && <p>{[entry.location, entry.dates].filter(Boolean).join(' · ')}</p>}{entry.items?.length > 0 && <ul>{entry.items.map((item,k) => <li key={k}>{item}</li>)}</ul>}</div>)}</section>)}</div><p className="formHint">上方只展示内容及分栏设置，不模拟模板版式；PDF 保留原模板排版，请生成 PDF 检查实际分页和溢出。单栏模板不使用左右分栏设置。</p></>}
       <div className="btnRow"><button className="btn primary sm" disabled={!!busy || !compiler} onClick={compile}>{busy === 'compile' ? '编译中…' : '生成 PDF'}</button><button className="btn outline sm" disabled={!!busy} onClick={tex}>导出单个 .tex</button><button className="btn outline sm" disabled={!!busy} onClick={bundle}>{busy === 'bundle' ? '打包中…' : '下载完整源码包（含字体/许可）'}</button>{pdf && <a className="btn outline sm" href={pdf} download="resume.pdf">下载 PDF</a>}</div>
       {template === 'sidebar' && <p className="formHint">Deedy 单个 .tex 不含字体、类文件等依赖，不能独立还原排版；建议下载完整 ZIP 源码包（含字体与许可）。</p>}
-      {!compiler && <p className="formHint">后端暂未提供可用的 XeLaTeX / Tectonic 编译器，可先下载完整源码包，在配置相应编译器的环境中编译。</p>}{warnings > 0 && <p role="alert" className="formHint">检测到排版溢出，请检查 PDF，缩短内容或换用单栏模板。</p>}{pdf && <iframe className="resumePdf" title="LaTeX PDF实际预览" src={pdf}/>} {source && <details><summary>LaTeX 源码（只读）</summary><pre className="resumeSource">{source}</pre></details>}
+      {!compiler && <p className="formHint">后端暂未提供可用的 XeLaTeX / Tectonic 编译器，可先下载完整源码包，在配置相应编译器的环境中编译。</p>}{warnings > 0 && <p role="alert" className="formHint">检测到排版溢出，请检查 PDF，缩短内容或换用单栏模板。</p>}{source && <details><summary>LaTeX 源码（只读）</summary><pre className="resumeSource">{source}</pre></details>}
     </section></div>
   </div>
 }

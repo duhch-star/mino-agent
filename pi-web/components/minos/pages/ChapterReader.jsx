@@ -234,7 +234,7 @@ export default function ChapterReader() {
 
       {selection && (
         <button className="askFab" onClick={askAboutSelection}>
-          问 MINO AGENT：{selection.length > 16 ? selection.slice(0, 16) + '…' : selection}
+          问 MINOS：{selection.length > 16 ? selection.slice(0, 16) + '…' : selection}
         </button>
       )}
     </div>

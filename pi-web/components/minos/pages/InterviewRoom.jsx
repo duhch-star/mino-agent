@@ -11,7 +11,7 @@ import { fetchInterviewFeedback, finishInterviewSession, submitInterviewAnswer }
 import { useInterviewStore } from '../store.js'
 import { ensureChapterIndex, getChapterTitle } from '../lib/chapterIndex.js'
 
-import { IconMic, IconSend, IconStop, IconPause, IconArrowLeft, IconRefresh, IconCheck, IconBook, IconVideo } from '../components/Icons.jsx'
+import { IconMic, IconSend, IconArrowLeft, IconCheck, IconBook, IconVideo } from '../components/Icons.jsx'
 
 // 轻量 2D 小北头像：替代旧火箭及 GLB 加载链路。
 
@@ -158,7 +158,10 @@ export default function InterviewRoom() {
   const [micStatus, setMicStatus] = useState('')
 
   const [voiceAuto, setVoiceAuto] = useState(true)
-  const [autoSubmit, setAutoSubmit] = useState(false)
+  const [autoSubmit, setAutoSubmit] = useState(true)
+  const [autoAdvance, setAutoAdvance] = useState(true)
+  const [micSuspended, setMicSuspended] = useState(false)
+  const liveConversationRef = useRef(null)
   const [editing, setEditing] = useState(false)
 
   const testMic = async () => {
@@ -225,7 +228,7 @@ export default function InterviewRoom() {
 
   const beginVideo = async () => {
     const ok = await startCamera()
-    if (ok) st.start()
+    if (ok) { window.speechSynthesis?.resume(); st.start() }
   }
 
   // 未配置直接进房间 → 回到配置页
@@ -244,13 +247,19 @@ export default function InterviewRoom() {
   const speech = useInterviewSpeech({ phase: st.phase, stage: speechStage, question: spokenText, index: st.index,
     paused: st.paused, mode: st.mode, typing: st.stage === 'asking' && editing })
   const recognition = useInterviewRecognition({
-    active: voiceAuto && !editing && st.mode !== 'text' && st.phase === 'running' && st.stage === 'asking' && !st.paused && speech.readyForAnswer && !st.answerError,
+    active: voiceAuto && !micSuspended && !editing && st.mode !== 'text' && st.phase === 'running' && st.stage === 'asking' && !st.paused && speech.readyForAnswer && !st.answerError,
     autoSubmit, initialText: draft,
     onText: setDraft,
     onListening: st.setMic,
     onAnswer: async text => { const ok = await submitAnswer(text); if (ok) setDraft('') },
   })
   useEffect(() => { setDraft(''); setEditing(false); setFeedbackPreview(null); setFeedbackMs(null) }, [st.index, st.followup])
+  useEffect(() => { const node = liveConversationRef.current; if (node) node.scrollTop = node.scrollHeight }, [st.messages, recognition.interim, draft])
+  useEffect(() => {
+    if (st.mode === 'text' || st.phase !== 'running' || st.stage !== 'feedback' || st.paused || !autoAdvance || !voiceAuto || !speech.enabled || speech.error || !speech.readyForAnswer) return
+    const timer = setTimeout(nextQuestion, 1800)
+    return () => clearTimeout(timer)
+  }, [st.mode, st.phase, st.stage, st.paused, st.index, autoAdvance, voiceAuto, speech.enabled, speech.readyForAnswer, speech.error])
   const character = st.paused ? 'idle' : speech.status === 'generating' ? 'think'
     : speech.status === 'playing' ? 'talk' : characterFor(st.phase, st.stage, st.micOn, typing)
 
@@ -277,7 +286,7 @@ export default function InterviewRoom() {
         <div className="reportView">
           <div className="reportHead">
             <h1>面试复盘</h1>
-            <p className="pageSub">MINO AGENT 基于你的回答给出的训练建议（仅供参考，不构成录用判断）</p>
+            <p className="pageSub">MINOS 基于你的回答给出的训练建议（仅供参考，不构成录用判断）</p>
             <p className="formHint">面试回答已保存至服务端；下方为本次真实大模型逐题反馈。</p>
           </div>
 
@@ -355,7 +364,7 @@ export default function InterviewRoom() {
                   ? '视频练习仅在授权后开启本地自拍预览，不上传视频、不分析表情或据此评分；语音作答需另外授权麦克风。'
                   : st.mode === 'voice'
                     ? '请确认麦克风可用。仅在授权后收音转写，可随时暂停或结束；本页面不提供音频录制文件。'
-                    : `共 ${total} 道题，MINO AGENT 会逐题提问并给出反馈。`}
+                    : `共 ${total} 道题，MINOS 会逐题提问并给出反馈。`}
               </p>
               {st.mode !== 'text' && <p className="formHint">可选择本机/浏览器声音或曼波云端播报。云端模式会发送题目与反馈文字到语音供应商；浏览器声音标注“在线”时也可能使用网络服务。语音识别可能由浏览器供应商在线处理，转写后提交面试模型。仅在播报停止后收音，默认先核对再提交；可随时关闭播报或改用文字。建议佩戴耳机。</p>}
               <ul className="md-ul">
@@ -386,6 +395,7 @@ export default function InterviewRoom() {
           {st.phase === 'running' && (
             <>
               {st.paused && <div className="pausedBanner">已暂停 · 点击右上角「继续」恢复</div>}
+              {st.mode !== 'text' && <div className="interviewFaceStatus" role="status"><span className={`runningDot${st.micOn ? ' listening' : ''}`} />{st.paused ? '面试已暂停' : speech.status === 'generating' ? '正在准备播报' : speech.status === 'playing' ? '面试官正在说话' : st.micOn ? '正在收音 · 实时转写' : st.stage === 'feedbacking' ? '正在分析你的回答' : st.stage === 'feedback' ? autoAdvance && voiceAuto && !speech.error ? '反馈播报后自动进入下一题' : '本题完成 · 点击下一题继续' : micSuspended ? '收音已暂停 · 回答已保留' : recognition.error ? '收音不可用，请重试或改用文字' : '等待声音或麦克风就绪'}<small>分轮语音对话 · 可点击停止播报后回答 · 非全双工</small></div>}
               {/* 面试官提问 */}
               <div className="questionCard">
                 <div className="questionLabel">面试官提问</div>
@@ -395,11 +405,12 @@ export default function InterviewRoom() {
                   <button className="btn ghost sm" disabled={!speech.enabled || st.paused || !['asking','feedback'].includes(st.stage)} onClick={speech.replay}>重播当前内容</button>
                   <button className="btn outline sm" disabled={speech.status === 'idle'} onClick={speech.stop}>停止播报 · 我要回答</button>
                   <span className="interviewLiveStatus" role="status"><i data-state={speech.status} />{speech.status === 'generating' ? '正在准备声音' : speech.status === 'playing' ? '面试官正在播报' : st.micOn ? '正在收音' : '语音就绪'}</span>
-                  <label>声音来源<select aria-label="声音来源" value={speech.provider} onChange={e => speech.setProvider(e.target.value)}><option value="auto">自动 · 根据可用服务选择</option><option value="browser">浏览器语音 · 快速响应</option><option value="mambo">曼波云端语音</option></select></label>
+                  <details className="interviewVoiceSettings"><summary>声音设置</summary><div className="interviewVoiceSettingsBody"><label>声音来源<select aria-label="声音来源" value={speech.provider} onChange={e => speech.setProvider(e.target.value)}><option value="auto">自动 · 根据可用服务选择</option><option value="browser">浏览器语音 · 快速响应</option><option value="mambo">曼波云端语音</option></select></label>
                   <label>语速<select aria-label="播报语速" value={speech.rate} onChange={e => speech.setRate(Number(e.target.value))}><option value={0.85}>0.85×</option><option value={1}>1×</option><option value={1.15}>1.15×</option><option value={1.3}>1.3×</option></select></label>
                   {speech.provider === 'auto' && <span className="formHint">{speech.configuration?.configured ? '云端已配置 · 网络失败自动使用浏览器声音' : '云端未配置或状态未知 · 自动直接使用浏览器声音'}</span>}
                   {(speech.provider === 'browser' || (speech.provider === 'auto' && !speech.configuration?.configured)) && speech.voices.length > 0 && <label>音色<select aria-label="浏览器音色" value={speech.voiceURI} onChange={e => speech.setVoiceURI(e.target.value)}><option value="">自动选择中文声音</option>{speech.voices.map(v => <option key={v.voiceURI} value={v.voiceURI}>{v.name}{v.localService ? ' · 本机' : ' · 在线'}</option>)}</select></label>}
                   {speech.metrics.firstAudioMs !== null && <span className="interviewLatency">本轮首响 {speech.metrics.firstAudioMs} ms · {speech.metrics.provider === 'browser' ? '浏览器' : '云端'}</span>}
+                  </div></details>
                 </div>}
                 {speech.error && <p className="formHint" role="status">{speech.error}</p>}
               </div>
@@ -409,12 +420,12 @@ export default function InterviewRoom() {
                 <div className="feedbacking"><div role="status"><span className="runningDot" />正在分析回答 · 已等待 {waitingSeconds} 秒<span className="formHint">{waitingSeconds >= 10 ? '模型响应较慢，回答已保留；可取消等待后重试或结束。' : '正在整理表达结构、行动证据与改进建议。'}</span></div><button className="btn outline sm" onClick={cancelFeedback}>取消等待 · 保留回答</button></div>
               )}
 
-              {feedbackPreview && <div className="feedbackCard" role="status"><div className="questionLabel">{st.stage === 'feedback' ? '首段反馈' : '口语预览 · 详细报告尚未完成'}</div><p>{feedbackPreview.reply}</p><span className="interviewLatency">首段反馈 {(feedbackPreview.elapsedMs / 1000).toFixed(1)} 秒</span></div>}
+              {feedbackPreview && st.stage !== 'feedback' && <div className="feedbackCard" role="status"><div className="questionLabel">{st.stage === 'feedback' ? '首段反馈' : '口语预览 · 详细报告尚未完成'}</div><p>{feedbackPreview.reply}</p><span className="interviewLatency">首段反馈 {(feedbackPreview.elapsedMs / 1000).toFixed(1)} 秒</span></div>}
               {/* 本轮反馈 */}
               {st.stage === 'feedback' && last && (
                 <div className="feedbackCard">
-                  <div className="feedbackScore">本轮得分 {last.feedback.score}/5</div>
-                  {feedbackMs !== null && <p className="interviewLatency">模型反馈往返 {(feedbackMs / 1000).toFixed(1)} 秒 · 不含语音首响</p>}
+                  <div className="feedbackScore">本轮反馈 · {last.feedback.score}/5</div>
+                  {last.feedback.reply && <p className="interviewFeedbackReply">{last.feedback.reply}</p>}
                   <p className="formHint">练习参考评分，不代表招聘或录用判断。</p>
                   <div className="dims">
                     {last.feedback.dimensions.map((d, j) => (
@@ -425,11 +436,14 @@ export default function InterviewRoom() {
                 </div>
               )}
 
-              <section className="interviewChat" aria-label="面试聊天记录" aria-live="polite">
-                <div className="questionLabel">本次对话记录（保留至本次页面会话结束）</div>
+              <section className="interviewChat" aria-label="面试聊天记录">
+                <div className="questionLabel">实时对话 · {st.mode === 'text' ? '文字作答' : st.micOn ? '正在听你说' : speech.status === 'playing' ? '面试官正在说话' : st.stage === 'feedbacking' ? '正在思考' : '等待下一轮'}</div>
+                <div className="interviewConversationLog" ref={liveConversationRef} role="log" aria-live="polite">
                 {(st.messages || []).map((message, i) => <div key={i} className={`interviewMessage ${message.role}`}>
                   <strong>{message.role === 'user' ? '你' : '小北 · 面试官'}</strong><p>{message.text}</p>
                 </div>)}
+                {st.mode !== 'text' && (draft || recognition.interim) && st.stage === 'asking' && <div className="interviewMessage user"><strong>你 · 实时转写（未提交）</strong><p>{draft} <span className="interviewInterim">{recognition.interim}</span></p></div>}
+                </div>
               </section>
               {st.answerError && <p className="formHint" role="alert">{st.answerError}；可更正下方文字后重新提交。</p>}
               {/* 作答区 */}
@@ -437,17 +451,21 @@ export default function InterviewRoom() {
                 {(st.mode === 'voice' || st.mode === 'video') && (
                   <button
                     className={`micBtn${st.micOn ? ' on' : ''}`}
-                    onClick={() => { speech.stop(); setVoiceAuto(v => !v); setEditing(false); recognition.retry() }}
+                    aria-pressed={st.micOn}
+                    disabled={st.paused || st.stage !== 'asking'}
+                    onClick={() => { if (st.micOn || (!micSuspended && voiceAuto && !editing)) { setMicSuspended(true); setVoiceAuto(false) } else { speech.stop(); setMicSuspended(false); setVoiceAuto(true); setEditing(false); recognition.retry() } }}
                   >
                     <IconMic size={20} />
-                    {st.micOn ? <><Waveform />点击暂停收音</> : voiceAuto ? '自动语音对话中' : '继续语音对话'}
+                    {st.micOn ? <><Waveform />暂停收音</> : micSuspended || !voiceAuto || editing ? '开启收音' : speech.status === 'playing' ? '等播报结束后收音' : '准备收音…'}
                   </button>
                 )}
                 {st.mode !== 'text' && <div className="formHint">
                   {!recognition.supported ? '当前浏览器不支持语音识别，请使用支持的 Chrome/Edge 或文字作答。' : recognition.error || (st.micOn ? autoSubmit ? '正在识别，完整转写稳定 1.8 秒后提交；可随时停止收音。' : '正在转写，默认不自动提交；说完后点击提交回答。' : '小北播报结束后自动开始收音。')}
-                  <button className="btn ghost sm" onClick={() => { useInterviewStore.setState({ answerError: '' }); setVoiceAuto(true); setEditing(false); recognition.retry() }}>重试收音</button>
+                  <button className="btn ghost sm" onClick={() => { useInterviewStore.setState({ answerError: '' }); setMicSuspended(false); setVoiceAuto(true); setEditing(false); recognition.retry() }}>重试收音</button>
                   <button className="btn ghost sm" onClick={() => { speech.stop(); setEditing(true); setVoiceAuto(false) }}>文字更正 / 手动提交</button>
-                  <label className="interviewAutoSubmit"><input type="checkbox" checked={autoSubmit} onChange={e => setAutoSubmit(e.target.checked)} />开启停顿自动提交（1.8 秒，仅完整转写）</label>
+                  <label className="interviewAutoSubmit"><input type="checkbox" checked={autoSubmit} onChange={e => setAutoSubmit(e.target.checked)} />说完自动提交（停顿 1.8 秒，可关闭）</label>
+                  <label className="interviewAutoSubmit"><input type="checkbox" checked={autoAdvance} onChange={e => setAutoAdvance(e.target.checked)} />反馈播报后自动下一题</label>
+                  <button className="btn ghost sm" onClick={() => { speech.stop(); stopCamera(); setVoiceAuto(false); setMicSuspended(true); st.setMode('text') }}>改用文字作答</button>
                   {recognition.interim && <span className="interviewInterim" role="status">临时转写：{recognition.interim}</span>}
                 </div>}
                 <div className="answerInput">
@@ -491,8 +509,7 @@ export default function InterviewRoom() {
                     <IconVideo size={14} />{cameraOn ? '关闭摄像头' : '开启摄像头'}
                   </button>
                 )}
-                <button className="btn ghost sm" disabled={st.finishing || st.stage === 'feedbacking'} onClick={finish}><IconStop size={14} />结束</button>
-                <button className="btn ghost sm" onClick={() => setDraft('')}><IconRefresh size={14} />清空</button>
+
               </div>
             </>
           )}

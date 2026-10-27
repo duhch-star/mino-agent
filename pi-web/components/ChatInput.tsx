@@ -2279,7 +2279,7 @@ export const ChatInput = memo(forwardRef<ChatInputHandle, Props>(function ChatIn
           <textarea
             ref={textareaRef}
             className="chat-input-textarea"
-            aria-label={compact ? t("chat.quoteQuestion") : "告诉 MINO 你的求职需求"}
+            aria-label={compact ? t("chat.quoteQuestion") : "告诉 MINOS 你的求职需求"}
             value={value}
             onChange={(e) => {
               valueRef.current = e.target.value;

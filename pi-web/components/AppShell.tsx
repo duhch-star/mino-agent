@@ -1430,7 +1430,7 @@ export function AppShell() {
   // Subagent work tabs: like files, only the active one is mounted.
   const activeAgentTab = agentTabs.find((tab) => `agent:${tab.sessionId}` === activeFileTabId) ?? null;
   const activeCwdName = activeCwd ? getFileName(activeCwd) || activeCwd : null;
-  const windowTitle = "MINO AGENT · 求职工作区";
+  const windowTitle = "MINOS · 求职工作区";
 
   useEffect(() => {
     const syncWindowTitle = () => {
