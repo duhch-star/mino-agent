@@ -1837,6 +1837,7 @@ export function AppShell() {
           />
         ))}
         <button
+          hidden
           ref={systemBtnRef}
           type="button"
           onClick={() => handleSystemInfoToggle("system", mobile)}
@@ -1845,7 +1846,7 @@ export function AppShell() {
           aria-label={translate("system.prompt")}
           aria-pressed={activeTopPanel === "system"}
           style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            display: "none", alignItems: "center", justifyContent: "center", gap: 6,
             width: mobile ? TOP_BAR_ICON_BUTTON_SIZE : undefined,
             height: "100%", padding: mobile ? 0 : "0 12px",
             background: activeTopPanel === "system" ? "var(--bg-selected)" : "none",
@@ -1875,6 +1876,7 @@ export function AppShell() {
           {!mobile && <span>{translate("system.label")}</span>}
         </button>
         <button
+          hidden
           type="button"
           onClick={() => handleSystemInfoToggle("tools", mobile)}
           disabled={mobile && !showChat}
@@ -1882,7 +1884,7 @@ export function AppShell() {
           aria-label={translate("tools.title")}
           aria-pressed={activeTopPanel === "tools"}
           style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            display: "none", alignItems: "center", justifyContent: "center", gap: 6,
             width: mobile ? TOP_BAR_ICON_BUTTON_SIZE : undefined,
             height: "100%", padding: mobile ? 0 : "0 12px",
             background: activeTopPanel === "tools" ? "var(--bg-selected)" : "none",
