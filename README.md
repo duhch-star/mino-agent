@@ -40,6 +40,7 @@ Windows 安装版由 Electron 管理前后端进程，随包提供 Node、Python
 - [开发与构建](#开发与构建)
 - [质量与验证](#质量与验证)
 - [安全与数据边界](#安全与数据边界)
+- [常见问题](#常见问题)
 - [路线图](#路线图)
 - [协作与问题反馈](#协作与问题反馈)
 - [品牌与第三方许可](#品牌与第三方许可)
@@ -50,9 +51,9 @@ Windows 安装版由 Electron 管理前后端进程，随包提供 Node、Python
 | --- | --- | --- |
 | **Pi 智能工作区** | 多会话、流式对话、模型配置、文件引用与工具调用；求职任务卡只填入草稿 | 真实生成需要用户配置可用模型；本地工具并非 OS 沙箱 |
 | **LaTeX 简历** | 结构化内容保存、版本冲突检测、模板切换、重新编译、右侧预览和 PDF 下载 | 编译只更新派生 PDF；模板示例不自动导入个人经历 |
-| **完整开源模板** | 共 7 款；Awesome-CV、FortySecondsCV 保留上游类、字体、图标、图片和完整示例 | 先前三款合成适配示例有明确标注；中文内容加入字体回退 |
+| **开源简历模板** | 共 7 款；其中 Awesome-CV、FortySecondsCV 提供完整上游资源与原例，保留类、字体、图标和图片 | McDowell、Hunner、latexcv 的预览为合成适配示例，有明确标注；中文加入字体回退，不承诺像素级一致 |
 | **10 项内置 Skills** | 简历诊断、定制、排版、ATS、求职信、模拟面试、STAR、邮件草稿、薪酬及 Offer 对比 | 离线随包分发，账号启用时直接加载；不覆盖已有用户编辑，不保证 ATS 或录用结果 |
-| **AI 面试** | 岗位、难度、时长配置；逐题作答与模型反馈；原有动态面试官、可选语音与本地摄像头预览 | 在线 ASR 在 Electron 中尚未保证；摄像头不参与视觉评分；汇总不是录用预测 |
+| **AI 面试** | 岗位、难度、时长配置；逐题作答与模型反馈；动态面试官、可选语音与本地摄像头预览 | 结束汇总仍含规则评分，不等于逐题模型评估；在线 ASR 在 Electron 中尚未保证，摄像头不参与视觉评分 |
 | **知识与学习** | 知识分类、院校专业、章节、笔记、收藏、测验和学习复盘 | 以本机实际内容与真实学习记录为准，不生成虚假完成记录 |
 | **账号与数据** | 本机账号、角色、求职画像、账号私有工作区；源码含业务额度与数据管理面板 | 业务记录清除不等于删除 Pi 会话、工作区文件或模型凭据 |
 | **桌面交付** | Electron 窗口、服务管理、退出清理、安装资源与用户数据分离 | 当前安装包未商业签名；macOS/Linux 未作为已验证交付承诺 |
@@ -86,13 +87,32 @@ Pi 对话梳理证据与差距 → 用户确认 → 保存简历 → LaTeX 编�
 **[下载 Preview 9 安装包](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/MINOS-Electron-Setup-1.0.0-x64.exe)** · [版本说明](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.9) · [SHA256 校验](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/SHA256SUMS.txt)
 
 1. 使用有仓库访问权限的 GitHub 账号下载（仓库目前为私有，无权限会显示 404）。Preview 9 安装包约 **414 MiB**。
-2. 校验 SHA256，退出旧版后覆盖安装。不需要单独安装 Node、Python 或 TeX。
+2. 校验 SHA256，退出旧版后覆盖安装。不需要单独安装 Node、Python 或 TeX；此处离线 TeX 能力限定于随包模板，不是完整通用 TeX 发行版。
 3. 首次启动创建自己的本机账号，无预置开发者账号或密钥。
 4. 在右上角配置模型，确认本地智能体权限，再开始对话。未配置模型时可先浏览业务页面。
 
-> **发布版与源码状态分开：** Preview 9 已包含 7 款模板与 10 项内置求职 Skills。之后的单前端目录清理、“账号与数据”面板、新品牌 logo，以及隐藏“系统 / 工具”入口等变更已进入 main，尚未重新发布安装包。不要把当前源码截图或说明理解为 Preview 9 已包含全部更新。
+### 版本与交付状态
+
+文档核对日期：**2026-10-28**。本页以 main 源码为准，安装体验以对应 Release 为准。
+
+| 交付项 | Preview 9 安装包 | 当前 main 源码 |
+| --- | --- | --- |
+| 7 款模板、10 项内置 Skills | 已包含并做过定向验证 | 保留 |
+| Pi Web 原生业务界面 | 已包含 | 保留；旧前端目录已删除 |
+| “系统 / 工具”顶栏入口隐藏 | 未包含 | 已实现 |
+| “账号与数据”面板 | 未包含 | 已实现 |
+| 指定品牌 logo、应用图标 | 未包含 | 已实现，待重新打包 |
+
+不要把 main 的品牌与界面说明理解为 Preview 9 已包含全部更新。最新发布记录请以 [Releases](https://github.com/Akun-python/minos/releases) 为准。
 
 安装包尚未商业签名，Windows 可能显示未知发布者。核验来源与散列，不要关闭系统安全防护。升级前建议备份数据。
+
+校验示例（在安装包与校验文件所在目录执行，比较结果应与校验文件中的散列完全一致）：
+
+```powershell
+Get-FileHash .\MINOS-Electron-Setup-1.0.0-x64.exe -Algorithm SHA256
+Get-Content .\SHA256SUMS.txt
+```
 
 ### 最小使用示例
 
@@ -164,6 +184,11 @@ minos/
 ```powershell
 git clone https://github.com/Akun-python/minos.git
 Set-Location minos
+git switch main
+
+# 与已安装的桌面应用分开，避免开发测试写入真实用户数据
+$env:MINOS_DATA_DIR = Join-Path (Get-Location).Path '.runtime\dev-data'
+
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend\requirements-local.txt
 Set-Location pi-web
@@ -173,7 +198,11 @@ Set-Location ..
 .\start-minos.cmd
 ```
 
-源码统一入口通常为 `http://127.0.0.1:5173`；Electron 优先使用 5175/8005，并按可用情况分配端口。以实际应用打开地址为准。不要在同一构建目录运行 `next dev` 时执行 `next build`。
+源码启动脚本使用 `http://127.0.0.1:5173` 与后端 `http://127.0.0.1:8000`，端口占用时会退出；Electron 优先使用 5175/8005，并按可用情况分配端口。以实际打开地址为准。源码停止使用根目录的停止脚本，不要直接按端口终止未知进程。
+
+上面的数据目录变量只对当前 PowerShell 及其子进程有效；若换终端启动，请重新设置。首次隔离运行会创建新的本机账号，不会迁入已有数据。源码依赖安装不自动准备离线 TeX 缓存；PDF 编译还需按 [离线运行说明](<desktop/LATEX_RUNTIME.md>) 准备资源，或配置含 xeCJK/Fandol 的 XeLaTeX。
+
+**不要在同一构建目录运行 `next dev` 时执行 `next build`。** 应先退出正在运行的开发服务，再执行生产构建；二者不是可以同时运行的验证步骤。
 
 需要模型或可选语音服务时，使用个人配置；不要在源码或文档写入真实凭据。详见 [Windows 部署指南](<DEPLOY-WINDOWS.md>) 和 [模型配置步骤](<docs/USER_GUIDE.md#模型与可选服务>)。
 
@@ -189,7 +218,29 @@ Set-Location ..
 
 ## 质量与验证
 
-当前已记录的验证，不等于持续集成平台实时状态：
+### 可复现的定向检查
+
+下面只执行指定范围，不代表全量前端测试。后端测试在后端目录运行；前端需要先安装依赖。
+
+```powershell
+# 在仓库根目录执行
+Push-Location backend
+try { ..\.venv\Scripts\python.exe -m unittest discover -p '*test*.py' -q }
+finally { Pop-Location }
+
+Push-Location pi-web
+try {
+  node --test lib/minos-business.test.mjs components/MinosAccountPanel.test.mjs components/hidden-diagnostics-toolbar.test.mjs components/minos-brand.test.mjs
+  node node_modules/typescript/bin/tsc --noEmit --incremental false
+}
+finally { Pop-Location }
+```
+
+安装包资源预检由装配脚本执行。首次准备运行时、下载依赖或调用远程模型需要网络；离线 PDF 编译通过不代表整个求职流程可离线完成。
+
+### 已记录的验证结果
+
+以下为截至本页核对日期的历史验证，不是自动更新的 CI 徽章，也不代表本次文档修改重新执行了全部测试：
 
 | 验证项目 | 最近结果 / 范围 |
 | --- | --- |
@@ -211,6 +262,19 @@ Set-Location ..
 - 内置技能为固定版本第三方参考流程，不能覆盖“不虚构事实”和“外传需授权”的要求；ATS、薪酬、法律或税务建议需结合实际核验。
 - “清除业务数据”只作用于明确列出的数据库记录，不删除账号、Pi JSONL、工作区、磁盘附件、PDF 或模型密钥。
 - 不要直接公开配置目录、日志或聊天导出；安全问题请通过仓库维护者的私有渠道报告，不附真实密钥或个人简历。
+
+## 常见问题
+
+| 问题 | 先检查什么 |
+| --- | --- |
+| 下载链接显示 404 | 当前 GitHub 账号是否有私有仓库权限；不要下载来源不明的镜像 |
+| 能浏览但无法对话 | 是否确认工作区权限、保存并选中模型，以及供应商网络、认证和额度是否可用 |
+| PDF 无法生成 | 区分保存成功与编译失败；安装版检查运行资源，源码版检查 TeX 与中文字体，不要为修缺依赖而改写经历 |
+| 升级后还是旧 logo 或旧顶栏 | 对照上方版本表：main 已实现不等于已安装 Release 已包含；确认启动的不是旧构建目录 |
+| 麦克风已授权但无识别 | Electron 在线 ASR 未保证可用；切换文字作答，播报成功不代表识别服务可用 |
+| 想清除全部个人材料 | 业务清除面板不处理全部磁盘材料；先备份并退出应用，再按实际数据范围审慎处理，勿直接删库排障 |
+
+更多排障与逐页说明见 [用户指南](<docs/USER_GUIDE.md#常见问题>)。
 
 ## 路线图
 
