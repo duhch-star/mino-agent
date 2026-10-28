@@ -19,6 +19,22 @@ test('catalog rewrites original PDF and licenses to fixed same-origin resources'
   assert.equal(data.items.length, 1);
   assert.equal(data.items[0].originalPdfUrl, '/api/minos/resume-templates?template=classic&resource=original.pdf');
 });
+test('all five backend catalogue entries are available and adapted URLs are honest', async () => {
+  const ids = ['classic','sidebar','mcdowell','hunner','minimal'];
+  const get = handler(async () => Response.json({items:ids.map(id=>({id}))}));
+  const data=await (await get(request(''))).json();
+  assert.equal(data.items.length,5);
+  for(const item of data.items) {
+    assert.match(item.originalPdfUrl, /classic|sidebar/.test(item.id) ? /resource=original.pdf$/ : /resource=template.pdf$/);
+    assert.equal(item.exampleKind, /classic|sidebar/.test(item.id) ? 'upstream-original' : 'synthetic-adaptation');
+  }
+});
+test('adapted template.pdf aliases the compatible original.pdf backend route', async () => {
+  const get=handler(async path=>{assert.equal(path,'/api/resume/templates/mcdowell/original.pdf');return new Response('%PDF-test');});
+  const response=await get(request('?template=mcdowell&resource=template.pdf'));
+  assert.equal(response.headers.get('content-type'),'application/pdf');
+  assert.match(response.headers.get('content-disposition'),/synthetic-template-example/);
+});
 test('PDF proxy returns full upstream bytes as inline PDF', async () => {
   const bytes = new Uint8Array([37,80,68,70,45,0,255,10]);
   const get = handler(async path => { assert.equal(path, '/api/resume/templates/sidebar/original.pdf'); return new Response(bytes); });
@@ -40,8 +56,8 @@ test('initial welcome does not embed PDFs; optional template component only draf
   const welcome = readFileSync(new URL('./CareerWelcome.tsx', import.meta.url), 'utf8');
   const component = readFileSync(new URL('./ResumeTemplateExample.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(welcome, /ResumeTemplateExample|<iframe|<embed|<object/);
-  assert.match(component, /<iframe[^>]+originalPdfUrl/);
-  assert.match(component, /onChooseTask\(`/);
+  assert.doesNotMatch(component, /<(?:iframe|object|embed)\b/);
+  assert.match(component, /onChooseTask\(templateDraft\(template\)\)/);
   assert.match(component, /作者.*不会作为你的经历保存/);
   assert.doesNotMatch(component, /method:\s*['"]POST/);
 });

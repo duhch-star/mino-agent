@@ -17,9 +17,9 @@ def verify(root, python=None):
 import sys
 sys.path.insert(0,sys.argv[1])
 from app.resume_schemas import Resume,Section
-from app.services.resume_service import render,compile_pdf
+from app.services.resume_service import render,compile_pdf,TEMPLATES
 r=Resume(name='离线中文测试',contact='test@example.invalid',summary='仅用于安装包验证，不是个人经历。',sections=[Section(title='教育经历',items=['待填写真实信息'])])
-for template in ['classic','sidebar']:
+for template in [t['id'] for t in TEMPLATES]:
  pdf,warnings=compile_pdf(render(r,template),template)
  assert pdf.startswith(b'%PDF-') and len(pdf)>1000
  import pypdfium2 as pdfium

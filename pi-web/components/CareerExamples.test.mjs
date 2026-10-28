@@ -14,8 +14,8 @@ test('welcome examples are opt-in and do not load PDF embeds',()=>{
  assert.doesNotMatch(html,/<iframe|<object|<embed|<img/);
 });
 test('real rendered thumbnails exist and example prompts never import author facts',()=>{
- for(const id of ['classic','sidebar'])assert.ok(existsSync(new URL(`../public/examples/${id}.png`,import.meta.url)));
+ for(const id of ['classic','sidebar','mcdowell','hunner','minimal'])assert.ok(existsSync(new URL(`../public/examples/${id}.png`,import.meta.url)));
  const source=readFileSync(new URL('./CareerExamples.tsx',import.meta.url),'utf8');
- assert.match(source,/不要导入示例作者/);assert.match(source,/只填入草稿/);assert.doesNotMatch(source,/fetch\(|method:\s*['"]POST/);
- assert.match(source,/resource=license/);
+ assert.match(source,/templateDraft\(example\)/);assert.match(source,/只填入草稿/);assert.doesNotMatch(source,/method:\s*['"]POST/);
+ assert.match(source,/example.licenseUrl/);
 });

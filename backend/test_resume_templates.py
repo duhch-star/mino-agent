@@ -59,7 +59,7 @@ class ResumeTemplatesTests(unittest.TestCase):
 
     def test_catalog_and_original_resources(self):
         catalog = service.template_catalog()
-        self.assertEqual(len(catalog), 2)
+        self.assertEqual(len(catalog), 5)
         for template in catalog:
             for field in ['author', 'overview', 'features', 'sections', 'fontInfo', 'compilerInfo', 'limitations', 'previewUrl', 'originalPdfUrl', 'sourceFileUrl', 'commitUrl']:
                 self.assertTrue(template[field], field)
@@ -69,6 +69,21 @@ class ResumeTemplatesTests(unittest.TestCase):
                 self.assertTrue(mime)
         for template, resource in [('unknown','preview'),('classic','../../.env'),('technical','preview')]:
             with self.assertRaises(ValueError): service.template_resource(template, resource)
+
+    def test_new_templates_preserve_content_and_escape(self):
+        for template in ['mcdowell', 'hunner', 'minimal']:
+            self.resume.name = r'\input{secret} & 张三'
+            source = service.render(self.resume, template)
+            self.assertNotIn(r'\input{secret}', source)
+            self.assertIn(r'\textbackslash{}input\{secret\}', source)
+            for text in ['示例大学', '计算机本科', '北京', '2020–2024', '真实履历']:
+                self.assertIn(text, source)
+            with zipfile.ZipFile(io.BytesIO(service.source_bundle(self.resume, template))) as bundle:
+                self.assertIn('upstream/LICENSE', bundle.namelist())
+                if template != 'minimal':
+                    self.assertTrue(any(n.endswith('.cls') and '/' not in n for n in bundle.namelist()))
+        self.assertNotIn(b'Times New Roman', service.assets('mcdowell')['mcdowellcv.cls'])
+        self.assertIn('Times New Roman', (service.TEMPLATE_ROOT/'mcdowell/mcdowellcv.cls').read_text())
 
     def test_fixed_sb2nov_hashes(self):
         folder=service.TEMPLATE_ROOT/'sb2nov'

@@ -1,6 +1,6 @@
 # Bundled offline resume compiler
 
-Windows installers include Tectonic 0.17.0 (XeTeX-compatible) and an offline cache of distribution resources required by the two shipped resume templates, including xeCJK and Fandol Chinese fonts. Users do not need to install a TeX distribution or download packages on first compile. This is a bounded template runtime, not a complete arbitrary-LaTeX installation.
+Windows installers include Tectonic 0.17.0 (XeTeX-compatible) and an offline cache of distribution resources required by the five shipped resume templates, including xeCJK and Fandol Chinese fonts. Users do not need to install a TeX distribution or download packages on first compile. This is a bounded template runtime, not a complete arbitrary-LaTeX installation.
 
 Provisioning inputs (generated files remain ignored):
 
@@ -16,7 +16,7 @@ Source/provenance:
 - https://www.tug.org/texlive/LICENSE.TL
 - https://www.latex-project.org/lppl/lppl-1-3c.txt
 
-Before staging, `verify_latex_runtime.py` uses embedded Python to compile both templates with synthetic Chinese, then opens each resulting PDF with PDFium. Compilation uses `--only-cached --untrusted`, with no shell escape or online fallback. A missing resource fails packaging rather than shipping a broken compiler.
+Before staging, `verify_latex_runtime.py` uses embedded Python to compile all five templates with synthetic Chinese, then opens each resulting PDF with PDFium. Compilation uses `--only-cached --untrusted`, with no shell escape or online fallback. A missing resource fails packaging rather than shipping a broken compiler.
 
 Desktop startup merges only the immutable distribution cache into a private user-data runtime cache, leaving installed resources read-only. The compiler environment uses that explicit cache, so a developer's global Tectonic cache is not needed. The backend locates the executable beneath `MINOS_APP_ROOT/runtime/latex`.
 

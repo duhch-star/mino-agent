@@ -94,7 +94,8 @@ def _changes(before, after):
         if old != new:
             changes.append({'field': f'第 {index + 1} 个内容板块', 'before': _section_text(old), 'after': _section_text(new)})
     if before['template'] != after['template']:
-        labels = {'classic': '经典单栏', 'sidebar': '侧栏双栏'}
+        labels = {t['id']: t['name'] for t in resume_service.TEMPLATES}
+        labels.update(classic='经典单栏', sidebar='侧栏双栏')
         changes.append({'field': '简历模板', 'before': labels.get(before['template'], '原模板'),
                         'after': labels.get(after['template'], '新模板')})
     return changes

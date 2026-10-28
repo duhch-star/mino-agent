@@ -1,0 +1,61 @@
+{
+    "schema_version":  1,
+    "repository":  "https://github.com/treyhunner/resume",
+    "commit":  "7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3",
+    "commit_url":  "https://github.com/treyhunner/resume/commit/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3",
+    "acquired_at_utc":  "2026-10-28T04:35:57.7423109Z",
+    "extraction":  "Pinned GitHub raw download via Invoke-WebRequest -OutFile; upstream bytes retained",
+    "license":  "MIT",
+    "entrypoint":  "resume.tex",
+    "compilation_status":  "not-run",
+    "manifest_self_hash":  "excluded to avoid self-reference",
+    "files":  [
+                  {
+                      "path":  "LICENSE",
+                      "size_bytes":  1055,
+                      "sha256":  "217b2f448ca2371cb158437d98b8d8617117a28234664be2adbc021bc427ebcb",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "LICENSE",
+                      "source_url":  "https://github.com/treyhunner/resume/blob/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/LICENSE",
+                      "raw_url":  "https://raw.githubusercontent.com/treyhunner/resume/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/LICENSE",
+                      "git_blob_sha1":  "8d526f7758d89c0139cea7e926e78c947e22b5c3"
+                  },
+                  {
+                      "path":  "UPSTREAM-README.md",
+                      "size_bytes":  381,
+                      "sha256":  "c7e1735af2c2011547656483403e6bab0400713902d1ccc28113b1007d191a78",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "README.md",
+                      "source_url":  "https://github.com/treyhunner/resume/blob/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/README.md",
+                      "raw_url":  "https://raw.githubusercontent.com/treyhunner/resume/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/README.md",
+                      "git_blob_sha1":  "cdd940ade4bd9f97f193f7590b8fc1a2884e39a9"
+                  },
+                  {
+                      "path":  "resume.cls",
+                      "size_bytes":  3502,
+                      "sha256":  "96fe411d2816d280d0d7c6d26b65f42cc4751da77a115f15984e8f5473ecfb99",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "resume.cls",
+                      "source_url":  "https://github.com/treyhunner/resume/blob/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/resume.cls",
+                      "raw_url":  "https://raw.githubusercontent.com/treyhunner/resume/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/resume.cls",
+                      "git_blob_sha1":  "6ded7022370638c47073773ec8371522a644188b"
+                  },
+                  {
+                      "path":  "resume.tex",
+                      "size_bytes":  2915,
+                      "sha256":  "3fa1edf6507e05c1af1123da7a1009d330776adac130be9db4db46bcd7e90417",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "resume.tex",
+                      "source_url":  "https://github.com/treyhunner/resume/blob/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/resume.tex",
+                      "raw_url":  "https://raw.githubusercontent.com/treyhunner/resume/7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3/resume.tex",
+                      "git_blob_sha1":  "6b5e2d298e946bd3fe1666d08200a97b886dd1d5"
+                  },
+                  {
+                      "path":  "README.md",
+                      "size_bytes":  2691,
+                      "sha256":  "ffb4c7e24ea8d42c110a522bf952731166295a74ac673d70b3fc81fee0ba4710",
+                      "kind":  "local-provenance-and-integration-notes"
+                  }
+              ],
+    "upstream_git_blob_verification":  "passed: all downloaded raw bytes match SHA1(blob \u003clength\u003e NUL + bytes) against pinned GitHub tree object IDs"
+}

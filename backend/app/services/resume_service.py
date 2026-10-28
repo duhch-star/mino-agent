@@ -51,6 +51,23 @@ TEMPLATE_DETAILS = {
 }
 
 
+# Additional upstream templates use a clearly labelled synthetic adapted preview.
+for _id, _name, _source, _commit, _layout, _path in [
+    ('mcdowell', 'McDowell · 紧凑履历', 'dnl-blkv/mcdowell-cv', 'b7e2d271c64814ee02b3505b191389c8df614035', '居中姓名 · 三列履历标题 · 紧凑分节', 'McDowell_CV_Template.tex'),
+    ('hunner', 'Trey Hunner · 分节单栏', 'treyhunner/resume', '7f889bfe6f7c1116cb8bd3cabbdabe7fb4b99ae3', '居中姓名 · 横线章节 · 缩进条目', 'resume.tex'),
+    ('minimal', 'latexcv Classic · 蓝色极简', 'jankapunkt/latexcv', '1fc7a2033ddda0fa77003444cafcf96117ad58dd', 'A4 单栏 · 蓝色居中章节 · 日期右对齐', 'classic/main.tex'),
+]:
+    _adaptation = '保留上游版式命令，填充用户纯文本；使用免费字体和 Fandol 中文回退。预览为 MINOS 合成示例，不是上游作者原始 PDF。'
+    TEMPLATES.append({'id': _id, 'name': _name, 'description': _layout, 'source': 'https://github.com/'+_source, 'license': 'MIT', 'upstream': _commit, 'adaptation': _adaptation})
+    TEMPLATE_DETAILS[_id] = {'title': _name, 'author': _source.split('/')[0], 'authorUrl': 'https://github.com/'+_source.split('/')[0],
+        'overview': _layout, 'tags': ['单栏', '中文适配', 'MIT'], 'layout': _layout,
+        'fontInfo': '免费字体 + Fandol 中文回退；不依赖商业系统字体。', 'compilerInfo': 'MINOS 内置 Tectonic / XeLaTeX。',
+        'features': [_layout, '支持教育、项目、工作、技能等自定义章节'], 'sections': ['自定义章节'],
+        'limitations': ['合成预览仅供版式参考，不会保存为个人履历。', '字体及中文适配与上游英文效果不同，请检查最终 PDF。'],
+        'adaptation': _adaptation, 'sourcePath': _path,
+        'files': {'preview': ('preview.png', 'image/png'), 'original.pdf': ('example.pdf', 'application/pdf'), 'readme': ('README.md', 'text/plain; charset=utf-8'), 'license': ('LICENSE', 'text/plain; charset=utf-8')}}
+
+
 def template_catalog():
     items = []
     for template in TEMPLATES:
@@ -69,7 +86,7 @@ def template_resource(template, kind):
     if template not in TEMPLATE_DETAILS or kind not in TEMPLATE_DETAILS[template]['files']:
         raise ValueError('未知模板资源')
     filename, mime = TEMPLATE_DETAILS[template]['files'][kind]
-    folder = 'sb2nov' if template == 'classic' else 'deedy'
+    folder = {'classic': 'sb2nov', 'sidebar': 'deedy'}.get(template, template)
     return TEMPLATE_ROOT / folder / filename, mime
 
 
@@ -133,8 +150,70 @@ def _deedy_section(section, *, left_column=False):
     return out + '\\sectionsep\n'
 
 
+def _render_additional(resume, template):
+    e = escape
+    if template == 'minimal':
+        pre = (TEMPLATE_ROOT/'minimal/main.tex').read_text(encoding='utf-8').split(r'\begin{document}', 1)[0]
+        pre = pre.replace(r'\usepackage[utf8]{inputenc}', '').replace(r'\usepackage[T1]{fontenc}', '')
+        pre = pre.replace(r'\usepackage[default]{raleway}', r'\usepackage{fontspec}\setsansfont{lmroman10-regular.otf}')
+        pre = pre.replace('bottom=-.6cm', 'bottom=1.5cm').replace(r'\setlength{\headheight}{-5pt}', r'\setlength{\headheight}{14pt}')
+        pre = pre.replace('p{13.6cm}  x{3.9cm}', r'p{0.70\textwidth} x{0.23\textwidth}')
+        # The selected Classic layout does not use the optional arrow graphics.
+        # Remove unused TikZ libraries and serialize bullets directly (user commas
+        # must not become PGF list separators).
+        import re
+        pre = re.sub(r'\\usepackage\{tikz\}', '', pre)
+        pre = re.sub(r'\\usetikzlibrary\{[^}]*\}', '', pre)
+        pre = re.sub(r'\\foreach \\desc in \{#4\}\{.*?\n\s*\}', lambda _: '#4', pre, flags=re.DOTALL)
+        out = pre + CJK + '\n\\begin{document}\n\\pagestyle{empty}\n'
+        out += r'\begin{center}{\Huge\textbf{' + e(resume.name or '姓名') + '}}\\\\[8pt]' + e(resume.contact) + '\n\\end{center}\n'
+    else:
+        cls = 'resume' if template == 'hunner' else 'mcdowellcv'
+        out = '\\documentclass{' + cls + '}\n' + CJK
+        if template == 'hunner':
+            out += '\\usepackage[margin=0.65in]{geometry}\n'
+        out += '\\name{' + e(resume.name or '姓名') + '}\n\\address{' + e(resume.contact) + '}\n\\begin{document}\n'
+        if template == 'mcdowell':
+            out += '\\makeheader\n'
+    sections = list(resume.sections)
+    if resume.summary:
+        from app.resume_schemas import Section
+        sections.insert(0, Section(title='个人简介', items=[resume.summary]))
+    for section in sections:
+        title = e(section.title)
+        if template == 'minimal':
+            out += '\\cvsection{' + title + '}\n'
+            for entry in _entries(section):
+                items = ''.join(r'$\cdot$ ' + e(i) + r'\\[3pt]' for i in entry.items)
+                out += '\\cvevent' + ''.join('{' + v + '}' for v in [e(entry.dates), e(entry.heading), e(' · '.join(x for x in [entry.subtitle, entry.location] if x)), items]) + '\n'
+            for item in section.items:
+                out += e(item) + '\\par\n'
+        elif template == 'hunner':
+            out += '\\begin{rSection}{' + title + '}\n'
+            for entry in _entries(section):
+                # An empty list still needs an item; preserve standalone location.
+                subtitle = entry.subtitle or (' ' if entry.location else '')
+                out += '\\begin{rSubsection}' + ''.join('{' + e(x) + '}' for x in [entry.heading, entry.dates, subtitle, entry.location]) + '\n'
+                out += ''.join('\\item ' + e(i) + '\n' for i in entry.items) if entry.items else '\\item[]\n'
+                out += '\\end{rSubsection}\n'
+            out += ''.join(e(i) + '\\par\n' for i in section.items) + '\\end{rSection}\n'
+        else:
+            out += '\\begin{cvsection}{' + title + '}\n'
+            for entry in _entries(section):
+                out += '\\begin{cvsubsection}[1]' + ''.join('{' + e(x) + '}' for x in [entry.subtitle, entry.heading, entry.dates]) + '\n'
+                if entry.location:
+                    out += e(entry.location) + '\\par\n'
+                if entry.items:
+                    out += '\\begin{itemize}\n' + ''.join('\\item ' + e(i) + '\n' for i in entry.items) + '\\end{itemize}\n'
+                out += '\\end{cvsubsection}\n'
+            out += ''.join(e(i) + '\\par\n' for i in section.items) + '\\end{cvsection}\n'
+    return '% MINOS adapted upstream template; free fonts and CJK. User fields escaped.\n' + out + '\\end{document}\n'
+
+
 def render(resume, template):
     template = normalize(template)
+    if template in ('hunner', 'mcdowell', 'minimal'):
+        return _render_additional(resume, template)
     if template == 'classic':
         original = (TEMPLATE_ROOT / 'sb2nov/sourabh_bajaj_resume.tex').read_text(encoding='utf-8')
         preamble = original.split(r'\begin{document}', 1)[0]
@@ -177,8 +256,12 @@ def render(resume, template):
 
 def assets(template):
     template = normalize(template)
-    folder = TEMPLATE_ROOT / ('deedy' if template == 'sidebar' else 'sb2nov')
-    return {p.relative_to(folder).as_posix(): p.read_bytes() for p in folder.rglob('*') if p.is_file()}
+    folder = TEMPLATE_ROOT / {'classic': 'sb2nov', 'sidebar': 'deedy'}.get(template, template)
+    result = {p.relative_to(folder).as_posix(): p.read_bytes() for p in folder.rglob('*') if p.is_file()}
+    if template == 'mcdowell':
+        # Keep the archived upstream class intact; ship a labelled free-font copy.
+        result['mcdowellcv.cls'] = result['mcdowellcv.cls'].replace(b'Times New Roman', b'lmroman10-regular.otf').replace(rb'\textls[110]{\textsc{\@name}}', rb'\textsc{\@name}')
+    return result
 
 
 def source_bundle(resume, template):
@@ -186,8 +269,8 @@ def source_bundle(resume, template):
     with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.writestr('resume.tex', render(resume, template))
         for name, content in assets(template).items():
-            archive.writestr('upstream/' + name, content)
-            if name == 'deedy-resume-openfont.cls' or name.startswith('fonts/'):
+            archive.writestr('upstream/' + name, (TEMPLATE_ROOT/'mcdowell'/name).read_bytes() if template == 'mcdowell' and name == 'mcdowellcv.cls' else content)
+            if name.endswith('.cls') or name.startswith('fonts/'):
                 archive.writestr(name, content)
         archive.writestr('BUILD.txt', 'Compile resume.tex with XeLaTeX (TeX Live with xeCJK + Fandol).\nKeep bundled class, fonts and licenses with this source.\nMINOS only fills content and adds Chinese fallback; upstream layout retained.\n')
     return buffer.getvalue()
@@ -217,7 +300,7 @@ def compile_pdf(source, template='classic'):
         root = Path(directory)
         (root / 'resume.tex').write_text(source, encoding='utf-8')
         for name, content in assets(template).items():
-            if name == 'deedy-resume-openfont.cls' or name.startswith('fonts/'):
+            if name.endswith('.cls') or name.startswith('fonts/'):
                 dest = root / name
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.write_bytes(content)

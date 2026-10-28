@@ -1,0 +1,61 @@
+{
+    "schema_version":  1,
+    "repository":  "https://github.com/dnl-blkv/mcdowell-cv",
+    "commit":  "b7e2d271c64814ee02b3505b191389c8df614035",
+    "commit_url":  "https://github.com/dnl-blkv/mcdowell-cv/commit/b7e2d271c64814ee02b3505b191389c8df614035",
+    "acquired_at_utc":  "2026-10-28T04:35:55.4523403Z",
+    "extraction":  "Pinned GitHub raw download via Invoke-WebRequest -OutFile; upstream bytes retained",
+    "license":  "MIT",
+    "entrypoint":  "McDowell_CV_Template.tex",
+    "compilation_status":  "not-run",
+    "manifest_self_hash":  "excluded to avoid self-reference",
+    "files":  [
+                  {
+                      "path":  "LICENSE",
+                      "size_bytes":  1083,
+                      "sha256":  "702fcbf3c9384384736820e7ff1654b4eacbc4da4925cdc1c1e5afe81231ccd7",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "LICENSE",
+                      "source_url":  "https://github.com/dnl-blkv/mcdowell-cv/blob/b7e2d271c64814ee02b3505b191389c8df614035/LICENSE",
+                      "raw_url":  "https://raw.githubusercontent.com/dnl-blkv/mcdowell-cv/b7e2d271c64814ee02b3505b191389c8df614035/LICENSE",
+                      "git_blob_sha1":  "9d349e12615464c34cc5de5821370036537e5f90"
+                  },
+                  {
+                      "path":  "UPSTREAM-README.md",
+                      "size_bytes":  2110,
+                      "sha256":  "edbede60e15b29fb729e04b7e221c8806cd8db576fa3fcc0d7ec1322cf3847a6",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "README.md",
+                      "source_url":  "https://github.com/dnl-blkv/mcdowell-cv/blob/b7e2d271c64814ee02b3505b191389c8df614035/README.md",
+                      "raw_url":  "https://raw.githubusercontent.com/dnl-blkv/mcdowell-cv/b7e2d271c64814ee02b3505b191389c8df614035/README.md",
+                      "git_blob_sha1":  "0d21a7eced241cbcbebcb7be39d9e39b8d7fa835"
+                  },
+                  {
+                      "path":  "mcdowellcv.cls",
+                      "size_bytes":  7194,
+                      "sha256":  "f3b18a2a2fbd3d041361cf108ca3c1bd21705714ac1511d91cdcea7c14db91fe",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "mcdowellcv.cls",
+                      "source_url":  "https://github.com/dnl-blkv/mcdowell-cv/blob/b7e2d271c64814ee02b3505b191389c8df614035/mcdowellcv.cls",
+                      "raw_url":  "https://raw.githubusercontent.com/dnl-blkv/mcdowell-cv/b7e2d271c64814ee02b3505b191389c8df614035/mcdowellcv.cls",
+                      "git_blob_sha1":  "582977a6429ba03aeec2e9a21d337bbb2b3b202c"
+                  },
+                  {
+                      "path":  "McDowell_CV_Template.tex",
+                      "size_bytes":  5746,
+                      "sha256":  "66eb5033174c63b9113899e636ca283f948e2922f8e00aadd41c48d32d3e0c3d",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "McDowell_CV_Template.tex",
+                      "source_url":  "https://github.com/dnl-blkv/mcdowell-cv/blob/b7e2d271c64814ee02b3505b191389c8df614035/McDowell_CV_Template.tex",
+                      "raw_url":  "https://raw.githubusercontent.com/dnl-blkv/mcdowell-cv/b7e2d271c64814ee02b3505b191389c8df614035/McDowell_CV_Template.tex",
+                      "git_blob_sha1":  "18b0ac62a40a7e3a8ff8366ad18140495a0933bd"
+                  },
+                  {
+                      "path":  "README.md",
+                      "size_bytes":  2773,
+                      "sha256":  "19fc7c3fd7c0b2ce0d1d48d00468d447d98179a095cdcfaed5e649969f0a2c25",
+                      "kind":  "local-provenance-and-integration-notes"
+                  }
+              ],
+    "upstream_git_blob_verification":  "passed: all downloaded raw bytes match SHA1(blob \u003clength\u003e NUL + bytes) against pinned GitHub tree object IDs"
+}

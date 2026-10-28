@@ -14,7 +14,7 @@ const revision = Type.Integer({ minimum: 0 });
 const definitions = [
   { name: 'resume_read', label: '读取简历', description: '读取当前会话完整简历及修订号。', parameters: Type.Object({}) },
   { name: 'resume_update', label: '保存简历', description: '以完整结构保存简历，成功后自动编译并下载本次版本PDF；返回真实保存前后changes和previousRevision。', parameters: Type.Object({ resume, expectedRevision: revision }) },
-  { name: 'resume_set_template', label: '切换原版模板', description: '只切换原版 classic 单栏或 sidebar 双栏模板，保存后自动编译并下载本次版本PDF；返回真实模板changes和previousRevision。', parameters: Type.Object({ template: Type.Union([Type.Literal('classic'), Type.Literal('sidebar')]), expectedRevision: revision }) },
+  { name: 'resume_set_template', label: '切换原版模板', description: '只切换 classic 经典单栏、sidebar 双栏、mcdowell 紧凑履历、hunner 分节单栏、minimal 蓝色极简模板，保存后自动编译并下载本次版本PDF；返回真实模板changes和previousRevision。', parameters: Type.Object({ template: Type.Union([Type.Literal('classic'), Type.Literal('sidebar'), Type.Literal('mcdowell'), Type.Literal('hunner'), Type.Literal('minimal')]), expectedRevision: revision }) },
   { name: 'resume_compile', label: '编译简历PDF', description: '只编译当前版本并保存PDF到会话工作区，可用于重试编译；不得保存或修改简历正文，不得为编译调用resume_update/resume_set_template。', parameters: Type.Object({}) },
 ];
 

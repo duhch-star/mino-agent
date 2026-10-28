@@ -25,7 +25,7 @@ class Resume(BaseModel):
     sections: list[Section] = Field(default_factory=list, max_length=15)
 
 
-Template = Literal['classic', 'sidebar']
+Template = Literal['classic', 'sidebar', 'mcdowell', 'hunner', 'minimal']
 
 
 class DocumentWrite(BaseModel):

@@ -1,0 +1,61 @@
+{
+    "schema_version":  1,
+    "repository":  "https://github.com/jankapunkt/latexcv",
+    "commit":  "1fc7a2033ddda0fa77003444cafcf96117ad58dd",
+    "commit_url":  "https://github.com/jankapunkt/latexcv/commit/1fc7a2033ddda0fa77003444cafcf96117ad58dd",
+    "acquired_at_utc":  "2026-10-28T04:36:00.4133729Z",
+    "extraction":  "Pinned GitHub raw download via Invoke-WebRequest -OutFile; upstream bytes retained",
+    "license":  "MIT",
+    "entrypoint":  "main.tex",
+    "compilation_status":  "not-run",
+    "manifest_self_hash":  "excluded to avoid self-reference",
+    "files":  [
+                  {
+                      "path":  "LICENSE",
+                      "size_bytes":  1068,
+                      "sha256":  "f9ac05cb8604799eb40f34ff48d524dfc346b2f2c809dab5e2a982f0e791cbcd",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "LICENSE",
+                      "source_url":  "https://github.com/jankapunkt/latexcv/blob/1fc7a2033ddda0fa77003444cafcf96117ad58dd/LICENSE",
+                      "raw_url":  "https://raw.githubusercontent.com/jankapunkt/latexcv/1fc7a2033ddda0fa77003444cafcf96117ad58dd/LICENSE",
+                      "git_blob_sha1":  "a8b21adb42902e5a9c39b7ef017d5b071c006bf7"
+                  },
+                  {
+                      "path":  "UPSTREAM-README.md",
+                      "size_bytes":  8492,
+                      "sha256":  "f32b0cbf1526663a56feb70a1b6427bf9b43a74b63aac7d1ea68214a439e2622",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "README.md",
+                      "source_url":  "https://github.com/jankapunkt/latexcv/blob/1fc7a2033ddda0fa77003444cafcf96117ad58dd/README.md",
+                      "raw_url":  "https://raw.githubusercontent.com/jankapunkt/latexcv/1fc7a2033ddda0fa77003444cafcf96117ad58dd/README.md",
+                      "git_blob_sha1":  "aa5fb9ab7576c5f3558a2553faf1ed8321264a51"
+                  },
+                  {
+                      "path":  "UPSTREAM-CLASSIC-README.md",
+                      "size_bytes":  35,
+                      "sha256":  "2cd9607aeddbcbd68be76d946872f7b41d22de98d5ffb990b0d9734fab41a68c",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "classic/README.md",
+                      "source_url":  "https://github.com/jankapunkt/latexcv/blob/1fc7a2033ddda0fa77003444cafcf96117ad58dd/classic/README.md",
+                      "raw_url":  "https://raw.githubusercontent.com/jankapunkt/latexcv/1fc7a2033ddda0fa77003444cafcf96117ad58dd/classic/README.md",
+                      "git_blob_sha1":  "faa96054eb29951b0e306a082655ed40b247a837"
+                  },
+                  {
+                      "path":  "main.tex",
+                      "size_bytes":  14320,
+                      "sha256":  "a9b01556db05472544048301b6960b6f519679a6a585cf9a0423551499dca589",
+                      "kind":  "upstream-unmodified",
+                      "upstream_path":  "classic/main.tex",
+                      "source_url":  "https://github.com/jankapunkt/latexcv/blob/1fc7a2033ddda0fa77003444cafcf96117ad58dd/classic/main.tex",
+                      "raw_url":  "https://raw.githubusercontent.com/jankapunkt/latexcv/1fc7a2033ddda0fa77003444cafcf96117ad58dd/classic/main.tex",
+                      "git_blob_sha1":  "6e7bf90b81a52a4d33e209d2d5270e770487d592"
+                  },
+                  {
+                      "path":  "README.md",
+                      "size_bytes":  3007,
+                      "sha256":  "39dca37ae6004e7c8224cd6b70b8e6f36a50812367919f55fefb1dced2374275",
+                      "kind":  "local-provenance-and-integration-notes"
+                  }
+              ],
+    "upstream_git_blob_verification":  "passed: all downloaded raw bytes match SHA1(blob \u003clength\u003e NUL + bytes) against pinned GitHub tree object IDs"
+}

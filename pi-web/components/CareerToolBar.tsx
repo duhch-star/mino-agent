@@ -9,7 +9,7 @@ export const CAREER_CHAT_TOOLS = [
 const RESUME_TOOLS = [
  {name:'读取简历',icon:'▤',prompt:'请真实调用resume_read，读取本会话简历和当前修订号，并展示内容。'},
  {name:'修改简历',icon:'◇',prompt:'我要修改LaTeX简历。请先真实调用resume_read，再询问我需要修改的内容；先展示修改前后优化对比及修改理由，确认后用resume_update保存，保留其他字段，不虚构经历；保存后自动编译并打开最新PDF，编译失败需明确说明。'},
- {name:'选择模板',icon:'▧',prompt:'请读取本会话简历，向我介绍classic单栏和sidebar双栏原版LaTeX模板。等我选择后再调用resume_set_template，保留简历内容。'},
+ {name:'选择模板',icon:'▧',prompt:'请先读取本会话简历，并从模板列表介绍 classic、sidebar、mcdowell、hunner、minimal 五款LaTeX模板；classic/sidebar为作者原版示例，其余为合成示例适配版。等我选择并确认后才调用resume_set_template，仅切换版式，保持当前正文，不保存任何示例经历。'},
  {name:'生成 PDF',icon:'↗',prompt:'请只调用resume_compile编译当前LaTeX简历PDF，并提供可打开的PDF文件。不要保存或修改正文，不调用resume_update或resume_set_template。若没有简历，请先说明需要建立简历，不要虚构文件。'},
 ];
 export function CareerToolBar({ onChoose }: { onChoose: (prompt: string) => void }) {
