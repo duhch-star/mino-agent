@@ -3,7 +3,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-MODULES = ('pdfplumber', 'pypdf', 'docx', 'olefile', 'lxml.etree')
+MODULES = ('pdfplumber', 'pypdf', 'docx', 'olefile', 'lxml.etree', 'pypdfium2', 'PIL.Image')
 
 
 def verify(python: Path):

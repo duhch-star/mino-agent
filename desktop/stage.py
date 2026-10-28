@@ -5,6 +5,8 @@ ROOT = Path(__file__).resolve().parent.parent
 from verify_document_runtime import verify
 # Validate before deleting an existing stage; never ship silently empty parsers.
 verify(ROOT / '.runtime/packaging/python/python.exe')
+from verify_latex_runtime import verify as verify_latex
+verify_latex(ROOT / '.runtime/packaging/latex', ROOT / '.runtime/packaging/python/python.exe')
 STAGE = ROOT / 'dist/windows/app'
 # Recreate only this verified generated staging directory; never mutate the checkout.
 assert STAGE.resolve() == (ROOT / 'dist/windows/app').resolve()
@@ -18,6 +20,10 @@ def copy(source, target, ignore=None):
 def excluded(directory, names):
     return [n for n in names if n in {'__pycache__','.pytest_cache','.git','.cache','uploads','workspaces','.env'} or n.startswith('.env.') or n.endswith(('.pyc','.db','.sqlite','.sqlite3','.log'))]
 copy(ROOT/'.runtime/packaging/python', STAGE/'runtime/python', excluded)
+latex = ROOT/'.runtime/packaging/latex'
+if not (latex/'tectonic.exe').is_file() or not (latex/'cache/bundles').is_dir():
+    raise RuntimeError('Offline LaTeX runtime missing; provision and verify both templates before packaging')
+copy(latex, STAGE/'runtime/latex')
 copy(Path(shutil.which('node')), STAGE/'runtime/node/node.exe')
 copy(ROOT/'backend/app', STAGE/'backend/app', excluded)
 for name in ['package.json','package-lock.json','tsconfig.json','LICENSE']:

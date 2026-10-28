@@ -9,6 +9,7 @@ import { MinosBusinessNavigation, MinosBusinessContent, useMinosBusiness } from 
 import { NewSessionContextBar, type NewSessionContextControl } from "./NewSessionContextBar";
 import type { ChatScrollPosition } from "@/lib/chat-scroll-position";
 import { FileViewer } from "./FileViewer";
+import { ResumePreviewPanel } from './ResumePreviewPanel';
 import { TabBar, type Tab } from "./TabBar";
 import { openFileTab, saveFileViewerState, saveParkedFileViewerState, switchFileWorkspace, type ParkedFileWorkspace } from "./file-tab-state";
 import { SettingsPanel, SettingsSectionIcon } from "./SettingsPanel";
@@ -550,7 +551,18 @@ export function AppShell() {
   // Subagent work tabs are session-scoped and transient: no persistence, and
   // they are dropped when the project changes (they belong to its sessions).
   const [agentTabs, setAgentTabs] = useState<{ sessionId: string; label: string }[]>([]);
+  const [resumePreviewVisible, setResumePreviewVisible] = useState(false);
+  const [resumePreviewRefresh, setResumePreviewRefresh] = useState(0);
+  const [resumeRequestedRevision, setResumeRequestedRevision] = useState<number | undefined>();
+  useEffect(() => {
+    if (business.path !== '/resume') return;
+    setResumeRequestedRevision(undefined);
+    setResumePreviewVisible(true);
+    setActiveFileTabId('resume:preview');
+    setRightPanelOpen(true);
+  }, [business.path, selectedSession?.id]);
   const panelTabs: Tab[] = [
+    ...(resumePreviewVisible ? [{ id: 'resume:preview', label: 'LaTeX 简历', filePath: '' }] : []),
     ...fileTabs,
     ...terminalTabs.map((tab) => ({
       id: tab.id,
@@ -1219,6 +1231,17 @@ export function AppShell() {
   }, [isMobile]);
 
   const handleOpenLinkedFile = useCallback((filePath: string, page?: number) => {
+    // Bridge-generated resume PDFs use the authenticated image renderer, not
+    // Electron's sandboxed native PDF plugin. Ordinary file links are unchanged.
+    if (/[\\/]resume-previews[\\/][^\\/]+\.pdf$/i.test(filePath)) {
+      const revision = /-r(\d+)-/.exec(getFileName(filePath));
+      setResumeRequestedRevision(revision ? Number(revision[1]) : undefined);
+      setResumePreviewVisible(true);
+      setResumePreviewRefresh(value => value + 1);
+      setActiveFileTabId('resume:preview');
+      setRightPanelOpen(true);
+      return;
+    }
     handleOpenFile(filePath, getFileName(filePath), { sourceSessionId: selectedSession?.id ?? null, page });
   }, [handleOpenFile, selectedSession?.id]);
 
@@ -1265,6 +1288,12 @@ export function AppShell() {
   };
 
   const handleCloseFileTab = useCallback((tabId: string) => {
+    if (tabId === 'resume:preview') {
+      setResumePreviewVisible(false);
+      setActiveFileTabId(fileTabs.at(-1)?.id ?? terminalTabs.at(-1)?.id ?? lastAgentTabId(agentTabs));
+      if (!fileTabs.length && !terminalTabs.length && !agentTabs.length) setRightPanelOpen(false);
+      return;
+    }
     if (terminalTabs.some((tab) => tab.id === tabId)) {
       setTerminalTabs((tabs) => tabs.map((tab) => tab.id === tabId && !tab.closing ? { ...tab, closing: "close" } : tab));
       return;
@@ -1446,7 +1475,7 @@ export function AppShell() {
   const sidebarContent = (
     <>
       <SessionSidebar
-        businessNavigation={<MinosBusinessNavigation path={business.path} onNavigate={(path) => { business.navigate(path); if (isMobile) setSidebarOpen(false); }} />}
+        businessNavigation={<MinosBusinessNavigation path={business.path} onNavigate={(path) => { business.navigate(path); if (path === '/resume') { setResumeRequestedRevision(undefined); setResumePreviewVisible(true); setResumePreviewRefresh(value => value + 1); setActiveFileTabId('resume:preview'); setRightPanelOpen(true); } if (isMobile) setSidebarOpen(false); }} />}
         selectedSessionId={selectedSession?.id ?? null}
         onSelectSession={handleSelectSession}
         onNewSession={handleNewSession}
@@ -2754,7 +2783,9 @@ export function AppShell() {
 
         {/* Only the active viewer is mounted. Lightweight per-tab state is restored on activation. */}
         <div style={{ flex: 1, minHeight: 0, overflow: "hidden", paddingBottom: "env(safe-area-inset-bottom)" }}>
-          {activeFileTab?.filePath ? (
+          {activeFileTabId === 'resume:preview' ? (
+            <ResumePreviewPanel key={selectedSession?.id ?? 'new'} sessionId={selectedSession?.id} refreshKey={resumePreviewRefresh} requestedRevision={resumeRequestedRevision} />
+          ) : activeFileTab?.filePath ? (
             <FileViewer
               key={`${fileWorkspaceGeneration}:${activeFileTab.id}:${activeFileTab.viewerRevision ?? 0}`}
               filePath={activeFileTab.filePath}

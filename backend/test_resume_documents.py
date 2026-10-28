@@ -46,6 +46,16 @@ class ResumeDocumentTests(unittest.TestCase):
     def update(self, revision=0, resume=None):
         return self.call('resume_update', {'resume': self.resume if resume is None else resume, 'expectedRevision': revision})
 
+    def test_explicit_recompile_runs_engine_without_changing_content_or_revision(self):
+        self.update()
+        before = self.call('resume_read')
+        with patch.object(service.resume_service, 'compile_pdf', return_value=(b'%PDF-synthetic', [])) as engine:
+            first = self.call('resume_compile')
+            second = self.call('resume_compile')
+            self.assertEqual(engine.call_count, 2)
+        self.assertEqual(first['revision'], second['revision'])
+        self.assertEqual(before, self.call('resume_read'))
+
     def test_empty_draft_no_fabrication(self):
         self.assertEqual(self.call('resume_read'), {'resume': {'name': '', 'contact': '', 'summary': '', 'sections': []}, 'template': 'classic', 'revision': 0, 'exists': False})
         state = self.call('resume_set_template', {'template': 'sidebar', 'expectedRevision': 0})
@@ -97,7 +107,7 @@ class ResumeDocumentTests(unittest.TestCase):
             self.assertIn(r'\textbackslash{}input\{secret\}', compiler.call_args.args[0])
             self.assertEqual(service.read_pdf(self.db, 'alice', 'one', 1), b'%PDF-test')
             self.call('resume_compile')
-            self.assertEqual(compiler.call_count, 1)
+            self.assertEqual(compiler.call_count, 2)  # explicit recompile is not a cache read
         self.call('resume_set_template', {'template': 'sidebar', 'expectedRevision': 1})
         self.assert_status(409, lambda: service.read_pdf(self.db, 'alice', 'one', 1))
         self.assert_status(404, lambda: service.read_pdf(self.db, 'alice', 'one', 2))

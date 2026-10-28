@@ -96,6 +96,7 @@ function serviceEnvironment() {
       path.join(windows, 'System32'), windows].join(path.delimiter),
     MINOS_DATA_DIR: data, MINOS_APP_ROOT: payload, MINOS_DESKTOP: '1', MINOS_GATEWAY: '1',
     MINOS_API_BASE_URL: backendUrl, MINOS_GATEWAY_SESSION_DIR: path.join(data, 'gateway'),
+    MINOS_LATEX_CACHE: path.join(data, 'runtime', 'latex-cache'),
   });
 }
 
@@ -375,6 +376,14 @@ async function startCycle() {
     await stopServices();
     if (window && !window.isDestroyed()) window.destroy();
     frontendUrl = ''; backendUrl = '';
+    const latexSource = path.join(payload, 'runtime', 'latex', 'cache');
+    const latexCache = path.join(data, 'runtime', 'latex-cache');
+    if (fs.existsSync(latexSource)) {
+      fs.mkdirSync(latexCache, { recursive: true });
+      // Cache contains only immutable TeX distribution assets, no user data.
+      // Merge on upgrades so newly required resources are provisioned offline.
+      fs.cpSync(latexSource, latexCache, { recursive: true, force: false });
+    }
     const python = requireFile('runtime/python/python.exe');
     const node = requireFile('runtime/node/node.exe');
     requireFile('pi-web/.next/BUILD_ID');

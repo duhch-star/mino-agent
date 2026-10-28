@@ -194,6 +194,11 @@ def source_bundle(resume, template):
 
 
 def compiler():
+    app_root = os.getenv('MINOS_APP_ROOT')
+    if app_root:
+        bundled = Path(app_root) / 'runtime/latex/tectonic.exe'
+        if bundled.is_file():
+            return str(bundled)
     configured = os.getenv('RESUME_XELATEX', settings.resume_xelatex)
     if configured and Path(configured).is_file():
         return configured
@@ -219,7 +224,15 @@ def compile_pdf(source, template='classic'):
         env = os.environ.copy()
         env.update({'openin_any': 'p', 'openout_any': 'p'})
         if 'tectonic' in Path(executable).name.lower():
+            bundled_cache = Path(executable).parent / 'cache'
+            cache = os.getenv('MINOS_LATEX_CACHE')
+            if cache:
+                env['TECTONIC_CACHE_DIR'] = cache
+            elif bundled_cache.is_dir():
+                env['TECTONIC_CACHE_DIR'] = str(bundled_cache)
             command = [executable, '--untrusted', '--keep-logs', '--keep-intermediates', '--outdir', directory, 'resume.tex']
+            if cache or bundled_cache.is_dir():
+                command.insert(1, '--only-cached')
         else:
             command = [executable, '-no-shell-escape', '-interaction=nonstopmode', '-halt-on-error', '-output-directory', directory, 'resume.tex']
         result = subprocess.run(command, cwd=directory, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=90)

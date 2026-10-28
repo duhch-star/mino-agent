@@ -196,8 +196,8 @@ def compile_document(db, user_id, conversation_id):
     _owned(db, user_id, conversation_id)
     row = _row(db, user_id, conversation_id)
     state = _state(row)
-    if row is not None and row.pdf_revision == row.revision and row.pdf_data:
-        return _compile_result(conversation_id, row.revision, row.template, json.loads(row.warnings_json))
+    # An explicit compile request really reruns the engine, even when a PDF
+    # cache exists. Only derived PDF data changes; content/revision stay intact.
     # Persist an empty draft without inventing content; compilation itself does not
     # change the document revision. Unique PK makes simultaneous first writes safe.
     if row is None:
@@ -212,8 +212,22 @@ def compile_document(db, user_id, conversation_id):
     try:
         source = resume_service.render(Resume.model_validate(state['resume']), state['template'])
         pdf, warnings = resume_service.compile_pdf(source, state['template'])
-    except Exception:
-        _error(503, 'PDF 编译失败或超时，请缩短内容、切换模板后重试')
+    except FileNotFoundError:
+        _error(503, '简历编译器缺失，请修复或更新 MINOS 安装包；无需修改简历内容')
+    except Exception as exc:
+        import subprocess
+        if isinstance(exc, subprocess.TimeoutExpired):
+            _error(503, 'LaTeX 编译超时，简历正文和修订未改变；请重试并检查编译环境')
+        message = str(exc)
+        if '未找到 XeLaTeX' in message:
+            _error(503, '未找到内置 LaTeX 编译器，请更新或修复 MINOS 安装包；无需修改简历内容')
+        # Return only a bounded TeX diagnostic, never raw stdout (which can
+        # contain private source, paths or environment details).
+        import re
+        match = re.search(r'(?:LaTeX Error:|Package [\w-]+ Error:|error:)\s*([^\r\n]{1,180})', message, re.IGNORECASE)
+        detail = match.group(1) if match else '请检查内置离线资源或模板兼容性'
+        detail = re.sub(r'[A-Za-z]:[^\s]*', '[路径]', detail)
+        _error(503, 'LaTeX 编译失败：' + detail + '；正文与修订未改变')
     _owned(db, user_id, conversation_id)
     result = db.execute(update(ResumeDocument).where(ResumeDocument.user_id == user_id,
         ResumeDocument.conversation_id == conversation_id, ResumeDocument.revision == state['revision'])
