@@ -1878,6 +1878,18 @@ pre, code {
   margin: 0 auto;
 }
 
+/* Empty welcome + expanded examples + composer must share a real scroller.
+   The transcript keeps its independent virtualized scroller in active chats. */
+.chat-content.chat-empty-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+.chat-empty-scroll > .shrink-0 { flex-shrink: 0; }
+.chat-empty-scroll .new-session-hero { padding-top: 20px; }
+
+
 .new-session-brand {
   display: flex;
   align-items: center;

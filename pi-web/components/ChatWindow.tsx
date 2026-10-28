@@ -997,7 +997,7 @@ export function ChatWindow({ session, searchTarget, onSearchTargetHandled, initi
 
   return (
     <div
-      className="chat-content relative flex h-full min-w-0 flex-col overflow-hidden"
+      className={`chat-content relative flex h-full min-h-0 min-w-0 flex-col ${isEmptyNew ? 'chat-empty-scroll' : 'overflow-hidden'}`}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
