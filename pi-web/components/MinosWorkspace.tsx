@@ -77,13 +77,22 @@ export function MinosWorkspace() {
     window.addEventListener('minos:account-navigate', navigate);
     return () => window.removeEventListener('minos:account-navigate', navigate);
   }, []);
+  useEffect(() => {
+    const dismiss = (event: PointerEvent) => {
+      if (event.target instanceof Element && !event.target.closest('.minos-account-menu')) {
+        document.querySelector<HTMLDetailsElement>('.minos-account-menu')?.removeAttribute('open');
+      }
+    };
+    document.addEventListener('pointerdown', dismiss);
+    return () => document.removeEventListener('pointerdown', dismiss);
+  }, []);
   const logout = async () => {
     setConnected(false); await activateAccount(null);
     await fetch('/api/minos/account', { method: 'DELETE' }).catch(() => {});
     window.location.replace('/login');
   };
   return <div className="minos-unified-workspace">
-    <header className="minos-account-bar"><strong>MINOS</strong><span>{user?.name || user?.username || '正在验证账号…'}</span>{user?.role === 'admin' && <button onClick={() => window.dispatchEvent(new CustomEvent('minos:account-navigate', { detail: '/admin/review' }))}>内容审核</button>}<button onClick={configure}>模型设置</button><button onClick={logout}>退出账号</button></header>
+    <header className="minos-account-bar" aria-label="账号与模型"><strong>MINOS</strong><button onClick={configure}>模型设置</button><details className="minos-account-menu" onKeyDown={event => { if (event.key === 'Escape') { event.currentTarget.open = false; event.currentTarget.querySelector('summary')?.focus(); } }}><summary title={user?.name || user?.username || '账号菜单'} aria-label="账号菜单"><span className="minos-account-avatar" aria-hidden="true">{(user?.name || user?.username || 'M').slice(0, 1).toUpperCase()}</span><span className="minos-account-name">{user?.name || user?.username || '正在验证账号…'}</span><span aria-hidden="true">⌄</span></summary><div className="minos-account-dropdown"><span className="minos-account-caption">当前账号</span><strong>{user?.name || user?.username || '正在验证账号…'}</strong>{user?.role === 'admin' && <button onClick={() => { window.dispatchEvent(new CustomEvent('minos:account-navigate', { detail: '/admin/review' })); document.querySelector<HTMLDetailsElement>('.minos-account-menu')?.removeAttribute('open'); }}>内容审核</button>}<button onClick={logout}>退出账号</button></div></details></header>
     {connected ? <AppShell /> : <div className="minos-offline-shell"><aside><h2>求职工作区</h2>{[['/chat','智能对话'],['/knowledge','知识库'],['/interview','AI 面试'],['/review','学习复盘'],['/onboarding','求职画像']].map(([route, label]) => <button key={route} aria-current={path === route ? 'page' : undefined} onClick={() => setPath(route)}>{label}</button>)}</aside><section>{path !== '/chat' ? <BusinessPages path={path} onNavigate={setPath} /> : <div className="minos-connect-state minos-welcome">
       <div className="minos-welcome-eyebrow"><span /> YOUR NEXT CHAPTER</div>
       <div className="minos-welcome-hero"><div><h1>下一步，<br/><em>更接近理想。</em></h1><p>从一次对话、一份准备开始。<br/>让每一步求职，都有清晰的方向。</p><div className="minos-welcome-actions"><button className="minos-primary" disabled={busy || !user} onClick={configure}>{busy ? '正在准备工作区…' : '配置模型，开始对话'}<span>↗</span></button><button onClick={() => setPath('/knowledge')}>先逛逛知识库 →</button></div></div><div className="minos-welcome-art" aria-hidden="true"><div className="minos-orbit"/><img src="/icons/minos-avatar.svg" alt=""/><span>MINOS · 为下一步而准备</span></div></div>

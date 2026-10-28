@@ -27,13 +27,19 @@ window.addEventListener('DOMContentLoaded', () => {
     .desktop-actions button[data-window="close"]:hover { background:#c64343;color:white; }
     .desktop-actions svg { width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.2; }
     .app,.minos-unified-workspace { height:calc(100dvh - 52px)!important; }
-    .minos-account-bar > strong { visibility:hidden; }
+    /* Float real React controls into the titlebar: no reparenting or cloned
+       buttons, no second account strip, and no additional renderer privileges. */
+    .minos-account-bar { position:fixed!important; top:0!important; right:184px!important; height:52px!important; min-height:0!important; padding:0!important; gap:8px!important; border:0!important; background:transparent!important; z-index:2147483001!important; -webkit-app-region:no-drag; }
+    .minos-account-bar > strong { display:none; }
+    #minos-desktop-chrome .desktop-identity { max-width:calc(100% - 480px); }
+    .minos-account-dropdown { top:46px; }
     .minos-permission-backdrop,.minos-model-settings { top:52px!important; }
     .config-panel-root.is-modal { top:52px!important; max-height:calc(100dvh - 52px)!important; }
     .config-panel-root.is-modal > .config-panel-surface { max-height:100%!important;min-height:0!important; }
-    .minos-account-bar { flex-wrap:wrap;min-height:40px;height:auto!important;flex:none!important; }
-    .minos-account-bar > span { min-width:0;overflow:hidden;text-overflow:ellipsis; }
-    .minos-account-bar > button { flex:none; }
+    .minos-account-bar { flex-wrap:nowrap;flex:none!important; }
+    .minos-account-bar > button { flex:none;padding:6px 10px; }
+    @media(max-width:760px) { .minos-account-name {display:none;} .minos-account-bar {gap:3px!important;} #minos-desktop-chrome .desktop-identity {max-width:calc(100% - 345px);} }
+    @media(max-width:480px) { .desktop-identity strong {display:none;} .minos-account-bar {right:174px!important;} }
     @media(max-height:650px) { .config-panel-root.is-modal { padding:8px!important; } }
     .web-login-page { min-height:0!important;height:calc(100dvh - 52px)!important; }
     @media(max-width:900px) { .desktop-tagline,.desktop-divider {display:none;} }
