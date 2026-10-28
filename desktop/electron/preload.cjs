@@ -7,9 +7,14 @@ window.addEventListener('DOMContentLoaded', () => {
   const css = document.createElement('style');
   css.textContent = `
     html { --desktop-chrome-height:52px; }
-    body { padding-top:52px!important; box-sizing:border-box!important; height:100dvh!important; }
+    html { overflow:hidden!important; }
+    body { margin:0!important; padding:52px 0 0!important; box-sizing:border-box!important; height:100dvh!important; width:100%!important; min-width:0!important; min-height:0!important; overflow:hidden!important; }
+    body > :not(#minos-desktop-chrome):not(style):not(script) { flex-shrink:0; }
+    body > .minos-unified-workspace, body > .app { flex:1 1 0!important;min-height:0!important;min-width:0!important; }
     #minos-desktop-chrome { position:fixed; inset:0 0 auto; height:52px; z-index:2147483000; display:flex; align-items:center; justify-content:space-between; padding:0 10px 0 22px; box-sizing:border-box; background:var(--bg,#f8fafb); color:var(--text,#213547); border-bottom:1px solid var(--border,#e5e9ec); -webkit-app-region:drag; user-select:none; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; }
-    .desktop-identity { display:flex;align-items:center;gap:12px;white-space:nowrap; }
+    #minos-desktop-chrome { min-width:0!important; overflow:hidden; flex:none!important; transform:none!important; }
+    #minos-desktop-chrome .desktop-identity { display:flex;align-items:center;gap:12px;white-space:nowrap;min-width:0;overflow:hidden; }
+    #minos-desktop-chrome .desktop-actions { flex:none!important;margin-left:auto;padding-left:12px; }
     .desktop-identity img { width:32px;height:32px;object-fit:contain; }
     .desktop-identity strong { font-size:14px;letter-spacing:2px;font-weight:700; }
     .desktop-divider { height:14px;width:1px;background:var(--border,#dbe3e8);margin:0 3px; }
@@ -24,7 +29,12 @@ window.addEventListener('DOMContentLoaded', () => {
     .app,.minos-unified-workspace { height:calc(100dvh - 52px)!important; }
     .minos-account-bar > strong { visibility:hidden; }
     .minos-permission-backdrop,.minos-model-settings { top:52px!important; }
-    .minos-model-settings .config-panel-root.is-modal { top:52px!important; }
+    .config-panel-root.is-modal { top:52px!important; max-height:calc(100dvh - 52px)!important; }
+    .config-panel-root.is-modal > .config-panel-surface { max-height:100%!important;min-height:0!important; }
+    .minos-account-bar { flex-wrap:wrap;min-height:40px;height:auto!important;flex:none!important; }
+    .minos-account-bar > span { min-width:0;overflow:hidden;text-overflow:ellipsis; }
+    .minos-account-bar > button { flex:none; }
+    @media(max-height:650px) { .config-panel-root.is-modal { padding:8px!important; } }
     .web-login-page { min-height:0!important;height:calc(100dvh - 52px)!important; }
     @media(max-width:900px) { .desktop-tagline,.desktop-divider {display:none;} }
   `;

@@ -2,7 +2,7 @@
 
 // Packaged layout: resources/payload/{runtime,backend,pi-web}. No npm, shell
 // command interpolation, renderer Node integration, or inherited provider keys.
-const { app, BrowserWindow, Menu, dialog, shell, session, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, dialog, shell, session, ipcMain, screen } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
@@ -258,16 +258,40 @@ function permissions() {
   });
   session.defaultSession.setDevicePermissionHandler(() => false);
 }
+let restoreWindowBounds = null;
+function toggleWindowMaximize() {
+  if (!window || window.isDestroyed()) return;
+  if (restoreWindowBounds) {
+    const bounds = restoreWindowBounds;
+    restoreWindowBounds = null;
+    window.setBounds(bounds);
+  } else {
+    if (window.isMaximized()) window.unmaximize();
+    restoreWindowBounds = window.getBounds();
+    window.setBounds(screen.getDisplayMatching(restoreWindowBounds).workArea);
+  }
+  window.webContents.send('minos:window-state', Boolean(restoreWindowBounds));
+}
 function createWindow() {
+  restoreWindowBounds = null;
+  const workArea = screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea;
+  const width = Math.min(1280, workArea.width);
+  const height = Math.min(860, workArea.height);
   window = new BrowserWindow({
-    width: 1280, height: 860, minWidth: 840, minHeight: 600, title: 'MINOS', show: !smoke,
+    x: workArea.x + Math.floor((workArea.width - width) / 2),
+    y: workArea.y + Math.floor((workArea.height - height) / 2),
+    width, height, minWidth: Math.min(640, width), minHeight: Math.min(480, height), title: 'MINOS', show: !smoke,
     frame: false,
+    thickFrame: false,
     backgroundColor:'#f8fafb', autoHideMenuBar:true,
     webPreferences: { preload:path.join(__dirname,'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true,
       webSecurity: true, allowRunningInsecureContent: false, webviewTag: false },
   });
   window.setMenu(null);
-  const publishWindowState = () => window?.webContents.send('minos:window-state', window.isMaximized());
+  // Windows frameless maximize includes invisible resize borders beyond the
+  // work area. Use work-area bounds for custom maximize instead of that path.
+  window.on('maximize', () => { window.unmaximize(); if (!restoreWindowBounds) toggleWindowMaximize(); });
+  const publishWindowState = () => window?.webContents.send('minos:window-state', Boolean(restoreWindowBounds) || window.isMaximized());
   window.on('maximize', publishWindowState);
   window.on('unmaximize', publishWindowState);
   const contents = window.webContents;
@@ -301,7 +325,7 @@ async function openPath(target) {
 ipcMain.on('minos:window-control', (event, action) => {
   if (event.sender !== window?.webContents || !trustedContents(event.sender)) return;
   if (action === 'minimize') window.minimize();
-  else if (action === 'maximize') { if (window.isMaximized()) window.unmaximize(); else window.maximize(); }
+  else if (action === 'maximize') toggleWindowMaximize();
   else if (action === 'close') window.close();
 });
 ipcMain.on('minos:application-menu', event => {
