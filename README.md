@@ -1,210 +1,169 @@
-# MINOS · 你的 AI 求职搭档
+<p align="center">
+  <img src="assets/brand/minos-project-banner.png" alt="MINOS — 你的 AI 求职工作区" width="100%" />
+</p>
 
-把智能对话、LaTeX 简历、知识库、模拟面试、学习复盘和求职画像，放进一个本地桌面工作区。
+<h1 align="center">MINOS · 你的 AI 求职搭档</h1>
+<p align="center"><strong>从真实经历，到清晰表达；从一份简历，到下一次机会。</strong></p>
+<p align="center">智能对话 · LaTeX 简历 · 模拟面试 · 知识学习 · 求职 Skills</p>
+<p align="center">
+  <img alt="Stage: Preview" src="https://img.shields.io/badge/stage-preview-f59e0b" />
+  <img alt="Platform: Windows x64" src="https://img.shields.io/badge/platform-Windows_x64-2563eb" />
+  <img alt="Frontend: Next.js and React" src="https://img.shields.io/badge/frontend-Next.js_%2B_React-111827" />
+  <img alt="Desktop: Electron" src="https://img.shields.io/badge/desktop-Electron-47848f" />
+  <img alt="Backend: FastAPI" src="https://img.shields.io/badge/backend-FastAPI-009688" />
+</p>
+<p align="center">
+  <a href="https://github.com/Akun-python/minos/releases">下载安装</a> ·
+  <a href="docs/USER_GUIDE.md">用户指南</a> ·
+  <a href="#系统架构">系统架构</a> ·
+  <a href="#开发与构建">开发构建</a> ·
+  <a href="#路线图">路线图</a>
+</p>
 
-**MINOS 基于 Pi Web + Pi Agent SDK，使用 Electron 封装。** Windows 安装版内置前后端、Node 和 Python，无需用户另装这些运行环境；模型服务使用你自己的账号和密钥。
+---
 
-> **当前为预发布版，不是已全面验收的稳定版本。** 本地智能体可按当前 Windows 用户权限读写文件、执行命令；账号数据分目录不等于操作系统安全沙箱。仅在可信本机使用，不要直接暴露到公网。
+## 项目简介
 
-![MINOS 智能对话首页](<docs/screenshots/05-chat.png>)
+**MINOS 是面向个人求职准备的本地桌面 AI 工作区。** 基于 Pi Web 与 Pi Agent SDK，将智能对话、结构化求职建议、可编译的 LaTeX 简历、模拟面试和学习记录整合为连续的准备流程，而不是多个彼此割裂的网页工具。
 
-## 目录
+Windows 安装版由 Electron 管理前后端进程，随包提供 Node、Python、文档解析依赖和限定模板的离线 TeX 资源。用户使用自己的模型服务；账号、会话与工作区按本机账号组织。**只维护一套 Pi Web 前端，不再维护第二套 Vite 界面。**
 
-- [下载安装](#下载安装)
-- [第一次使用](#第一次使用)
-- [各页面操作指南](#各页面操作指南)
-- [模型与可选服务](#模型与可选服务)
-- [数据备份与安全](#数据备份与安全)
-- [常见问题](#常见问题)
+> **项目状态：预发布。** 当前 Windows 10/11 x64 是主要交付目标，尚未完成另一台干净电脑上的全面验收。本地智能体能够以当前 Windows 用户权限访问文件和执行命令；账号隔离不等于操作系统沙箱。模型请求可能将用户提供的材料发送给所选供应商，不能将“本地运行”理解为“全部离线”。
+
+## 导航
+
+- [核心能力](#核心能力)
+- [产品预览](#产品预览)
+- [快速开始](#快速开始)
+- [系统架构](#系统架构)
+- [项目结构](#项目结构)
 - [开发与构建](#开发与构建)
-- [验证范围与限制](#验证范围与限制)
+- [质量与验证](#质量与验证)
+- [安全与数据边界](#安全与数据边界)
+- [路线图](#路线图)
+- [协作与问题反馈](#协作与问题反馈)
+- [品牌与第三方许可](#品牌与第三方许可)
 
-## 下载安装
+## 核心能力
 
-支持 **Windows 10/11 x64**。
+| 模块 | 已实现能力 | 明确边界 |
+| --- | --- | --- |
+| **Pi 智能工作区** | 多会话、流式对话、模型配置、文件引用与工具调用；求职任务卡只填入草稿 | 真实生成需要用户配置可用模型；本地工具并非 OS 沙箱 |
+| **LaTeX 简历** | 结构化内容保存、版本冲突检测、模板切换、重新编译、右侧预览和 PDF 下载 | 编译只更新派生 PDF；模板示例不自动导入个人经历 |
+| **完整开源模板** | 共 7 款；Awesome-CV、FortySecondsCV 保留上游类、字体、图标、图片和完整示例 | 先前三款合成适配示例有明确标注；中文内容加入字体回退 |
+| **10 项内置 Skills** | 简历诊断、定制、排版、ATS、求职信、模拟面试、STAR、邮件草稿、薪酬及 Offer 对比 | 离线随包分发，账号启用时直接加载；不覆盖已有用户编辑，不保证 ATS 或录用结果 |
+| **AI 面试** | 岗位、难度、时长配置；逐题作答与模型反馈；原有动态面试官、可选语音与本地摄像头预览 | 在线 ASR 在 Electron 中尚未保证；摄像头不参与视觉评分；汇总不是录用预测 |
+| **知识与学习** | 知识分类、院校专业、章节、笔记、收藏、测验和学习复盘 | 以本机实际内容与真实学习记录为准，不生成虚假完成记录 |
+| **账号与数据** | 本机账号、角色、求职画像、账号私有工作区；源码含业务额度与数据管理面板 | 业务记录清除不等于删除 Pi 会话、工作区文件或模型凭据 |
+| **桌面交付** | Electron 窗口、服务管理、退出清理、安装资源与用户数据分离 | 当前安装包未商业签名；macOS/Linux 未作为已验证交付承诺 |
 
-- [Release 页面：v1.0.0-electron-preview.9](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.9)
-- [Windows 安装包（约 301 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/MINOS-Electron-Setup-1.0.0-x64.exe)
-- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/SHA256SUMS.txt)
+### 求职流程
 
-仓库目前为私有仓库，下载需要有仓库访问权限的 GitHub 账号；无权限时会显示 404。
-
-1. 下载安装包和校验文件；PowerShell 可用 `Get-FileHash .\MINOS-Electron-Setup-1.0.0-x64.exe -Algorithm SHA256` 核对散列。
-2. 退出正在运行的旧版 MINOS，运行安装器，选择安装位置。
-3. 安装完成后使用桌面快捷方式启动，不要继续打开旧构建目录中的程序。
-4. 等待程序启动本机服务；首次启动可能较慢。
-
-安装包尚未商业签名，Windows 可能提示未知发布者。请核验来源和散列，不要为了安装关闭系统安全防护。升级默认保留数据，但建议提前备份。
-
-## 第一次使用
-
-### 1. 创建自己的本机账号
-
-首次启动填写账号和密码，点击“创建账号并进入”。**没有预置的默认账号或管理员密码**，也不会带上开发者的账号、聊天记录或 API 密钥。后续启动使用自己创建的账号登录。
-
-![首次创建账号](<docs/screenshots/01-account.png>)
-
-### 2. 可先浏览，再配置模型
-
-未配置模型时也能进入首页，查看功能入口。点击右上角“模型设置”或“配置模型，开始对话”进入配置流程。
-
-![首次进入欢迎页](<docs/screenshots/02-welcome.png>)
-
-### 3. 理解本地工具权限
-
-首次启用 Pi 工作区需要确认本地智能体权限。它能够访问文件和运行命令，不是账号安全沙箱。不希望现在启用时，可以选择“稍后启用，继续浏览”。不要对不可信项目随意启用高权限工具。
-
-![本地智能体权限确认](<docs/screenshots/03-permission.png>)
-
-### 4. 配置并选择聊天模型
-
-在 Pi 原生模型面板中，点击“添加 Provider”，选择供应商或自定义 OpenAI/Anthropic 兼容端点，根据供应商文档填写接口类型、Base URL、API Key 和准确的模型 ID，保存后在输入框下方的模型选择器选择模型。模型展示名称不等于模型 ID；不要填写不受服务端支持的名称。
-
-![Pi 原生模型设置](<docs/screenshots/04-models.png>)
-
-截图全部来自隔离账号真实运行界面，无真实密钥或个人简历；空列表代表该测试账号尚未配置或创建相应数据，不是预置业务成果。
-
-## 各页面操作指南
-
-### 智能对话
-
-左侧点击“智能对话”。可以上传简历、粘贴 JD，或描述自己的求职目标。首页任务卡和底部求职工具会帮助填写草稿，**确认内容并发送后才执行**。
-
-- **建立简历 / 简历精修**：先给真实经历，再逐项修改；不要让模型虚构学历、公司或业绩。
-- **匹配岗位 / 机会对比**：提供岗位要求、Offer 条件及个人优先级。
-- **求职规划 / 成长路线 / 投递进展**：根据你提供的事实整理行动与进度；不会自动向招聘网站投递。
-- **STAR 整理 / 面试练习**：围绕具体经历练习表达。
-- 历史会话在左侧切换；新建会话前检查当前工作区和所选模型。
-
-![智能对话与求职工具栏](<docs/screenshots/05-chat.png>)
-
-### 内置求职 Skills
-
-安装包离线内置 10 个真实上游 MIT 技能：简历诊断、岗位定制、排版、ATS 分析、求职信、模拟面试、STAR 经历梳理、求职邮件草稿、薪酬谈判、Offer 对比。每账号首次启用工作区前自动放入账号私有 skills，SDK 直接加载，无需 npx 或再次下载安装。现有用户修改／停用的技能不会被覆盖；在“技能”面板可查看与停用。实际生成内容仍需配置模型。来源、固定版本、许可和质量限制见 [技能清单](<backend/app/bundled_skills/manifest.json>) 与 [第三方说明](<backend/app/bundled_skills/NOTICE>)；外部广告不是必需步骤，不自动上传或发送个人资料，不保证 ATS 或录用结果。
-
-### LaTeX 简历
-
-左侧点击“LaTeX 简历”，在简历专用会话中使用“读取简历”“修改简历”“选择模板”“生成 PDF”等工具。该入口复用 Pi 对话和简历扩展，不是独立的拖拽排版器。
-
-1. 描述目标岗位和真实经历，或上传已有简历。
-2. 先读取当前简历，再确认修改内容，保留未涉及字段。
-3. 点击“选择模板”，浏览 7 款。优先提供 **Awesome-CV 完整图标版、FortySecondsCV 完整侧栏版**：完整保留固定上游类文件、图标字体、图片、示例和许可证，不删除图标或简化组件；原例 PDF 分别 3 页和 2 页。其余保留 Sourabh Bajaj、Deedy，以及先前明确标注的 McDowell / Hunner / latexcv 合成适配示例。确认后仅切换版式、保留正文，不导入作者身份；个人数据仅填充用户提供的信息，并增加中文回退。
-4. 确认内容后生成 PDF。Windows 安装版内置轻量 Tectonic 和七套模板所需中文离线资源和完整图标字体，无需额外安装 TeX；点击“LaTeX 简历”自动展开右侧 PNG 预览并可下载完整 PDF。“重新编译”实际重跑当前修订，只更新派生 PDF，不再次保存正文。新账号或无个人 PDF 时只显示默认模板参考，不导入示例经历。
-
-首页提供可展开的简历案例，使用作者原版 PDF 渲染的完整第一页图片，不依赖内嵌 PDF 插件。案例默认收起，不自动导入作者经历；“按这个版式开始”只填入草稿。
-
-![LaTeX 简历入口](<docs/screenshots/06-resume.png>)
-
-### 知识库
-
-左侧点击“知识库”，按分类或搜索查找求职指南、专业课程与章节。点击条目进入阅读页面，按页面提供的入口完成章节学习或测验。新安装的内容取决于本机实际数据库；空列表不表示已经完成内容导入。
-
-![知识库页面](<docs/screenshots/07-knowledge.png>)
-
-章节内可使用目录跳转、收藏、随文笔记和测验。记录保存在当前本机账号下；阅读页面需要滚动查看完整测验。
-
-![知识章节阅读](<docs/screenshots/11-reader.png>)
-
-### AI 面试
-
-左侧点击“AI 面试”，选择目标岗位、难度和时长等参数，再创建练习。面试反馈默认复用当前对话的有效模型；没有当前对话选择时使用 Pi 默认模型。也可在面试页明确选择兼容模型，无需再次填写密钥。所选协议不兼容或模型不可用时会明确提示，不会静默切换供应商。
-
-1. 按页面提示创建面试，等待真实题目生成。
-2. 使用文字作答；如需要，再明确授权摄像头/麦克风。
-3. 提交回答后查看反馈，逐题继续并结束面试。
-4. 语音不可用时切换文字；摄像头仅作本地预览，不参与视觉评分。
-
-![AI 面试配置页](<docs/screenshots/08-interview.png>)
-
-在线语音识别尚未保证在 Electron 中可用，也不宣称支持全双工实时音视频。逐题反馈与结束汇总的机制不同，不应把汇总分数当成录用预测。
-
-### 学习复盘
-
-左侧点击“学习复盘”，查看本机账号已有的学习与测验记录，再按页面提示回顾内容。首次使用可能为空；先完成相关学习活动，再回来查看，不会自动生成虚假学习成果。
-
-![学习复盘页面](<docs/screenshots/09-review.png>)
-
-### 求职画像
-
-左侧点击“求职画像”，填写或更新求职方向与个人背景，按实际情况保存。避免把模板作者或模型猜测的信息写成自己的经历；涉及敏感个人资料时先确认保存和上传范围。
-
-![求职画像页面](<docs/screenshots/10-profile.png>)
-
-## 模型与可选服务
-
-Pi 对话和面试反馈现在复用同一账户的供应商认证；其他可选后端服务仍有独立配置：
-
-| 能力 | 配置方式 |
-| --- | --- |
-| Pi 智能对话、会话内简历工具 | 右上角“模型设置”，使用 Pi 原生面板保存供应商配置 |
-| AI 面试反馈 | 自动复用当前对话模型／Pi 默认；面试页可明确另选兼容模型，密钥只在服务端使用 |
-| PDF 编译 | Windows 安装版内置 Tectonic、xeCJK 与 Fandol 离线资源；源码部署可配置 `RESUME_XELATEX` |
-| 可选在线解析/语音播报 | 按相应服务填写个人密钥；需要网络和服务权限 |
-
-可选旧后端业务配置示例（新面试反馈不依赖这里；全部为占位值，不是可用凭据）：
-
-```dotenv
-LLM_API_KEY=your-provider-key
-LLM_BASE_URL=https://your-provider.example/v1
-LLM_MODEL=your-real-model-id
-INTERVIEW_LLM_MODEL=your-real-model-id
-# 可选
-RESUME_XELATEX=C:\path\to\xelatex.exe
-MINERU_API_KEY=
-MAMBO_TTS_KEY=
+```text
+提供真实经历与目标岗位
+          ↓
+Pi 对话梳理证据与差距 → 用户确认 → 保存简历 → LaTeX 编译与预览
+          ↓                                      ↓
+知识学习与专项补强 ← 学习复盘 ← 模拟面试与逐题反馈
 ```
 
-个人环境配置文件位于 `%LOCALAPPDATA%\MINOS`，**不要修改安装目录，也不要提交真实配置到 Git**。修改后从顶栏“···”应用菜单执行重启服务。具体配置项见 [便携运行说明](<backend/PORTABLE_RUNTIME.md>)。
+结构化建议用于帮助判断，不代表自动完成外部操作。投递进展由用户提供，不连接招聘网站自动投递；求职邮件仅生成草稿，外传材料或发送须经明确授权。
 
-## 数据备份与安全
+## 产品预览
 
-- 默认数据目录：`%LOCALAPPDATA%\MINOS`。包含账号数据库、工作区、会话、模型配置与日志。
-- 安装资源与用户数据分离；程序可安装在另一盘。卸载默认保留数据。
-- 备份前完全退出 MINOS，再复制整个数据目录到受保护的位置；恢复前先备份当前数据，避免覆盖较新的内容。
-- 不要分享整个数据目录或日志压缩包而不检查内容：配置、模型密钥、聊天记录和个人材料均可能敏感。
-- 后端仅监听本机回环地址，不应映射公网。工具仍使用当前 Windows 用户权限，Electron 渲染隔离不等于智能体工具沙箱。
+![MINOS 智能对话工作区](<docs/screenshots/05-chat.png>)
 
-## 常见问题
-
-| 问题 | 处理方法 |
+| LaTeX 简历 | AI 面试 |
 | --- | --- |
-| Release 链接显示 404 | 确认 GitHub 账号拥有私有仓库访问权限 |
-| 忘记账号密码 | 没有通用默认密码；请先备份数据，再由操作者明确执行密码重置，不要删除数据库 |
-| 工作区连接失败 | 核对正在运行的是最新版；退出旧进程后重开，从顶栏菜单查看日志；不要删除账号数据 |
-| `Cannot find module ... uploads.mjs` | 旧打包版漏了 SDK 文件；升级至本 README 链接的完整依赖版，并重启服务 |
-| 能浏览但不能对话 | 检查是否已启用工作区、保存并选择模型，以及供应商接口/额度/网络是否正常 |
-| 聊天正常但 AI 面试失败 | 查看面试页显示的实际模型和协议兼容提示；确保工作区已连接，必要时明确选择兼容模型，不用重复填写密钥 |
-| 模板 PDF 黑屏 | 首页案例使用可靠图片预览，不依赖 PDF 插件；完整 PDF 按需打开，不把预览成功等同于编译成功 |
-| 文档已上传却读不到 | PDF/DOCX/DOC 引用在工具模式下由 `document_read` 提取正文；扫描PDF需OCR、加密或不支持旧DOC需另存DOCX，不会把二进制当正文 |
-| PDF 编译失败 | 安装版请更新／修复内置编译资源；错误会区分缺失、超时和 LaTeX 诊断，不应靠改写正文修复缺依赖。源码部署检查 XeLaTeX；见 [离线编译环境](<desktop/LATEX_RUNTIME.md>) |
-| 麦克风允许了仍无识别 | Electron 在线识别服务未保证可用，先用文字作答；播报与识别是不同能力 |
+| ![LaTeX 简历入口](<docs/screenshots/06-resume.png>) | ![AI 面试配置](<docs/screenshots/08-interview.png>) |
+
+以上为隔离账号的真实界面截图，不含个人密钥或真实简历。截图记录早期预发布界面，可能与 main 的新 logo、顶部精简和新增模板不同；不是最新视觉验收凭证。完整步骤见 [用户指南](<docs/USER_GUIDE.md>)。
+
+## 快速开始
+
+### Windows 安装版
+
+**[下载 Preview 9 安装包](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/MINOS-Electron-Setup-1.0.0-x64.exe)** · [版本说明](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.9) · [SHA256 校验](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/SHA256SUMS.txt)
+
+1. 使用有仓库访问权限的 GitHub 账号下载（仓库目前为私有，无权限会显示 404）。Preview 9 安装包约 **414 MiB**。
+2. 校验 SHA256，退出旧版后覆盖安装。不需要单独安装 Node、Python 或 TeX。
+3. 首次启动创建自己的本机账号，无预置开发者账号或密钥。
+4. 在右上角配置模型，确认本地智能体权限，再开始对话。未配置模型时可先浏览业务页面。
+
+> **发布版与源码状态分开：** Preview 9 已包含 7 款模板与 10 项内置求职 Skills。之后的单前端目录清理、“账号与数据”面板、新品牌 logo，以及隐藏“系统 / 工具”入口等变更已进入 main，尚未重新发布安装包。不要把当前源码截图或说明理解为 Preview 9 已包含全部更新。
+
+安装包尚未商业签名，Windows 可能显示未知发布者。核验来源与散列，不要关闭系统安全防护。升级前建议备份数据。
+
+### 最小使用示例
+
+```text
+我准备申请后端开发岗位。请先询问我的真实经历和目标 JD，
+不要虚构学校、公司或指标。先展示简历优化建议，等我确认再保存。
+```
+
+需要 PDF 时可明确要求“只编译当前简历，不修改正文”。模板原例只用于参考，不能作为个人经历保存。
+
+## 系统架构
+
+```mermaid
+flowchart TB
+    User[用户] --> Desktop[Electron 桌面壳]
+    Desktop --> Web[Pi Web · 唯一 React 前端]
+    Web --> Gateway[同源网关 · HttpOnly 账号会话]
+    Gateway --> Business[FastAPI · 账号与业务数据]
+    Gateway --> Pi[按账号隔离的 Pi Web / Agent SDK 进程]
+    Pi --> Model[用户配置的模型供应商]
+    Pi --> Tools[文档读取 / 简历工具 / 本地工具]
+    Tools --> Business
+    Business --> DB[(SQLite 业务记录)]
+    Business --> TeX[Tectonic · 离线模板资源]
+    TeX --> PDF[PDF 与 PNG 预览]
+    Pi --> Files[账号私有会话与工作区]
+```
+
+### 架构原则
+
+- **单一前端**：业务页面在 Pi Web 内原生渲染，不以旧 SPA 或 iframe 拼装第二套应用；独立头像展示资源不构成第二套前端工程。
+- **复用 Pi 能力**：保留真实 Pi UI / API / SDK；对话、简历和面试尽量复用同一账号的模型配置。
+- **同源与最小暴露**：浏览器持有随机 HttpOnly 账号 cookie；业务 JWT、刷新令牌与桥接凭据由服务端管理。
+- **内容与派生产物分离**：简历保存、版本校验、模板切换与 PDF 编译职责分开；编译失败不冒充保存失败。
+- **安装与用户数据分离**：安装包只携带运行资源；真实账号、工作区和配置留在个人数据目录。
+
+详见 [Pi 集成与安全设计](<pi-web/MINOS-INTEGRATION.md>)、[本地 Harness](<backend/HARNESS.md>)、[便携运行设计](<backend/PORTABLE_RUNTIME.md>)。
+
+## 项目结构
+
+```text
+minos/
+├── pi-web/       # 唯一前端：Next.js / React / Pi UI、API、SDK 集成
+├── backend/      # FastAPI、SQLite、业务服务、模板及预装 skills
+├── desktop/      # Electron 主进程、预加载、运行时校验及 Windows 打包
+├── scripts/      # 本机源码部署的启动与停止脚本
+├── docs/         # 用户指南、设计文档和真实界面截图
+├── assets/       # 指定品牌 logo、品牌横幅及 IP 素材
+└── rocket_rig/   # 历史 IP 设计资源，不是第二套应用前端
+```
+
+关键入口：[前端](<pi-web>) · [业务后端](<backend>) · [桌面构建](<desktop>) · [品牌规范](<assets/brand/README.md>)。
 
 ## 开发与构建
 
-### 唯一前端
+### 环境要求
 
-只维护 [pi-web](<pi-web>) 一套前端。知识库、院校专业、章节学习、面试、复盘、画像与管理员审核都是原生 React 页面；简历与求职统一使用 Pi 对话和工具，不再保留旧聊天、旧简历编辑器或另一套 Vite 界面。头像资源也在 Pi Web 内。右上角账号菜单的“账号与数据”提供角色、真实业务额度与明确范围的业务记录清除，不会删除 Pi 会话或工作区文件。
+| 项目 | 当前基线 |
+| --- | --- |
+| 系统 | Windows 10/11 x64；桌面打包验证以 Windows 为主 |
+| Node.js | 22.19+；当前构建使用 24.x |
+| Python | 3.12 |
+| 前端 | Next.js 16、React 19；Pi 依赖按仓库锁定版本安装 |
+| 桌面 | Electron 41、electron-builder 26 |
+| PDF | Tectonic 0.17.0；源码也可配置 XeLaTeX |
 
-### 目录
-
-```text
-pi-web/       Next.js + React：当前唯一前端、Pi UI/API/SDK 集成
-backend/      FastAPI + SQLite：账号、业务数据、简历与侧车进程管理
-desktop/      Electron 主进程、预加载脚本、Windows 打包脚本
-scripts/      Windows 源码部署启动/停止脚本
-docs/         指南、架构说明及本 README 真实界面截图
-assets/       品牌与 IP 资源（2D 素材位于 assets/ip/2d）
-rocket_rig/   保留的 IP 设计工程、渲染图、表情、贴图及分析脚本
-```
-
-### 源码运行
-
-需要 Git、Python 3.12、Node.js 22.19+ 与 npm。当前 Windows 构建验证使用 Node 24.x。
+### 源码启动
 
 ```powershell
 git clone https://github.com/Akun-python/minos.git
 Set-Location minos
-git switch main
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend\requirements-local.txt
 Set-Location pi-web
@@ -214,39 +173,86 @@ Set-Location ..
 .\start-minos.cmd
 ```
 
-源码部署统一入口通常为 `http://127.0.0.1:5173`，后端通常为 `http://127.0.0.1:8000`；Electron 优先使用 5175/8005，并按可用情况分配端口。按程序实际打开的地址使用，不要混用不同实例。
+源码统一入口通常为 `http://127.0.0.1:5173`；Electron 优先使用 5175/8005，并按可用情况分配端口。以实际应用打开地址为准。不要在同一构建目录运行 `next dev` 时执行 `next build`。
 
-当前后端只读取个人数据目录的环境配置，不自动继承源码目录中的私有环境文件。需要隔离运行时可设置绝对路径 `MINOS_DATA_DIR`，详见 [便携运行说明](<backend/PORTABLE_RUNTIME.md>)。不要在同一构建目录的 `next dev` 运行时执行 `next build`。
+需要模型或可选语音服务时，使用个人配置；不要在源码或文档写入真实凭据。详见 [Windows 部署指南](<DEPLOY-WINDOWS.md>) 和 [模型配置步骤](<docs/USER_GUIDE.md#模型与可选服务>)。
 
-### Electron 打包
+### 桌面打包
 
-按 [桌面构建说明](<desktop/README.md>) 和 [Electron 说明](<desktop/electron/README.md>) 准备嵌入式 Python 及运行依赖，执行：
+先按 [桌面构建说明](<desktop/README.md>)、[Electron 说明](<desktop/electron/README.md>) 准备经过验证的 Node、嵌入式 Python 和 TeX 资源，再运行：
 
 ```powershell
 .\desktop\build.ps1
 ```
 
-输出目录为 `dist/electron`。打包不是简单网页快捷方式；Electron 会管理本机前后端进程及退出清理。不要上传依赖目录、运行数据和生成产物到源码提交；二进制通过 Releases 分发。
+默认生成目录为 `dist/electron`。装配脚本会检查文档依赖、七款模板离线编译，以及十项内置 Skills 的完整性，不能用“构建成功”替代干净机器安装验收。生成产物通过 Releases 分发，不提交运行数据或依赖目录。
 
-## 验证范围与限制
+## 质量与验证
 
-最近一次验证记录：
+当前已记录的验证，不等于持续集成平台实时状态：
 
-- 后端运行 80 项测试，跳过 1 项，其余通过。
-- 本次相关前端回归 24 项通过，生产构建通过。
-- 实测跨盘启动、账号创建/登录、模型设置保存与读回、重启后配置保留。
-- 审计生产依赖文件无缺失，并验证 OpenAI / Pi AI SDK 导入成功。
-- 实测首页不嵌入 PDF、不自动请求模板 PDF，保留选择模板入口。
-- 本文截图来自隔离账号真实 Electron 页面；页面截图不代表所有后端业务流程或远程 AI 服务已完成验收。
+| 验证项目 | 最近结果 / 范围 |
+| --- | --- |
+| 后端业务回归 | 运行 95 项，跳过 1 项，其余通过 |
+| 单前端与账号面板 | 定向回归 10 项通过；TypeScript 与生产构建通过 |
+| 品牌与面试资源隔离 | 指定 logo 原字节复制、品牌引用和面试头像独立性测试通过 |
+| 模板运行资源 | 七款中文离线编译与 PDF 打开通过 |
+| 完整版图标 | 两款上游原例实际编译；FontAwesome5 字体嵌入与原例图标检查通过 |
+| Skills 首次加载 | 打包成品隔离账号直接加载十项，SDK 诊断为空，无再次安装 |
+| 历史桌面验证 | 跨盘启动、账号登录、模型配置读回与保留等已做定向检查 |
 
-**未完成项：** 另一台干净电脑的全面验收；最新发布版真实远程模型回复与在线 ASR 的可用性确认。全量上游前端测试存在失败，部分为中文文案与英文断言不一致，其余未逐项定位，不能宣称全量测试全绿。
+**仍待验证：**另一台干净电脑全面验收、最新发布版真实远程模型回复、Electron 在线 ASR 稳定性。上游全量前端测试尚有未逐项处理的失败；不能宣称全量测试全绿或生产级全面验收完成。
 
-## 文档与致谢
+## 安全与数据边界
 
-- [Windows 源码部署](<DEPLOY-WINDOWS.md>)
-- [Pi 集成架构与安全边界](<pi-web/MINOS-INTEGRATION.md>)
-- [本地智能体 Harness](<backend/HARNESS.md>)
-- [简历工作台](<backend/RESUME_WORKBENCH.md>)
-- [原版简历模板与许可](<backend/app/resume_templates/README.md>)
+- 默认数据目录为 `%LOCALAPPDATA%\MINOS`；备份前完全退出应用，再复制整个数据目录到受保护的位置。
+- 服务仅应监听本机回环地址，不直接映射公网。Electron 启用渲染隔离，但它不限制智能体以当前用户权限执行工具。
+- 向模型或可选在线服务提交简历、录音及其他材料前，应理解实际供应商与隐私条款。
+- 内置技能为固定版本第三方参考流程，不能覆盖“不虚构事实”和“外传需授权”的要求；ATS、薪酬、法律或税务建议需结合实际核验。
+- “清除业务数据”只作用于明确列出的数据库记录，不删除账号、Pi JSONL、工作区、磁盘附件、PDF 或模型密钥。
+- 不要直接公开配置目录、日志或聊天导出；安全问题请通过仓库维护者的私有渠道报告，不附真实密钥或个人简历。
 
-Pi Web 上游：[agegr/pi-web](https://github.com/agegr/pi-web)，版本 `0.12.2`，基准提交 `e533d9b3975f8a74b378d5007c92fdf4d15d3fba`。本项目保留真实 Pi UI/API/SDK 实现并进行 MINOS 集成。分发须保留 [Pi Web MIT 许可](<pi-web/LICENSE>)、字体 OFL 与简历模板原始许可。
+## 路线图
+
+以下区分已实现方向与计划，不代表已承诺交付时间。
+
+- [x] 统一 Pi Web 前端与 Electron 桌面入口
+- [x] 模型配置复用、账号私有工作区与服务端桥接
+- [x] 结构化简历、PDF 预览、七款模板与离线编译
+- [x] 十项求职 Skills 随包提供、首次直接加载
+- [x] 原生知识学习、模拟面试、复盘与画像
+- [x] 统一指定品牌 logo，保留 AI 面试形象
+- [ ] 将 main 的界面整合与品牌变更重新打包发布
+- [ ] 干净 Windows 环境的完整安装、升级、备份与恢复验收
+- [ ] 持续补齐上游前端回归、端到端测试和发布检查
+- [ ] 提升语音能力的兼容性与失败恢复体验
+- [ ] 更新最新品牌与模板界面的真实截图
+
+## 协作与问题反馈
+
+仓库当前为私有项目，协作需相应权限。提交问题时建议包含：**安装版本 / commit、系统版本、复现步骤、预期与实际行为、脱敏日志**。不要提交真实密钥、完整个人简历或用户数据目录。
+
+开发变更应遵循：
+
+1. 优先在现有 Pi Web 原生组件内补功能，不恢复第二套前端。
+2. 改动涉及账号、文件访问、模型凭据或本地工具时，说明权限与数据边界。
+3. 为核心行为补测试；构建、定向回归与端到端验收分别报告，不互相冒充。
+4. 引入第三方模板、技能或字体时，保留来源、固定版本、许可与完整资源。
+5. 文档中区分 main 已实现、发布包已包含和计划功能；不填未经运行的性能或成功率指标。
+
+## 品牌与第三方许可
+
+**项目品牌统一使用用户指定的 [MINOS 原始 logo](<assets/logo.png>)。** [README 横幅](<assets/brand/minos-project-banner.png>) 由原图排版生成，不重画标志；[应用图标生成脚本](<desktop/generate_brand_icons.py>) 生成 Windows ICO、浏览器与 PWA 尺寸。AI 面试头像使用独立资源，不随品牌替换。详见 [品牌说明](<assets/brand/README.md>)。
+
+Pi Web 上游为 [agegr/pi-web](https://github.com/agegr/pi-web)，集成版本 `0.12.2`，基准提交 `e533d9b3975f8a74b378d5007c92fdf4d15d3fba`。保留其真实 UI / API / SDK 实现及 [MIT 许可](<pi-web/LICENSE>)。
+
+模板、字体、技能和运行时分别遵循各自许可，不能用单一许可证标签覆盖所有资源。本仓库目前未提供覆盖自有代码的统一顶层开源许可证；**能访问仓库不等于获得任意再分发或商用授权。** 分发前核对各组件许可及品牌使用权限。
+
+- [模板来源与许可](<backend/app/resume_templates/README.md>)
+- [Skills 来源、版本与哈希](<backend/app/bundled_skills/manifest.json>) · [第三方技能说明](<backend/app/bundled_skills/NOTICE>)
+- [离线 TeX 运行资源](<desktop/LATEX_RUNTIME.md>)
+- [用户操作指南](<docs/USER_GUIDE.md>) · [Windows 部署](<DEPLOY-WINDOWS.md>) · [简历工作台](<backend/RESUME_WORKBENCH.md>)
+
+---
+
+<p align="center"><strong>MINOS · 让每一步准备，都有事实与方向。</strong></p>
