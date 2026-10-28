@@ -1,130 +1,242 @@
-# MINOS · MINO AGENT
+# MINOS · 你的 AI 求职搭档
 
-基于 **Pi Web + Pi Agent SDK** 的本地求职智能体。将智能对话、LaTeX 简历、知识库、模拟面试与学习复盘放入统一的 Pi 风格工作区，保留真实工具调用、会话流式输出和业务数据。
+把智能对话、LaTeX 简历、知识库、模拟面试、学习复盘和求职画像，放进一个本地桌面工作区。
 
-> 当前面向可信用户的 Windows 本机部署。Pi 可运行命令、访问文件、使用终端和插件，**不是操作系统沙箱**；请勿直接暴露到公网或作为不可信多租户服务。
+**MINOS 基于 Pi Web + Pi Agent SDK，使用 Electron 封装。** Windows 安装版内置前后端、Node 和 Python，无需用户另装这些运行环境；模型服务使用你自己的账号和密钥。
 
-## 功能
+> **当前为预发布版，不是已全面验收的稳定版本。** 本地智能体可按当前 Windows 用户权限读写文件、执行命令；账号数据分目录不等于操作系统安全沙箱。仅在可信本机使用，不要直接暴露到公网。
 
-| 模块 | 已实现能力 |
+![MINOS 智能对话首页](<docs/screenshots/05-chat.png>)
+
+## 目录
+
+- [下载安装](#下载安装)
+- [第一次使用](#第一次使用)
+- [各页面操作指南](#各页面操作指南)
+- [模型与可选服务](#模型与可选服务)
+- [数据备份与安全](#数据备份与安全)
+- [常见问题](#常见问题)
+- [开发与构建](#开发与构建)
+- [验证范围与限制](#验证范围与限制)
+
+## 下载安装
+
+支持 **Windows 10/11 x64**。
+
+- [Release 页面：v1.0.0-electron-preview.1](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.1)
+- [Windows 安装包（约 301 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.1/MINOS-Electron-Setup-1.0.0-x64.exe)
+- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.1/SHA256SUMS.txt)
+
+仓库目前为私有仓库，下载需要有仓库访问权限的 GitHub 账号；无权限时会显示 404。
+
+1. 下载安装包和校验文件；PowerShell 可用 `Get-FileHash .\MINOS-Electron-Setup-1.0.0-x64.exe -Algorithm SHA256` 核对散列。
+2. 退出正在运行的旧版 MINOS，运行安装器，选择安装位置。
+3. 安装完成后使用桌面快捷方式启动，不要继续打开旧构建目录中的程序。
+4. 等待程序启动本机服务；首次启动可能较慢。
+
+安装包尚未商业签名，Windows 可能提示未知发布者。请核验来源和散列，不要为了安装关闭系统安全防护。升级默认保留数据，但建议提前备份。
+
+## 第一次使用
+
+### 1. 创建自己的本机账号
+
+首次启动填写账号和密码，点击“创建账号并进入”。**没有预置的默认账号或管理员密码**，也不会带上开发者的账号、聊天记录或 API 密钥。后续启动使用自己创建的账号登录。
+
+![首次创建账号](<docs/screenshots/01-account.png>)
+
+### 2. 可先浏览，再配置模型
+
+未配置模型时也能进入首页，查看功能入口。点击右上角“模型设置”或“配置模型，开始对话”进入配置流程。
+
+![首次进入欢迎页](<docs/screenshots/02-welcome.png>)
+
+### 3. 理解本地工具权限
+
+首次启用 Pi 工作区需要确认本地智能体权限。它能够访问文件和运行命令，不是账号安全沙箱。不希望现在启用时，可以选择“稍后启用，继续浏览”。不要对不可信项目随意启用高权限工具。
+
+![本地智能体权限确认](<docs/screenshots/03-permission.png>)
+
+### 4. 配置并选择聊天模型
+
+在 Pi 原生模型面板中，点击“添加 Provider”，选择供应商或自定义 OpenAI/Anthropic 兼容端点，根据供应商文档填写接口类型、Base URL、API Key 和准确的模型 ID，保存后在输入框下方的模型选择器选择模型。模型展示名称不等于模型 ID；不要填写不受服务端支持的名称。
+
+![Pi 原生模型设置](<docs/screenshots/04-models.png>)
+
+截图全部来自隔离账号真实运行界面，无真实密钥或个人简历；空列表代表该测试账号尚未配置或创建相应数据，不是预置业务成果。
+
+## 各页面操作指南
+
+### 智能对话
+
+左侧点击“智能对话”。可以上传简历、粘贴 JD，或描述自己的求职目标。首页任务卡和底部求职工具会帮助填写草稿，**确认内容并发送后才执行**。
+
+- **建立简历 / 简历精修**：先给真实经历，再逐项修改；不要让模型虚构学历、公司或业绩。
+- **匹配岗位 / 机会对比**：提供岗位要求、Offer 条件及个人优先级。
+- **求职规划 / 成长路线 / 投递进展**：根据你提供的事实整理行动与进度；不会自动向招聘网站投递。
+- **STAR 整理 / 面试练习**：围绕具体经历练习表达。
+- 历史会话在左侧切换；新建会话前检查当前工作区和所选模型。
+
+![智能对话与求职工具栏](<docs/screenshots/05-chat.png>)
+
+### LaTeX 简历
+
+左侧点击“LaTeX 简历”，在简历专用会话中使用“读取简历”“修改简历”“选择模板”“生成 PDF”等工具。该入口复用 Pi 对话和简历扩展，不是独立的拖拽排版器。
+
+1. 描述目标岗位和真实经历，或上传已有简历。
+2. 先读取当前简历，再确认修改内容，保留未涉及字段。
+3. 点击“选择模板”，了解单栏/双栏原版模板，确认后再切换；作者示例经历不属于你的简历。
+4. 确认内容后生成 PDF。缺少 TeX 编译器时可保留、导出源文件，不能把源文件生成视为 PDF 编译成功。
+
+**首页不自动显示模板 PDF**，不会再用大块预览占据首页。
+
+![LaTeX 简历入口](<docs/screenshots/06-resume.png>)
+
+### 知识库
+
+左侧点击“知识库”，按分类或搜索查找求职指南、专业课程与章节。点击条目进入阅读页面，按页面提供的入口完成章节学习或测验。新安装的内容取决于本机实际数据库；空列表不表示已经完成内容导入。
+
+![知识库页面](<docs/screenshots/07-knowledge.png>)
+
+章节内可使用目录跳转、收藏、随文笔记和测验。记录保存在当前本机账号下；阅读页面需要滚动查看完整测验。
+
+![知识章节阅读](<docs/screenshots/11-reader.png>)
+
+### AI 面试
+
+左侧点击“AI 面试”，选择目标岗位、难度和时长等参数，再创建练习。面试运行依赖**后端业务模型配置**，仅配置 Pi 聊天模型不一定足够。
+
+1. 按页面提示创建面试，等待真实题目生成。
+2. 使用文字作答；如需要，再明确授权摄像头/麦克风。
+3. 提交回答后查看反馈，逐题继续并结束面试。
+4. 语音不可用时切换文字；摄像头仅作本地预览，不参与视觉评分。
+
+![AI 面试配置页](<docs/screenshots/08-interview.png>)
+
+在线语音识别尚未保证在 Electron 中可用，也不宣称支持全双工实时音视频。逐题反馈与结束汇总的机制不同，不应把汇总分数当成录用预测。
+
+### 学习复盘
+
+左侧点击“学习复盘”，查看本机账号已有的学习与测验记录，再按页面提示回顾内容。首次使用可能为空；先完成相关学习活动，再回来查看，不会自动生成虚假学习成果。
+
+![学习复盘页面](<docs/screenshots/09-review.png>)
+
+### 求职画像
+
+左侧点击“求职画像”，填写或更新求职方向与个人背景，按实际情况保存。避免把模板作者或模型猜测的信息写成自己的经历；涉及敏感个人资料时先确认保存和上传范围。
+
+![求职画像页面](<docs/screenshots/10-profile.png>)
+
+## 模型与可选服务
+
+目前存在两套配置边界，**尚未完全统一**：
+
+| 能力 | 配置方式 |
 | --- | --- |
-| 智能对话 | 真正的 Pi SDK 会话、SSE、历史会话、工具与文件预览、模型/技能设置；首页直接进入对话 |
-| LaTeX 简历 | `resume_read` / `resume_update` / `resume_set_template` / `resume_compile`；修订校验、历史与撤销、原版单栏/双栏模板、PDF 编译和预览 |
-| 聊天工具栏 | 简历优化、岗位匹配、STAR 整理、面试练习，以及读取简历、修改简历、选择模板、生成 PDF；点击填入草稿，确认发送后执行 |
-| 生成式 UI | 岗位匹配矩阵、简历前后对照、面试反馈、行动清单、投递进展看板；严格数据协议，不执行模型提供的 HTML/脚本 |
-| 知识库 | 求职指南、学院/专业/课程、章节阅读与测验；Pi 风格列表、分类、搜索和真实 API 数据 |
-| AI 面试 | 岗位/难度/时长配置、会话题目、答案持久化、真实 LLM 逐题反馈、结束与重试；可选浏览器语音识别、摄像头及第三方语音播报 |
-| 本地业务后端 | FastAPI、SQLAlchemy、SQLite、账号鉴权、上传文档解析；旧聊天/简历界面保留兼容入口 |
+| Pi 智能对话、会话内简历工具 | 右上角“模型设置”，使用 Pi 原生面板保存供应商配置 |
+| AI 面试等后端业务模型 | 通过应用菜单打开个人配置文件，填写下方环境变量并重启服务 |
+| PDF 编译 | 额外安装 XeLaTeX 与中文依赖，并配置 `RESUME_XELATEX` |
+| 可选在线解析/语音播报 | 按相应服务填写个人密钥；需要网络和服务权限 |
 
-### 功能边界
+后端业务配置示例（全部为占位值，不是可用凭据）：
 
-- 普通 Pi 会话注册简历扩展；`Chat only` 等不启用工具的模式不会执行简历工具。
-- 行动清单勾选为页面本地状态，投递进展来自用户陈述；不会自动投递，也不与招聘网站同步。显示分数必须有范围和依据，不代表录用概率。
-- 逐题面试反馈由真实模型生成；结束报告仍使用现有后端规则汇总，不能等同于完整 LLM 测评。
-- 语音识别依赖浏览器支持，播报依赖第三方服务配置；失败可改用文字。视频仅为本地摄像头预览，不是视觉面试评分。
-- 聊天文本不设置应用层单条长度上限，但仍受模型上下文、服务请求体和供应商限制；面试回答等结构化业务字段有独立校验。
-
-## 架构与目录
-
-```text
-pi-web/            唯一前端：Next.js + React 19，账号登录、原生业务页面、Pi UI/SDK
-mino-agent/        历史前端源码（仅作回退参考，不再安装、构建或启动）
-backend/           FastAPI + SQLite：账号、业务数据、简历文档、面试和 Pi 进程管理
-scripts/           Windows 本机启动/停止脚本
-docs/              产品与技术文档
-assets/            品牌与吉祥物资源
+```dotenv
+LLM_API_KEY=your-provider-key
+LLM_BASE_URL=https://your-provider.example/v1
+LLM_MODEL=your-real-model-id
+INTERVIEW_LLM_MODEL=your-real-model-id
+# 可选
+RESUME_XELATEX=C:\path\to\xelatex.exe
+MINERU_API_KEY=
+MAMBO_TTS_KEY=
 ```
 
-入口 `127.0.0.1:5173` 由 Pi Web Next 生产服务提供，业务 API 保留在 `127.0.0.1:8000`。登录、知识库、章节、面试、学习复盘与管理员审核已迁入 Pi Web，同一 React 工作区原生渲染，不再嵌套旧前端 iframe。Next 服务端持有业务 JWT/refresh token，浏览器仅有 HttpOnly 账号 cookie。后端仍按账号启动独立 Pi SDK 生产进程（回环端口 `30141–30240`），统一入口按服务端记录转发 SDK API/SSE，不暴露能力凭据或允许客户端选择目标端口。
+个人环境配置文件位于 `%LOCALAPPDATA%\MINOS`，**不要修改安装目录，也不要提交真实配置到 Git**。修改后从顶栏“···”应用菜单执行重启服务。具体配置项见 [便携运行说明](<backend/PORTABLE_RUNTIME.md>)。
 
-**账号数据目录分离不等于 OS 安全隔离。** 任意命令仍使用当前 Windows 用户权限。首次进入需要明确确认本地智能体权限；后端重启后请从主入口重新连接。
+## 数据备份与安全
 
-## 快速开始（Windows / PowerShell）
+- 默认数据目录：`%LOCALAPPDATA%\MINOS`。包含账号数据库、工作区、会话、模型配置与日志。
+- 安装资源与用户数据分离；程序可安装在另一盘。卸载默认保留数据。
+- 备份前完全退出 MINOS，再复制整个数据目录到受保护的位置；恢复前先备份当前数据，避免覆盖较新的内容。
+- 不要分享整个数据目录或日志压缩包而不检查内容：配置、模型密钥、聊天记录和个人材料均可能敏感。
+- 后端仅监听本机回环地址，不应映射公网。工具仍使用当前 Windows 用户权限，Electron 渲染隔离不等于智能体工具沙箱。
 
-### 1. 环境
+## 常见问题
 
-- Python 3.12（建议），Node.js **22.19+**（本机验证使用 24.x）、npm、Git。
-- PDF 编译需 Tectonic 或包含中文字体/`xeCJK` 的 XeLaTeX；第一次编译可能需要网络下载 TeX 资源。
-- Pi 的原生命令/终端依赖需能在本机正常安装；不要提交本机依赖目录。
+| 问题 | 处理方法 |
+| --- | --- |
+| Release 链接显示 404 | 确认 GitHub 账号拥有私有仓库访问权限 |
+| 忘记账号密码 | 没有通用默认密码；请先备份数据，再由操作者明确执行密码重置，不要删除数据库 |
+| 工作区连接失败 | 核对正在运行的是最新版；退出旧进程后重开，从顶栏菜单查看日志；不要删除账号数据 |
+| `Cannot find module ... uploads.mjs` | 旧打包版漏了 SDK 文件；升级至本 README 链接的完整依赖版，并重启服务 |
+| 能浏览但不能对话 | 检查是否已启用工作区、保存并选择模型，以及供应商接口/额度/网络是否正常 |
+| 聊天正常但 AI 面试失败 | 检查后端业务模型配置；目前不自动继承 Pi 面板中的配置 |
+| 模板 PDF 黑屏 | 首页已移除嵌入预览；按需使用模板操作，不把预览成功等同于编译成功 |
+| PDF 编译失败 | 检查 XeLaTeX 路径、xeCJK/Fandol 与字体；具体见 [简历工作台](<backend/RESUME_WORKBENCH.md>) |
+| 麦克风允许了仍无识别 | Electron 在线识别服务未保证可用，先用文字作答；播报与识别是不同能力 |
+
+## 开发与构建
+
+### 目录
+
+```text
+pi-web/       Next.js + React：当前唯一前端、Pi UI/API/SDK 集成
+backend/      FastAPI + SQLite：账号、业务数据、简历与侧车进程管理
+desktop/      Electron 主进程、预加载脚本、Windows 打包脚本
+scripts/      Windows 源码部署启动/停止脚本
+docs/         指南、架构说明及本 README 真实界面截图
+mino-agent/   历史前端源码，仅作回退参考
+```
+
+### 源码运行
+
+需要 Git、Python 3.12、Node.js 22.19+ 与 npm。当前 Windows 构建验证使用 Node 24.x。
 
 ```powershell
 git clone https://github.com/Akun-python/minos.git
 Set-Location minos
-git switch feature/pi-web-agent-integration
+git switch main
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend\requirements-local.txt
-Copy-Item backend\.env.example backend\.env
-```
-
-编辑私有配置 `backend/.env`，设置随机 JWT 密钥及 OpenAI 兼容模型服务（配置项名称以示例与后端配置为准）：
-
-```dotenv
-LLM_API_KEY=replace-with-your-provider-key
-LLM_BASE_URL=https://your-provider.example/v1
-LLM_MODEL=your-model-id
-```
-
-不要将真实密钥写进前端、README 或 Git。没有真实模型配置时，Pi/面试 AI 能力不可用，不应把旧演示回复视为真实推理。
-
-### 2. 安装并构建
-
-```powershell
 Set-Location pi-web
 npm.cmd ci
 npm.cmd run build
 Set-Location ..
+.\start-minos.cmd
 ```
 
-Pi 后端启动要求已存在生产构建。**不要在 `next dev` 运行时执行 `next build`**，也不要启动多个共享同一构建目录的开发服务器。原版 Noto Sans Mono 字体已随源码附带 OFL 许可，构建不必访问 Google Fonts。
+源码部署统一入口通常为 `http://127.0.0.1:5173`，后端通常为 `http://127.0.0.1:8000`；Electron 优先使用 5175/8005，并按可用情况分配端口。按程序实际打开的地址使用，不要混用不同实例。
 
-### 3. 启动 / 停止
+当前后端只读取个人数据目录的环境配置，不自动继承源码目录中的私有环境文件。需要隔离运行时可设置绝对路径 `MINOS_DATA_DIR`，详见 [便携运行说明](<backend/PORTABLE_RUNTIME.md>)。不要在同一构建目录的 `next dev` 运行时执行 `next build`。
 
-双击根目录 `start-minos.cmd`，或运行：
+### Electron 打包
+
+按 [桌面构建说明](<desktop/README.md>) 和 [Electron 说明](<desktop/electron/README.md>) 准备嵌入式 Python 及运行依赖，执行：
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\local-deploy.ps1 -Action Start -NoBrowser
+.\desktop\build.ps1
 ```
 
-- 统一登录/工作区：<http://127.0.0.1:5173/>
-- 知识库：<http://127.0.0.1:5173/?businessPath=%2Fknowledge>
-- AI 面试：<http://127.0.0.1:5173/?businessPath=%2Finterview>
-- API 文档：<http://127.0.0.1:8000/docs>
+输出目录为 `dist/electron`。打包不是简单网页快捷方式；Electron 会管理本机前后端进程及退出清理。不要上传依赖目录、运行数据和生成产物到源码提交；二进制通过 Releases 分发。
 
-停止：双击 `stop-minos.cmd`。脚本只停止它记录且校验过的服务进程，不按端口盲杀其他程序。服务未设置开机自启。
+## 验证范围与限制
 
-演示账号：`demo@xiaomin.ai / demo123456`；管理员演示账号：`admin@xiaomin.ai / admin123456`。**均为公开演示凭据，不可作为公网部署凭据。**
+最近一次验证记录：
 
-### 4. PDF 与语音（可选）
+- 后端运行 80 项测试，跳过 1 项，其余通过。
+- 本次相关前端回归 24 项通过，生产构建通过。
+- 实测跨盘启动、账号创建/登录、模型设置保存与读回、重启后配置保留。
+- 审计生产依赖文件无缺失，并验证 OpenAI / Pi AI SDK 导入成功。
+- 实测首页不嵌入 PDF、不自动请求模板 PDF，保留选择模板入口。
+- 本文截图来自隔离账号真实 Electron 页面；页面截图不代表所有后端业务流程或远程 AI 服务已完成验收。
 
-- 将 `tectonic` / `xelatex` 加入 PATH，或通过 `RESUME_XELATEX` 指定编译器可执行文件。便携工具和下载缓存不随 Git 分发；具体支持项见后端简历文档。
-- 第三方曼波语音使用后端环境变量 `MAMBO_TTS_KEY`；缺失时文字面试仍可使用。
-- 摄像头/麦克风仅在明确授权后启用。请注意语音识别、播报和模型服务各自的数据传输边界。
+**未完成项：** 另一台干净电脑的全面验收；最新发布版真实远程模型回复与在线 ASR 的可用性确认。全量上游前端测试存在失败，部分为中文文案与英文断言不一致，其余未逐项定位，不能宣称全量测试全绿。
 
-## 数据与更新
+## 文档与致谢
 
-SQLite、上传文件、账号工作区、Pi 凭据和运行日志均应留在本机，不加入版本控制。先停止服务再备份数据库；不要通过删除用户数据解决启动问题。前端使用生产静态资源，修改后需重新构建；修改 Pi 后需重新连接/重启对应生产进程。
-
-旧前端不再运行。求职业务迁入 Pi Web，旧聊天不与 Pi 聊天并行；历史源码保留供回退。新密码使用随机盐 PBKDF2，不再绑定 JWT 签名密钥；旧密码在成功验证后自动升级。若旧签名密钥丢失导致旧密码不可验证，应由操作者明确重置，不在部署时静默改写账号。
-
-## 验证
-
-```powershell
-# 后端单元/集成测试（使用临时数据库，避免污染运行数据）
-.\.venv\Scripts\python.exe -m unittest discover -s backend -p '*test*.py' -q
-
-# Pi 求职 UI、路由桥接与聊天回归
-Set-Location pi-web
-node --test lib/career-ui.test.mjs lib/minos-business.test.mjs components/ChatInput.test.mjs components/ChatWindow.attach-files.test.mjs components/ChatWindow.lazy-load.test.mjs
-```
-
-本次集成已通过前后端生产构建、40 项后端测试及 66 项选定 Pi 回归测试；真实浏览器验证了知识库搜索/导航和文字面试“创建 → 保存作答 → 模型反馈 → 完成”。这些不是对全部上游功能、浏览器、供应商或语音硬件的全覆盖保证。
-
-## 文档与上游致谢
-
-- [Windows 部署](<DEPLOY-WINDOWS.md>)
-- [Pi 集成架构、安全边界与生成式 UI 协议](<pi-web/MINOS-INTEGRATION.md>)
+- [Windows 源码部署](<DEPLOY-WINDOWS.md>)
+- [Pi 集成架构与安全边界](<pi-web/MINOS-INTEGRATION.md>)
 - [本地智能体 Harness](<backend/HARNESS.md>)
 - [简历工作台](<backend/RESUME_WORKBENCH.md>)
 - [原版简历模板与许可](<backend/app/resume_templates/README.md>)
 
-Pi Web 来源：[agegr/pi-web](https://github.com/agegr/pi-web)，上游版本 `0.12.2`，基准提交 `e533d9b3975f8a74b378d5007c92fdf4d15d3fba`。本仓库直接保留上游 UI/API/SDK 实现并作 MINOS 集成，不是视觉仿制。分发时请保留 [Pi Web MIT 许可](<pi-web/LICENSE>)、字体 OFL 与各简历模板的原始许可。
+Pi Web 上游：[agegr/pi-web](https://github.com/agegr/pi-web)，版本 `0.12.2`，基准提交 `e533d9b3975f8a74b378d5007c92fdf4d15d3fba`。本项目保留真实 Pi UI/API/SDK 实现并进行 MINOS 集成。分发须保留 [Pi Web MIT 许可](<pi-web/LICENSE>)、字体 OFL 与简历模板原始许可。
