@@ -1,0 +1,16 @@
+2019-04-20
+
+  Support for LGR encoding. Condensed fonts now accessible
+  using standard c series codes.
+
+2019-04-07
+
+  Support for standard NFSS series codes. New macros for
+  localized use of non-default weights and figure styles.
+
+2019-03-01 and 2019-03-03:
+
+  FontFace and NFSSFamily declarations provided by Mario
+  Haustein added to roboto.sty and roboto-mono.sty so that
+  \fontseries{...} and \fontfamily{...} commands work as
+  expected with xelatex and lualatex.

@@ -250,6 +250,8 @@ class PiWebManager:
         agent = private / 'agent'
         agent.mkdir(exist_ok=True, mode=0o700)
         self._configure(agent)
+        from app.services.bundled_skills import install_bundled_skills
+        install_bundled_skills(agent)
         workspace = str(workspace_for(user_id))
         port = self._free_port()
         secret = secrets.token_urlsafe(48)

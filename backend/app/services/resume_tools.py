@@ -37,6 +37,6 @@ TOOLS = [
     _tool('resume_update', '提交完整简历替换（非 patch）；必须保留所有未涉及字段以及每个 section 的 entries/column、每个 entry 的全部字段。成功返回完整最新状态。',
           {'resume': RESUME_SCHEMA, 'expectedRevision': REVISION}, ['resume', 'expectedRevision'], definitions=True),
     _tool('resume_set_template', '只切换模板，不改变简历正文。成功返回完整最新状态。',
-          {'template': {'type': 'string', 'enum': ['classic', 'sidebar', 'mcdowell', 'hunner', 'minimal']}, 'expectedRevision': REVISION}, ['template', 'expectedRevision']),
+          {'template': {'type': 'string', 'enum': ['classic', 'sidebar', 'mcdowell', 'hunner', 'minimal', 'awesome', 'fortyseconds']}, 'expectedRevision': REVISION}, ['template', 'expectedRevision']),
     _tool('resume_compile', '用当前修订和当前原版模板安全编译 PDF，返回 revision/template/pdfUrl/warnings。仅当前修订可预览，不能传入源码或路径。'),
 ]

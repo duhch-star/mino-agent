@@ -1,0 +1,31 @@
+\documentclass[11pt]{standalone}
+\usepackage{array}
+\usepackage[default,type1]{sourcesans}
+\usepackage[T1]{fontenc}
+
+\newcommand*\spA{abcde}
+\newcommand*\spB{01469}
+\newcommand*\spr[1][\spA]{& #1 & #1 & #1 & #1 & #1 & #1 & #1 \\}
+\begin{document}
+\begin{tabular}{
+		l
+		>{\fontseries{extralight}\fontshape{n}\selectfont}c
+		>{\fontseries{light}\fontshape{n}\selectfont}c
+		>{\fontseries{regular}\fontshape{n}\selectfont}c
+		>{\fontseries{medium}\fontshape{n}\selectfont}c
+		>{\fontseries{semibold}\fontshape{n}\selectfont}c
+		>{\fontseries{bold}\fontshape{n}\selectfont}c
+		>{\fontseries{black}\fontshape{n}\selectfont}c }
+	& ExtraLight & Light & Regular & Medium & Semibold & Bold & Black \\
+	normal               \spr
+	italic               \spr[\itshape\spA]
+	small-caps           \spr[\scshape\spA]
+	capitals             \spr[\MakeUppercase\spA]
+	lining               \spr[\spB]
+	lining italic        \spr[\itshape\spB]
+	lining small-caps    \spr[\scshape\spB]
+	old-style            \spr[\oldstylenums{\spB}]
+	old-style italic     \spr[\oldstylenums{\itshape \spB}]
+	old-style small-caps \spr[\oldstylenums{\scshape\spB}]
+\end{tabular}
+\end{document}

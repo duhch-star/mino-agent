@@ -1,0 +1,64 @@
+% THIS FILE WAS AUTOMATICALLY GENERATED -- DO NOT EDIT
+
+%%AutoEnc_d6t5vry7esauu4jct4ayio3vbf
+% Encoding created by otftotfm on Sun May  3 18:05:32 2026
+% Command line follows encoding
+/AutoEnc_d6t5vry7esauu4jct4ayio3vbf [
+%00
+  /.notdef /Euro /.notdef /.notdef /fraction /dotaccent /hungarumlaut /ogonek
+  /fl /.notdef /.notdef /f_f /fi /.notdef /f_f_i /f_f_l
+%10
+  /dotlessi /uni0237 /grave /acute /caron /breve /macron /ring
+  /cedilla /germandbls /ae /oe /oslash /AE /OE /Oslash
+%20
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+  /parenleft.u /parenright.u /asterisk /plus.u /comma.u /hyphen.u /period.u /slash
+%30
+  /zero.u /one.u /two.u /three.u /four.u /five.u /six.u /seven.u
+  /eight.u /nine.u /colon.u /semicolon /less /equal.u /greater /question
+%40
+  /at /A.u /B.u /C.u /D.u /E.u /F.u /G.u
+  /H.u /I.u /J.u /K.u /L.u /M.u /N.u /O.u
+%50
+  /P.u /Q.u /R.u /S.u /T.u /U.u /V.u /W.u
+  /X.u /Y.u /Z.u /bracketleft /backslash /bracketright /circumflex /underscore
+%60
+  /quoteleft /a.u /b.u /c.u /d.u /e.u /f.u /g.u
+  /h.u /i.u /j.u /k.u /l.u /m.u /n.u /o.u
+%70
+  /p.u /q.u /r.u /s.u /t.u /u.u /v.u /w.u
+  /x.u /y.u /z.u /braceleft /bar /braceright /tilde /dieresis
+%80
+  /Lslash /quotesingle /quotesinglbase /uni0192 /quotedblbase /ellipsis /dagger /daggerdbl
+  /circumflex /perthousand /Scaron /guilsinglleft /OE /Zcaron /asciicircum /minus.u
+%90
+  /lslash /quoteleft /quoteright /quotedblleft /quotedblright /bullet /endash.u /emdash.u
+  /tilde /trademark /scaron /guilsinglright /oe /zcaron /asciitilde /Ydieresis
+%A0
+  /.notdef /exclamdown /cent /sterling /currency /yen /brokenbar /section
+  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen.u /registered /macron
+%B0
+  /degree /plusminus /two.u /three.u /acute /mu /paragraph /periodcentered
+  /cedilla /one.u /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown
+%C0
+  /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+  /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis
+%D0
+  /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply
+  /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls
+%E0
+  /agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla
+  /egrave.u /eacute.u /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis
+%F0
+  /eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide
+  /oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis
+] def
+% Command line: 'otftotfm --automatic --encoding=fontools_ly1
+% --tfm-directory=fonts/tfm/adobe/sourcesans
+% --vf-directory=fonts/vf/adobe/sourcesans
+% --type1-directory=fonts/type1/adobe/sourcesans
+% --encoding-directory=fonts/enc/dvips/sourcesans
+% --map-file=fonts/map/dvips/sourcesans/SourceSansThree.map --no-updmap
+% --force --coding-scheme=TEX TYPEWRITER AND WINDOWS ANSI --feature=sups
+% --ligkern=* {KL} * fonts/opentype/adobe/sourcesans/SourceSans3-Black.otf
+% SourceSans3-Black-sup-ly1'

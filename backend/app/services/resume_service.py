@@ -68,6 +68,14 @@ for _id, _name, _source, _commit, _layout, _path in [
         'files': {'preview': ('preview.png', 'image/png'), 'original.pdf': ('example.pdf', 'application/pdf'), 'readme': ('README.md', 'text/plain; charset=utf-8'), 'license': ('LICENSE', 'text/plain; charset=utf-8')}}
 
 
+for _id, _name, _repo, _commit, _pdf, _entry in [
+    ('awesome', 'Awesome-CV · 完整图标版', 'posquit0/Awesome-CV', 'add5bc0473b6fe385e1b46e09a8d3e9c55387d67', 'examples/resume.pdf', 'examples/resume.tex'),
+    ('fortyseconds', 'FortySecondsCV · 完整侧栏版', 'PandaScience/FortySecondsCV', '3cb0951560209cbb06ec7f8605c7f05329442ecb', 'previews/upstream-template.pdf', 'template.tex'),
+]:
+    TEMPLATES.append({'id': _id, 'name': _name, 'description': '上游完整版类文件、全部图标与资源，不删除组件。', 'source': 'https://github.com/'+_repo, 'license': 'LPPL-1.3c / CC-BY-SA-4.0' if _id=='awesome' else 'BSD-Source-Code', 'upstream': _commit, 'adaptation': '原类不改；个人简历仅填入用户提供信息、加入中文回退，不导入作者身份。'})
+    TEMPLATE_DETAILS[_id] = {'title': _name, 'author': _repo.split('/')[0], 'authorUrl': 'https://github.com/'+_repo, 'overview': '完整上游开源模板，包括图标字体、图片、示例及许可证。', 'tags': ['完整资源', '图标', '中文回退'], 'layout': '上游原版布局', 'fontInfo': '完整 FontAwesome5 图标与上游免费字体；随离线环境打包。', 'compilerInfo': 'Tectonic / XeLaTeX（固定兼容上游版本）', 'features': ['保留图标字体与类命令', '保留完整上游示例和资源'], 'sections': ['用户自定义章节'], 'limitations': ['原例作者身份不属于用户；只有用户提供的联系方式会写入个人简历。', '个人中文回退与上游英文效果可能不同；不会删除图标来规避错误。'], 'adaptation': '上游原类与图标不修改；只填入用户数据并加入 Fandol 中文回退。', 'sourcePath': _entry, 'files': {'preview': ('preview.png', 'image/png'), 'original.pdf': (_pdf, 'application/pdf'), 'readme': ('README.md', 'text/plain; charset=utf-8'), 'license': ('LICENCE' if _id=='awesome' else 'LICENSE', 'text/plain; charset=utf-8')}}
+
+
 def template_catalog():
     items = []
     for template in TEMPLATES:
@@ -212,6 +220,9 @@ def _render_additional(resume, template):
 
 def render(resume, template):
     template = normalize(template)
+    if template in ('awesome', 'fortyseconds'):
+        from app.services.resume_full_templates import render as render_full
+        return render_full(resume, template)
     if template in ('hunner', 'mcdowell', 'minimal'):
         return _render_additional(resume, template)
     if template == 'classic':
@@ -270,7 +281,7 @@ def source_bundle(resume, template):
         archive.writestr('resume.tex', render(resume, template))
         for name, content in assets(template).items():
             archive.writestr('upstream/' + name, (TEMPLATE_ROOT/'mcdowell'/name).read_bytes() if template == 'mcdowell' and name == 'mcdowellcv.cls' else content)
-            if name.endswith('.cls') or name.startswith('fonts/'):
+            if template in ('awesome', 'fortyseconds') or name.endswith('.cls') or name.startswith('fonts/'):
                 archive.writestr(name, content)
         archive.writestr('BUILD.txt', 'Compile resume.tex with XeLaTeX (TeX Live with xeCJK + Fandol).\nKeep bundled class, fonts and licenses with this source.\nMINOS only fills content and adds Chinese fallback; upstream layout retained.\n')
     return buffer.getvalue()
@@ -300,7 +311,7 @@ def compile_pdf(source, template='classic'):
         root = Path(directory)
         (root / 'resume.tex').write_text(source, encoding='utf-8')
         for name, content in assets(template).items():
-            if name.endswith('.cls') or name.startswith('fonts/'):
+            if template in ('awesome', 'fortyseconds') or name.endswith('.cls') or name.startswith('fonts/'):
                 dest = root / name
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.write_bytes(content)

@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[LGR,T2A,T1]{fontenc}
+\usepackage[sfdefault]{ClearSans}
+\usepackage{lipsum}
+\begin{document}
+
+\begin{center}\huge\bf Clear Sans
+\end{center}
+
+
+\section*{Regular}
+\lipsum[1]
+
+\section*{Italic}
+\textit{\lipsum[2]}
+
+\section*{Bold}
+
+\textbf{\lipsum[3]}
+
+\section*{Bold Italic}
+
+\textbf{\textit{\lipsum[4]}}
+
+\section*{Light}
+
+\textsfl{\lipsum[5]}
+
+\section*{Thin}
+
+\textsft{\lipsum[6]}
+
+
+\section*{LGR}
+
+
+{\clearlgr\noindent
+ a b g d e z h j i k l m n x o p r s t u f q y w\\
+ A B G D E Z H J I K L M N X O P R S T U F Q Y W\\
+}
+
+\section*{Cyrillic}
+
+{\ifxetex\else\ifluatex\else\fontencoding{T2A}\selectfont\fi\fi
+
+Съешь ещё этих мягких французских булок да
+выпей чаю!}
+
+
+\end{document}

@@ -7,6 +7,13 @@ from verify_document_runtime import verify
 verify(ROOT / '.runtime/packaging/python/python.exe')
 from verify_latex_runtime import verify as verify_latex
 verify_latex(ROOT / '.runtime/packaging/latex', ROOT / '.runtime/packaging/python/python.exe')
+# A first-run account must receive the bundled career skills without npx/network.
+import sys, tempfile
+sys.path.insert(0, str(ROOT/'backend'))
+from app.services.bundled_skills import install_bundled_skills
+with tempfile.TemporaryDirectory(prefix='minos-skill-preflight-') as temporary:
+    if len(install_bundled_skills(Path(temporary))) != 10:
+        raise RuntimeError('Expected ten verified bundled career skills')
 STAGE = ROOT / 'dist/windows/app'
 # Recreate only this verified generated staging directory; never mutate the checkout.
 assert STAGE.resolve() == (ROOT / 'dist/windows/app').resolve()

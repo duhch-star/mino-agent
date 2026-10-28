@@ -1,0 +1,65 @@
+% THIS FILE WAS AUTOMATICALLY GENERATED -- DO NOT EDIT
+
+%%AutoEnc_bhvwzmlspt4ixowon637ct6ggd
+% Encoding created by otftotfm on Thu Mar 27 10:45:26 2025
+% Command line follows encoding
+/AutoEnc_bhvwzmlspt4ixowon637ct6ggd [
+%00
+  /grave /acute /circumflex /tilde /dieresis /hungarumlaut /ring /caron
+  /breve /macron /dotaccent /cedilla /ogonek /f_f_i /f_f_l /.notdef
+%10
+  /quotedblleft /quotedblright /.notdef /.notdef /cyrbreve /endash /emdash /f_f
+  /.notdef /dotlessi /dotlessj /.notdef /fi /fl /.notdef /.notdef
+%20
+  /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+  /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+%30
+  /zero /one /two /three /four /five /six /seven
+  /eight /nine /colon /semicolon /less /equal /greater /question
+%40
+  /at /A /B /C /D /E /F /G
+  /H /I /J /K /L /M /N /O
+%50
+  /P /Q /R /S /T /U /V /W
+  /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+%60
+  /quoteleft /a /b /c /d /e /f /g
+  /h /i /j /k /l /m /n /o
+%70
+  /p /q /r /s /t /u /v /w
+  /x /y /z /braceleft /bar /braceright /asciitilde /hyphen
+%80
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /uni0409 /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%90
+  /.notdef /.notdef /uni040E /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /uni040A /.notdef /.notdef /uni0401 /uni2116 /currency /section
+%A0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /uni0459 /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%B0
+  /.notdef /.notdef /uni045E /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /uni045A /.notdef /.notdef /uni0451 /quotedblbase /guillemotleft /guillemotright
+%C0
+  /uni0410 /uni0411 /uni0412 /uni0413 /uni0414 /uni0415 /uni0416 /uni0417
+  /uni0418 /uni0419 /uni041A /uni041B /uni041C /uni041D /uni041E /uni041F
+%D0
+  /uni0420 /uni0421 /uni0422 /uni0423 /uni0424 /uni0425 /uni0426 /uni0427
+  /uni0428 /uni0429 /uni042A /uni042B /uni042C /uni042D /uni042E /uni042F
+%E0
+  /uni0430 /uni0431 /uni0432 /uni0433 /uni0434 /uni0435 /uni0436 /uni0437
+  /uni0438 /uni0439 /uni043A /uni043B /uni043C /uni043D /uni043E /uni043F
+%F0
+  /uni0440 /uni0441 /uni0442 /uni0443 /uni0444 /uni0445 /uni0446 /uni0447
+  /uni0448 /uni0449 /uni044A /uni044B /uni044C /uni044D /uni044E /uni044F
+] def
+% Command line: 'otftotfm --automatic --encoding=fontools_t2b
+% --tfm-directory=texmf/fonts/tfm/intel/clearsans
+% --vf-directory=texmf/fonts/vf/intel/clearsans
+% --truetype-directory=texmf/fonts/truetype/intel/clearsans
+% --encoding-directory=texmf/fonts/enc/dvips/clearsans
+% --map-file=texmf/fonts/map/dvips/clearsans/ClearSans.map --no-updmap
+% --force --coding-scheme=TEX CYRILLIC FONT ENCODING - T2B --feature=kern
+% --feature=liga --ligkern=f i =: fi --ligkern=f l =: fl --ligkern=f f =: ff
+% --ligkern=ff i =: ffi --ligkern=ff l =: ffl ClearSans-BoldItalic.ttf
+% ClearSans-BoldItalic-tlf-t2b'

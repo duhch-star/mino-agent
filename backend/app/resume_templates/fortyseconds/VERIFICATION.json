@@ -1,0 +1,46 @@
+{
+  "verified_files": 9200,
+  "manifest_sha256": "27e1f560389542844d8cb2cf2fb5ee379a4bcdb897311032155de9748421f8f7",
+  "pdf": "previews/upstream-template.pdf",
+  "pdf_sha256": "86b1a72fc68829f2b512097786a3cef9c0848a0728336b5882e41596ad97ef42",
+  "pages": 2,
+  "image_instances": 7,
+  "fonts": {
+    "/IHAIZV+ClearSans-Bold": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/BZIVMZ+ClearSans": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/AKHCZK+MSBM10": {
+      "subtype": "/Type1",
+      "embedded": true
+    },
+    "/VDVGTR+CMR10": {
+      "subtype": "/Type1",
+      "embedded": true
+    },
+    "/CAFSZL+CMMI10": {
+      "subtype": "/Type1",
+      "embedded": true
+    },
+    "/IXFAWU+ClearSans-Italic": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/TQTHRL+FontAwesome5Free-Solid-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/YEUUOC+FontAwesome5Brands-Regular-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    }
+  },
+  "text_chars": [
+    2437,
+    1909
+  ]
+}

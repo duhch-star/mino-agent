@@ -1,0 +1,143 @@
+MINOS bundled career skills — provenance and review notice
+Reviewed: 2026-10-28
+
+This distribution contains TEN distinct, real upstream SKILL.md files, copied
+byte-for-byte from public repositories at the immutable commits below. None was
+split into synthetic skills or attributed to an invented source. No scripts,
+package installers, binaries, credentials or account integrations are included.
+manifest.json records per-skill source, commit, upstream path, MIT license URL,
+and SHA-256 of every bundled file relative to that skill directory. Every skill
+also carries the complete original MIT LICENSE, so attribution survives copying.
+
+1. squerne/open-career-skills
+Repository: https://github.com/squerne/open-career-skills
+Commit: daaf01f832e5cc35e5e49e3257014de90fb5ed24
+License: MIT; Copyright (c) 2026 JobMentis (Sylvain Querné)
+Original paths: .claude/skills/<name>/SKILL.md
+Included names:
+- ruthless-cv-optimizer — evidence-based CV review, rewriting and tailoring
+- cover-letter-writer — factual, job-specific cover letters
+- mock-interviewer — interactive interview rehearsal and feedback
+- star-story-extractor — factual STAR story extraction and matching
+- ats-detective — public ATS vendor identification and formatting guidance
+Additional original file: story-bank/README.md is included under
+star-story-extractor/story-bank/README.md (same commit and MIT license).
+
+2. Paramchoudhary/ResumeSkills
+Repository: https://github.com/Paramchoudhary/ResumeSkills
+Commit: 74ae19e7c62b0516d1c298328e5544976c12da5d
+License: MIT; Copyright (c) 2026 Resume Skills
+Original paths: skills/<name>/SKILL.md
+Included names:
+- resume-tailor — truthful job-specific resume adaptation
+- resume-formatter — readable, ATS-conscious resume formatting review
+- cold-email-writer — human-written style networking/outreach DRAFTS
+- salary-negotiation-prep — compensation research and negotiation preparation
+- offer-comparison-analyzer — compensation and non-monetary offer comparison
+
+SAFETY AND QUALITY REVIEW / KNOWN LIMITATIONS
+All ten complete SKILL.md bodies, both complete LICENSE texts and the included
+story-bank reference were read during selection, not merely their metadata.
+No selected file directs credential collection, secret extraction/upload,
+destructive system changes, executable installation, automatic application
+submission or automatic sending of candidate documents/messages. Examples are
+illustrations, NEVER facts about the user. Unsupported numbers, certifications,
+skills, achievements or competing offers must not be invented. Missing evidence
+must be asked for, omitted or visibly marked, not filled with examples.
+
+The five open-career-skills files retain upstream promotional closing sentences
+linking to JobMentis. These are third-party advertising, NOT a MINOS endorsement,
+requirement or integration. Users do NOT need to visit, register, purchase or
+upload anything there to use these Markdown skills. The included files do not
+implement a network upload. Do not send personal data to these links.
+
+ats-detective can make unauthenticated requests to PUBLIC employer job boards;
+company names/board slugs go into URLs, not resumes. Ask before network use and
+do not transmit private candidate data. URL matches and board probes identify
+only observed evidence, not guaranteed employer-wide systems. Upstream claims
+about each ATS vendor's parsing/ranking behavior are generalized, unverified
+heuristics; they are NOT guarantees, screening probabilities or benchmark data.
+Likewise resume keyword scores are heuristics, not actual employer ATS results.
+
+salary-negotiation-prep contains unsourced statistics (including '84%') and
+US-centric salary-history, benefits and tax assumptions. Do not present those
+statistics as verified facts; validate current sources and local law. Equity
+and compensation examples simplify liquidity, vesting, taxation and risk;
+recalculate arithmetic against actual offers and consult qualified local
+legal/tax/financial advice where appropriate. No hiring, pay or ATS result is
+promised. Formatting preferences are market-specific, not universal rules.
+
+WORKSPACE CONVENTIONS / OPTIONAL CROSS-SKILL REFERENCES
+The open-career skills refer to user-owned profile/profile.md, story-bank/,
+tracker/applications.md and output/ paths. These are workspace conventions, NOT
+files containing a bundled user's profile. Ask the user for inputs if absent;
+do not search outside the authorized workspace. The original STAR format guide
+is available in the installed star-story-extractor/story-bank/README.md; consult
+that guide when creating the user's workspace story-bank. Never overwrite an
+existing user file merely to satisfy a convention. Slash commands in upstream
+text are upstream shortcuts, not additional MINOS commands or integrations.
+resume-tailor mentions job-description-analyzer; that optional upstream skill
+is NOT bundled. Analyze the user's supplied JD directly instead. All required
+instructional content for the selected ten skills is included, with no external
+executable dependency or credential required.
+
+REJECTED CANDIDATES (NOT BUNDLED)
+From Paramchoudhary/ResumeSkills: resume-bullet-writer, resume-ats-optimizer,
+interview-prep-generator, job-description-analyzer, career-changer-translator:
+examples or quantification instructions add facts not grounded in the supplied
+input, risking fabricated candidate achievements/skills; no silent repair made.
+linkedin-profile-optimizer was not selected: weak fact constraints and dated
+platform claims. cover-letter-generator was superseded by the stricter factual
+cover-letter-writer rather than duplicating that role.
+From squerne/open-career-skills: job-search explicitly acknowledges its proposed
+LinkedIn automated fetching is against that site's terms; not bundled.
+linkedin-360brew-planner demands treating unverified ranking rules as established
+facts; not bundled. evidence-miner was not selected because it depends on git
+operations instead of being purely document-first.
+
+MIT license text for both source groups (the exact original texts also appear
+inside each associated skill directory):
+
+MIT License
+
+Copyright (c) 2026 JobMentis (Sylvain Querné)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+MIT License
+
+Copyright (c) 2026 Resume Skills
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

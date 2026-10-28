@@ -1,0 +1,64 @@
+% THIS FILE WAS AUTOMATICALLY GENERATED -- DO NOT EDIT
+
+%%AutoEnc_ol724c3aitvvvdrqqzrq44dk4c
+% Encoding created by otftotfm on Sun May  3 18:05:32 2026
+% Command line follows encoding
+/AutoEnc_ol724c3aitvvvdrqqzrq44dk4c [
+%00
+  /Gamma /Delta /Theta /Lambda /Xi /Pi /Sigma /Upsilon
+  /Phi /Psi /Omega /f_f /fi /fl /f_f_i /f_f_l
+%10
+  /dotlessi /uni0237 /grave /acute /caron /breve /macron /ring
+  /cedilla /germandbls /ae /oe /oslash /AE /OE /Oslash
+%20
+  /.notdef /exclam /quotedblright /numbersign /dollar /percent /ampersand /quoteright
+  /parenleft.u /parenright.u /asterisk /plus.u /comma.u /hyphen.u /period.u /slash
+%30
+  /zero.u /one.u /two.u /three.u /four.u /five.u /six.u /seven.u
+  /eight.u /nine.u /colon.u /semicolon /exclamdown /equal.u /questiondown /question
+%40
+  /at /A.u /B.u /C.u /D.u /E.u /F.u /G.u
+  /H.u /I.u /J.u /K.u /L.u /M.u /N.u /O.u
+%50
+  /P.u /Q.u /R.u /S.u /T.u /U.u /V.u /W.u
+  /X.u /Y.u /Z.u /bracketleft /quotedblleft /bracketright /circumflex /dotaccent
+%60
+  /quoteleft /a.u /b.u /c.u /d.u /e.u /f.u /g.u
+  /h.u /i.u /j.u /k.u /l.u /m.u /n.u /o.u
+%70
+  /p.u /q.u /r.u /s.u /t.u /u.u /v.u /w.u
+  /x.u /y.u /z.u /endash.u /emdash.u /hungarumlaut /tilde /dieresis
+%80
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /Lslash /.notdef /.notdef /.notdef /.notdef /.notdef
+%90
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%A0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /lslash /.notdef /.notdef /.notdef /.notdef /.notdef
+%B0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%C0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%D0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%E0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%F0
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+  /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+] def
+% Command line: 'otftotfm --automatic --encoding=fontools_ot1
+% --tfm-directory=fonts/tfm/adobe/sourcesans
+% --vf-directory=fonts/vf/adobe/sourcesans
+% --type1-directory=fonts/type1/adobe/sourcesans
+% --encoding-directory=fonts/enc/dvips/sourcesans
+% --map-file=fonts/map/dvips/sourcesans/SourceSansThree.map --no-updmap
+% --force --coding-scheme=TEX TEXT --feature=sups --ligkern=* {KL} *
+% fonts/opentype/adobe/sourcesans/SourceSans3-Black.otf
+% SourceSans3-Black-sup-ot1'

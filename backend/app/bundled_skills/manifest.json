@@ -1,0 +1,158 @@
+﻿{
+    "schema_version":  1,
+    "reviewed_at":  "2026-10-28",
+    "description":  "Ten real upstream career SKILL.md files; unmodified, Markdown-only, each attributed to its upstream MIT license.",
+    "skills":  [
+                   {
+                       "id":  "ruthless-cv-optimizer",
+                       "path":  "ruthless-cv-optimizer",
+                       "source":  "https://github.com/squerne/open-career-skills",
+                       "commit":  "daaf01f832e5cc35e5e49e3257014de90fb5ed24",
+                       "license":  "MIT",
+                       "upstream_path":  ".claude/skills/ruthless-cv-optimizer/SKILL.md",
+                       "upstream_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/.claude/skills/ruthless-cv-optimizer/SKILL.md",
+                       "license_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "1d89e2e6bf6affaa485574fafd982e64357a2046af3b2c52aab4930ee3624811",
+                                     "LICENSE":  "c23f0102eb18e94c9bdb898d550b977bdb37dcc5b4ae1744f909f5692263fadf"
+                                 }
+                   },
+                   {
+                       "id":  "cover-letter-writer",
+                       "path":  "cover-letter-writer",
+                       "source":  "https://github.com/squerne/open-career-skills",
+                       "commit":  "daaf01f832e5cc35e5e49e3257014de90fb5ed24",
+                       "license":  "MIT",
+                       "upstream_path":  ".claude/skills/cover-letter-writer/SKILL.md",
+                       "upstream_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/.claude/skills/cover-letter-writer/SKILL.md",
+                       "license_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "7f329e7ab02cde53a225b111d7b4797dabd0a64a745b2e010c03edec6800c129",
+                                     "LICENSE":  "c23f0102eb18e94c9bdb898d550b977bdb37dcc5b4ae1744f909f5692263fadf"
+                                 }
+                   },
+                   {
+                       "id":  "mock-interviewer",
+                       "path":  "mock-interviewer",
+                       "source":  "https://github.com/squerne/open-career-skills",
+                       "commit":  "daaf01f832e5cc35e5e49e3257014de90fb5ed24",
+                       "license":  "MIT",
+                       "upstream_path":  ".claude/skills/mock-interviewer/SKILL.md",
+                       "upstream_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/.claude/skills/mock-interviewer/SKILL.md",
+                       "license_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "5a1a6651e8d5446043609f6da0bc249663064cf65ec1b7eeac2b05b58f86a37e",
+                                     "LICENSE":  "c23f0102eb18e94c9bdb898d550b977bdb37dcc5b4ae1744f909f5692263fadf"
+                                 }
+                   },
+                   {
+                       "id":  "star-story-extractor",
+                       "path":  "star-story-extractor",
+                       "source":  "https://github.com/squerne/open-career-skills",
+                       "commit":  "daaf01f832e5cc35e5e49e3257014de90fb5ed24",
+                       "license":  "MIT",
+                       "upstream_path":  ".claude/skills/star-story-extractor/SKILL.md",
+                       "upstream_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/.claude/skills/star-story-extractor/SKILL.md",
+                       "license_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "cd682bd00fd58654f25ead069ad21427037a97cd340daf5b2b1a6e643a466c2d",
+                                     "LICENSE":  "c23f0102eb18e94c9bdb898d550b977bdb37dcc5b4ae1744f909f5692263fadf",
+                                     "story-bank/README.md":  "5ac42d06e6b037cc69740c7e576d973fd4e34d563273c3d105c86fe1a2275257"
+                                 }
+                   },
+                   {
+                       "id":  "ats-detective",
+                       "path":  "ats-detective",
+                       "source":  "https://github.com/squerne/open-career-skills",
+                       "commit":  "daaf01f832e5cc35e5e49e3257014de90fb5ed24",
+                       "license":  "MIT",
+                       "upstream_path":  ".claude/skills/ats-detective/SKILL.md",
+                       "upstream_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/.claude/skills/ats-detective/SKILL.md",
+                       "license_url":  "https://github.com/squerne/open-career-skills/blob/daaf01f832e5cc35e5e49e3257014de90fb5ed24/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "6e97c37f15074b41e348ffc89a271a31b0112ae7ccb2a0402ade975665453168",
+                                     "LICENSE":  "c23f0102eb18e94c9bdb898d550b977bdb37dcc5b4ae1744f909f5692263fadf"
+                                 }
+                   },
+                   {
+                       "id":  "resume-tailor",
+                       "path":  "resume-tailor",
+                       "source":  "https://github.com/Paramchoudhary/ResumeSkills",
+                       "commit":  "74ae19e7c62b0516d1c298328e5544976c12da5d",
+                       "license":  "MIT",
+                       "upstream_path":  "skills/resume-tailor/SKILL.md",
+                       "upstream_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/skills/resume-tailor/SKILL.md",
+                       "license_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "96853a389e2043cd3cc46667b89576cd3755bbef2c72ebeafc486230609b0981",
+                                     "LICENSE":  "779da7ca4855d53a7800c744fef206c6265ace2e1eefef8ab608a0ccfb6d751d"
+                                 }
+                   },
+                   {
+                       "id":  "resume-formatter",
+                       "path":  "resume-formatter",
+                       "source":  "https://github.com/Paramchoudhary/ResumeSkills",
+                       "commit":  "74ae19e7c62b0516d1c298328e5544976c12da5d",
+                       "license":  "MIT",
+                       "upstream_path":  "skills/resume-formatter/SKILL.md",
+                       "upstream_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/skills/resume-formatter/SKILL.md",
+                       "license_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "387522dc9a48ea948fc44c73189fce0676dc12b694186d4d44957ae02bd6becf",
+                                     "LICENSE":  "779da7ca4855d53a7800c744fef206c6265ace2e1eefef8ab608a0ccfb6d751d"
+                                 }
+                   },
+                   {
+                       "id":  "cold-email-writer",
+                       "path":  "cold-email-writer",
+                       "source":  "https://github.com/Paramchoudhary/ResumeSkills",
+                       "commit":  "74ae19e7c62b0516d1c298328e5544976c12da5d",
+                       "license":  "MIT",
+                       "upstream_path":  "skills/cold-email-writer/SKILL.md",
+                       "upstream_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/skills/cold-email-writer/SKILL.md",
+                       "license_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "b8b576b5e917b68083efc8772db765843caef125dd5d9444b533ca23b9ad574b",
+                                     "LICENSE":  "779da7ca4855d53a7800c744fef206c6265ace2e1eefef8ab608a0ccfb6d751d"
+                                 }
+                   },
+                   {
+                       "id":  "salary-negotiation-prep",
+                       "path":  "salary-negotiation-prep",
+                       "source":  "https://github.com/Paramchoudhary/ResumeSkills",
+                       "commit":  "74ae19e7c62b0516d1c298328e5544976c12da5d",
+                       "license":  "MIT",
+                       "upstream_path":  "skills/salary-negotiation-prep/SKILL.md",
+                       "upstream_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/skills/salary-negotiation-prep/SKILL.md",
+                       "license_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "efac612f8ab539a7946f77e6b0c6d820713283c309eee6daf36e3ed7a27a7088",
+                                     "LICENSE":  "779da7ca4855d53a7800c744fef206c6265ace2e1eefef8ab608a0ccfb6d751d"
+                                 }
+                   },
+                   {
+                       "id":  "offer-comparison-analyzer",
+                       "path":  "offer-comparison-analyzer",
+                       "source":  "https://github.com/Paramchoudhary/ResumeSkills",
+                       "commit":  "74ae19e7c62b0516d1c298328e5544976c12da5d",
+                       "license":  "MIT",
+                       "upstream_path":  "skills/offer-comparison-analyzer/SKILL.md",
+                       "upstream_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/skills/offer-comparison-analyzer/SKILL.md",
+                       "license_url":  "https://github.com/Paramchoudhary/ResumeSkills/blob/74ae19e7c62b0516d1c298328e5544976c12da5d/LICENSE",
+                       "modified":  false,
+                       "files":  {
+                                     "SKILL.md":  "3265a7bb36a9b8ffb986f5e5dec6de88578f45b28da0be493d4e86ce366cf95d",
+                                     "LICENSE":  "779da7ca4855d53a7800c744fef206c6265ace2e1eefef8ab608a0ccfb6d751d"
+                                 }
+                   }
+               ]
+}

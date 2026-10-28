@@ -1,0 +1,147 @@
+This is the README for the roboto package, version
+2022-09-10.
+
+This package provides LaTeX, pdfLaTeX, XeLaTeX and
+LuaLaTeX support for the Roboto, RobotoMono, RobotoSlab
+and RobotoSerif families of fonts, designed by Christian
+Robertson and Greg Gazdowicz for Google, who say:
+
+  Roboto (Sans) has a dual nature. It has a mechanical skeleton
+  and the forms are largely geometric. At the same time,
+  the font features friendly and open curves. While some
+  grotesks distort their letterforms to force a rigid
+  rhythm, Roboto doesn't compromise, allowing letters to be
+  settled into their natural width. This makes for a more
+  natural reading rhythm more commonly found in humanist and
+  serif types.
+
+  Roboto Serif is designed to create a comfortable
+  and frictionless reading experience. Minimal and
+  highly functional, it is useful anywhere (even for app
+  interfaces) due to the extensive set of weights and widths
+  across a broad range of optical sizes. While it was
+  carefully crafted to work well in digital media, across
+  the full scope of sizes and resolutions we have today, it
+  is just as comfortable to read and work in print media.
+
+In addition to some condensed variants, there are four
+weights in a slab-serif family. Roboto and RobotoCondensed
+have small-capitals.
+
+To activate the sans-serif fonts, add
+
+\usepackage{roboto}
+
+to the preamble of your document. This makes Roboto the
+default sans family. To also set Roboto as the main text
+font, use
+
+\usepackage[sfdefault]{roboto}
+
+
+Other options include:
+
+regular
+bold
+medium        
+black
+light
+thin
+condensed       
+
+Only light, regular and bold weights are available in the
+condensed sans family.
+
+Defaults are regular and bold (uncondensed). 
+
+Italics (slanted) are available in all variants.
+
+rm, slab
+
+These options activate the slab-serif variants as the main
+text font. The weights available are thin, light, regular
+and bold, but there are no italics.
+
+Options scaled=<number> or scale=<number> may be used to
+adjust the sans fontsizes to match a serifed font.
+
+LuaLaTeX and xeLaTeX users who might prefer type1 fonts or
+who wish to avoid fontspec may use the type1 option.
+
+To activate RobotoMono, use
+
+\usepackage{roboto-mono}
+
+To activate RobotoSerif, use
+
+\usepackage{roboto-serif}
+
+The following options are supported:
+
+regular
+bold
+medium        
+black
+light
+thin
+condensed
+
+The default figure style is proportional-lining but the
+following options may be used to get other styles 
+in Roboto, RobotoSerif and the condensed variants:
+
+oldstyle (or osf)
+tabular (or t)
+
+The following allow for localized use of non-default figure
+styles:
+
+\robotoLF{...}          \robotoserifLF{...}     (proportional lining)
+\robotoTLF{...}         \robotoserifTLF{...}    (tabular lining)
+\robotoOsF{...}         \robotoserifOsF{...}    (proportional oldstyle)
+\robotoTOsF{...}        \robotoserifTOsF{...}   (tabular oldstyle)
+
+The following commands allow for localized use of
+non-default weights:
+
+\robotoThin{...}        \robotomonoThin{...}    \robotoserifThin{...}
+\robotoLight{...}       \robotomonoLight{...}   \robotoserifLight{...}
+\robotoRegular{...}     \robotomonoRegular{...} \robotoserifRegular{...}
+\robotoMedium{...}      \robotomonoMedium{...}  \robotoserifMedium{...}
+\robotoBold{...}        \robotomonoBold{...}    \robotoserifBold{...}
+\robotoBlack{...}       \robotomonoBlack{...}   \robotoserifBlack{...}
+
+Commands 
+
+\roboto
+\robotocondensed
+\robotoboldcondensed
+\robotoslab
+\robotolgr 
+\robotoslablgr
+\robotomono 
+\robotoserif
+\robotoserifcondensed
+\robotoserifboldcondensed
+
+select those font families or series.
+
+Font encodings supported are OT1, T1, TS1, LY1 and LGR.
+
+To install this package on a TDS-compliant
+TeX system download the file
+"tex-archive"/install/fonts/roboto.tds.zip, where the
+preferred URL for "tex-archive" is http://mirror.ctan.org.
+Unzip the archive at the root of an appropriate texmf tree,
+likely a personal or local tree. If necessary, update the
+file-name database (e.g., texhash). Update the font-map
+files by enabling the Map file roboto.map.
+
+The original truetype fonts are available at
+http://www.google.com/webfonts and are licensed under the
+Apache or OFL licenses; the texts may be found in the
+doc directory. The opentype and type1 versions were created
+using fontforge and cfftot1. The support files were created
+using autoinst and are licensed under the terms of the LaTeX
+Project Public License. The maintainer of this package is
+Bob Tennent (rdt at cs.queensu.ca)

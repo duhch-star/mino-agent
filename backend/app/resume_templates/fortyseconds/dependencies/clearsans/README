@@ -1,0 +1,51 @@
+This is the README for the clearsans package, version 2025-03-27.
+
+This package provides LaTeX, pdfLaTeX, XeLaTeX and LuaLaTeX support
+for the Clear Sans family of fonts (version 1.0), designed by Daniel
+Ratighan at Monotype for Intel. Clear Sans is available in three
+weights (regular, medium, and bold) with corresponding italics, plus
+light and thin upright (without italics).
+
+To install this package on a TDS-compliant TeX system download
+the file "tex-archive"/install/fonts/clearsans.tds.zip where the
+preferred URL for "tex-archive" is http://mirrors.ctan.org. Unzip
+the archive at the root of an appropriate texmf tree, likely a
+personal or local tree. If necessary, update the file-name database
+(e.g., texhash). Update the font-map files by enabling the Map file
+ClearSans.map.
+
+To use, add
+
+\usepackage{ClearSans}
+
+to the preamble of your document. These will activate Clear Sans as
+the sans-serif text font. To activate it as the main text font, use
+
+\usepackage[sfdefault]{ClearSans}
+
+LuaLaTeX and xeLaTeX users who might prefer type1 fonts or who wish
+to avoid fontspec may use the type1 option.
+
+Options scaled=<number> or scale=<number> may be used to scale the
+fonts.
+
+The only figure style is proportional-lining.
+
+Font encodings supported are OT1, T1, LY1, LGR, T2A/B/C  and TS1.
+
+The medium option activates that series as the default bold series.
+
+Commands \clearsans, \clearlight (or textsfl{...}) and
+\clearthin (or \textsft{...}) allow for localized use of
+Clear Sans and the light and thin variants, respectively.
+Command \clearlgr selects the LGR encoding.
+
+The original TrueType fonts were obtained from
+
+https://01.org/clear-sans
+
+and are licensed under the Apache License, version 2.0; the text
+may be found in the doc directory. The type1 versions were created
+using autoinst. The support files were created using autoinst and
+are licensed under the terms of the LaTeX Project Public License.
+The maintainer of this package is Bob Tennent (rdt at cs.queensu.ca)

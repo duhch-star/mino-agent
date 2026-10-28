@@ -1,0 +1,59 @@
+{
+  "verified_files": 6639,
+  "manifest_sha256": "3eddbfae28bcbe0251aeb83f45ab89782c2b57b805ba2f009ac474c71be41867",
+  "pdf": "examples/resume.pdf",
+  "pdf_sha256": "15303ddbca4fe2debb3f1dd739065bcb481c3dfe2a5974e52f9453707c542e41",
+  "pages": 3,
+  "image_instances": 0,
+  "fonts": {
+    "/DZGWMC+Roboto-Light-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/ZITVMC+Roboto-Bold-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/MYAUVT+SourceSansPro-Regular-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/ICFWKJ+Roboto-Italic-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/LWJVXA+FontAwesome5Free-Solid-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/XQURIF+Roboto-Regular-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/MPUETE+FontAwesome5Brands-Regular-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/QZOHMQ+SourceSansPro-It-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/YHSQNO+SourceSansPro-Bold-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/VLQAUJ+SourceSansPro-Light-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    },
+    "/IPSGFS+SourceSansPro-LightIt-Identity-H": {
+      "subtype": "/Type0",
+      "embedded": true
+    }
+  },
+  "text_chars": [
+    4521,
+    3299,
+    238
+  ]
+}

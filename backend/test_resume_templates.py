@@ -59,7 +59,7 @@ class ResumeTemplatesTests(unittest.TestCase):
 
     def test_catalog_and_original_resources(self):
         catalog = service.template_catalog()
-        self.assertEqual(len(catalog), 5)
+        self.assertEqual(len(catalog), 7)
         for template in catalog:
             for field in ['author', 'overview', 'features', 'sections', 'fontInfo', 'compilerInfo', 'limitations', 'previewUrl', 'originalPdfUrl', 'sourceFileUrl', 'commitUrl']:
                 self.assertTrue(template[field], field)
@@ -84,6 +84,19 @@ class ResumeTemplatesTests(unittest.TestCase):
                     self.assertTrue(any(n.endswith('.cls') and '/' not in n for n in bundle.namelist()))
         self.assertNotIn(b'Times New Roman', service.assets('mcdowell')['mcdowellcv.cls'])
         self.assertIn('Times New Roman', (service.TEMPLATE_ROOT/'mcdowell/mcdowellcv.cls').read_text())
+
+    def test_full_templates_keep_upstream_classes_and_icon_fonts(self):
+        for template, cls in [('awesome', 'awesome-cv.cls'), ('fortyseconds', 'fortysecondscv.cls')]:
+            self.assertEqual(service.assets(template)[cls], (service.TEMPLATE_ROOT/template/cls).read_bytes())
+            source = service.render(self.resume, template)
+            self.assertIn(r'\faAddressCard', source)
+            self.assertIn('示例大学', source)
+            self.assertNotIn('Panda Bear', source)
+            self.assertNotIn('Byungjin', source)
+            self.assertNotIn(r'\renewcommand{\fa', source)
+        from app.resume_schemas import Section
+        self.resume.sections = [Section(title='技能', items=['真实技能'])]
+        self.assertIn(r'技能\relax\relax\relax', service.render(self.resume, 'awesome'))
 
     def test_fixed_sb2nov_hashes(self):
         folder=service.TEMPLATE_ROOT/'sb2nov'
