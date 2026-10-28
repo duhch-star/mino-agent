@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="710" viewBox="0 0 1080 710" role="img" aria-label="学科知识关系图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="1080" height="710" rx="14" fill="#f6f9fc"/>
+<text x="540.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">学科知识关系图</text>
+<path d="M216.0,134 C216.0,172.0 360.0,172.0 360.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M432.0,134 C432.0,172.0 360.0,172.0 360.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M360.0,284 C360.0,322.0 540.0,322.0 540.0,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M432.0,134 C432.0,172.0 720.0,172.0 720.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M648.0,134 C648.0,247.0 540.0,247.0 540.0,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M864.0,134 C864.0,247.0 540.0,247.0 540.0,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M720.0,284 C720.0,397.0 540.0,397.0 540.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M540.0,434 C540.0,472.0 540.0,472.0 540.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="109.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="216.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">命题逻辑</text>
+<rect x="325.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="432.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">集合与函数</text>
+<rect x="253.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="360.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">证明方法</text>
+<rect x="433.0" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="540.0" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">算法分析</text>
+<rect x="541.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="648.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">数论与同余</text>
+<rect x="757.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="864.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">计数与概率</text>
+<rect x="613.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="720.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">关系结构</text>
+<rect x="433.0" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="540.0" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">图与树</text>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1010" viewBox="0 0 760 1010" role="img" aria-label="数字逻辑知识关系图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="760" height="1010" rx="14" fill="#f6f9fc"/>
+<text x="380.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">数字逻辑知识关系图</text>
+<path d="M380.0,134 C380.0,172.0 380.0,172.0 380.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,284 C380.0,322.0 253.33333333333334,322.0 253.33333333333334,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,284 C380.0,322.0 506.6666666666667,322.0 506.6666666666667,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M506.6666666666667,434 C506.6666666666667,472.0 380.0,472.0 380.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M253.33333333333334,434 C253.33333333333334,547.0 253.33333333333334,547.0 253.33333333333334,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,584 C380.0,622.0 253.33333333333334,622.0 253.33333333333334,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,584 C380.0,622.0 506.6666666666667,622.0 506.6666666666667,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M253.33333333333334,734 C253.33333333333334,772.0 380.0,772.0 380.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M506.6666666666667,734 C506.6666666666667,772.0 380.0,772.0 380.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="273.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">二值信息表示</text>
+<rect x="273.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">布尔代数</text>
+<rect x="146.33333333333334" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="253.33333333333334" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">组合逻辑</text>
+<rect x="399.6666666666667" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="506.6666666666667" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">触发器</text>
+<rect x="273.0" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">时序逻辑</text>
+<rect x="146.33333333333334" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="253.33333333333334" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">有限状态机</text>
+<rect x="399.6666666666667" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="506.6666666666667" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">存储器</text>
+<rect x="273.0" y="816" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="856.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">数字系统</text>
+</svg>

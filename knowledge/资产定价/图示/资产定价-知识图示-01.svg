@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="860" viewBox="0 0 830 860" role="img" aria-label="资产价格与风险补偿的逻辑关系图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="830" height="860" rx="14" fill="#f6f9fc"/>
+<text x="415.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">资产价格与风险补偿的逻辑关系图</text>
+<path d="M207.5,134 C207.5,247.0 276.6666666666667,247.0 276.6666666666667,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,134 C415.0,172.0 415.0,172.0 415.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,284 C415.0,322.0 276.6666666666667,322.0 276.6666666666667,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M276.6666666666667,434 C276.6666666666667,472.0 276.6666666666667,472.0 276.6666666666667,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M622.5,134 C622.5,322.0 276.6666666666667,322.0 276.6666666666667,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M207.5,134 C207.5,247.0 553.3333333333334,247.0 553.3333333333334,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,284 C415.0,322.0 553.3333333333334,322.0 553.3333333333334,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M553.3333333333334,434 C553.3333333333334,472.0 553.3333333333334,472.0 553.3333333333334,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M276.6666666666667,584 C276.6666666666667,622.0 415.0,622.0 415.0,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M553.3333333333334,584 C553.3333333333334,622.0 415.0,622.0 415.0,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="100.5" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="207.5" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">未来状态与支付</text>
+<rect x="308.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">偏好与边际效用</text>
+<rect x="308.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">随机贴现因子</text>
+<rect x="169.66666666666669" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="276.6666666666667" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">状态价格</text>
+<rect x="515.5" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="622.5" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">无套利约束</text>
+<rect x="169.66666666666669" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="276.6666666666667" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">资产价格</text>
+<rect x="308.0" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">期望收益</text>
+<rect x="446.33333333333337" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="553.3333333333334" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">风险协方差</text>
+<rect x="446.33333333333337" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="553.3333333333334" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">均衡风险溢价</text>
+</svg>

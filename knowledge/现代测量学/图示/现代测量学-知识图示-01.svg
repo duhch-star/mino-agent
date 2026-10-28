@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="1160" viewBox="0 0 830 1160" role="img" aria-label="摄影测量知识关系图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="830" height="1160" rx="14" fill="#f6f9fc"/>
+<text x="415.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">摄影测量知识关系图</text>
+<path d="M415.0,134 C415.0,172.0 415.0,172.0 415.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,284 C415.0,322.0 415.0,322.0 415.0,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,434 C415.0,472.0 415.0,472.0 415.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,584 C415.0,622.0 207.5,622.0 207.5,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,584 C415.0,622.0 415.0,622.0 415.0,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M207.5,734 C207.5,847.0 415.0,847.0 415.0,960" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,734 C415.0,847.0 415.0,847.0 415.0,960" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M622.5,734 C622.5,772.0 415.0,772.0 415.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,884 C415.0,922.0 415.0,922.0 415.0,960" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M415.0,584 C415.0,622.0 622.5,622.0 622.5,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="308.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">坐标系与误差</text>
+<rect x="308.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">中心投影</text>
+<rect x="308.0" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">方位元素</text>
+<rect x="308.0" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">共线方程</text>
+<rect x="100.5" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="207.5" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">后方交会</text>
+<rect x="308.0" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">前方交会</text>
+<rect x="515.5" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="622.5" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">相对定向</text>
+<rect x="308.0" y="816" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="856.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">绝对定向</text>
+<rect x="308.0" y="966" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="415.0" y="1006.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">空三平差</text>
+</svg>

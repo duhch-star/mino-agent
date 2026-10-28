@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1310" viewBox="0 0 760 1310" role="img" aria-label="具体方法流程图">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8Z" fill="#4b637a"/></marker></defs>
+<rect width="760" height="1310" rx="14" fill="#f6f9fc"/>
+<text x="380.0" y="35" text-anchor="middle" font-size="20" font-weight="bold" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">具体方法流程图</text>
+<path d="M380.0,134 C380.0,172.0 380.0,172.0 380.0,210" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,284 C380.0,322.0 380.0,322.0 380.0,360" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,434 C380.0,472.0 380.0,472.0 380.0,510" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,584 C380.0,622.0 380.0,622.0 380.0,660" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,734 C380.0,772.0 380.0,772.0 380.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,884 C380.0,922.0 380.0,922.0 380.0,960" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,1034 C380.0,1072.0 380.0,1072.0 380.0,1110" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,284 C380.0,547.0 380.0,547.0 380.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<path d="M380.0,584 C380.0,697.0 380.0,697.0 380.0,810" stroke="#4b637a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<rect x="273.0" y="66" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="106.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">明确投资目标</text>
+<rect x="273.0" y="216" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="256.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">分析宏观行业</text>
+<rect x="273.0" y="366" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="406.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">分析公司财务</text>
+<rect x="273.0" y="516" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="556.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">估计证券价值</text>
+<rect x="273.0" y="666" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="706.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">构建投资组合</text>
+<rect x="273.0" y="816" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="856.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">设定风险约束</text>
+<rect x="273.0" y="966" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="1006.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">执行与再平衡</text>
+<rect x="273.0" y="1116" width="214" height="68" rx="10" fill="#e6f1fb" stroke="#407ca7" stroke-width="1.5"/>
+<text x="380.0" y="1156.0" text-anchor="middle" font-size="16" font-family="Microsoft YaHei,Arial,sans-serif" fill="#17334b">评价与复盘</text>
+</svg>
