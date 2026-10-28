@@ -6,6 +6,8 @@ These PNGs are full first-page PDF renders. `classic` and `sidebar` are upstream
 | --- | --- | --- |
 | classic.png | sb2nov/sourabh_bajaj_resume.pdf | https://github.com/sb2nov/resume |
 | sidebar.png | deedy/deedy_resume-openfont.pdf | https://github.com/deedy/Deedy-Resume |
+| awesome.png | awesome/examples/resume.pdf (full upstream, 3 pages) | https://github.com/posquit0/Awesome-CV |
+| fortyseconds.png | fortyseconds/previews/upstream-template.pdf (unmodified upstream example compiled, 2 pages) | https://github.com/PandaScience/FortySecondsCV |
 | mcdowell.png | mcdowell/example.pdf (synthetic adaptation) | https://github.com/dnl-blkv/mcdowell-cv |
 | hunner.png | hunner/example.pdf (synthetic adaptation) | https://github.com/treyhunner/resume |
 | minimal.png | minimal/example.pdf (synthetic adaptation of Classic) | https://github.com/jankapunkt/latexcv |

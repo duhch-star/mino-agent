@@ -1,3 +1,6 @@
 # Preserve vendored upstream bytes and manifest hashes on Windows.
 backend/app/resume_templates/sb2nov/** -text
 backend/app/resume_templates/deedy/** -text
+backend/app/resume_templates/awesome/** -text
+backend/app/resume_templates/fortyseconds/** -text
+backend/app/bundled_skills/** -text
