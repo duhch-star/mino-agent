@@ -13,8 +13,9 @@ const NAV = [
   { to: '/chat', label: '对话助手', icon: IconChat },
 ]
 
-export default function Sidebar() {
-  const collapsed = useUiStore(s => s.sidebarCollapsed)
+export default function Sidebar({ mobile = false, onNavigate, onClose }) {
+  const storedCollapsed = useUiStore(s => s.sidebarCollapsed)
+  const collapsed = !mobile && storedCollapsed
   const toggleSidebar = useUiStore(s => s.toggleSidebar)
   const openSettings = useUiStore(s => s.openSettings)
   const newSession = useChatStore(s => s.newSession)
@@ -27,7 +28,8 @@ export default function Sidebar() {
   const branchConversation = useChatStore(s => s.branchConversation)
   const [openMenu, setOpenMenu] = useState(null)
   const menuRef = useRef(null)
-  const navigate = useNavigate()
+  const routerNavigate = useNavigate()
+  const navigate = to => { routerNavigate(to); onNavigate?.() }
   const user = useAuthStore(s => s.user)
   const navItems = user?.role === 'admin'
     ? [...NAV, { to: '/review', label: '内容审核', icon: IconShield }]
@@ -91,8 +93,8 @@ export default function Sidebar() {
         <button className="brand" onClick={() => navigate('/home')} aria-label="返回首页">
           <Brand size={24} />
         </button>
-        <button className="iconButton" onClick={toggleSidebar} aria-label={collapsed ? '展开侧边栏' : '折叠侧边栏'}>
-          <IconPanel size={16} />
+        <button className="iconButton" onClick={mobile ? onClose : toggleSidebar} aria-label={mobile ? '关闭导航' : collapsed ? '展开侧边栏' : '折叠侧边栏'}>
+          {mobile ? '×' : <IconPanel size={16} />}
         </button>
       </div>
 
@@ -113,6 +115,7 @@ export default function Sidebar() {
             <NavLink
               key={n.to}
               to={n.to}
+              onClick={() => onNavigate?.()}
               className={({ isActive }) => `panelRow${isActive ? ' panelActive' : ''}`}
             >
               <span aria-hidden="true"><I size={16} /></span>
@@ -153,7 +156,7 @@ export default function Sidebar() {
             <span className="accountRole">{user.role === 'admin' ? '管理员' : '求职者'}</span>
           </button>
         ) : (
-          <NavLink to="/login" className="accountBtn">
+          <NavLink to="/login" className="accountBtn" onClick={() => onNavigate?.()}>
             <span className="accountAvatar">?</span>
             <span className="accountName">未登录</span>
           </NavLink>

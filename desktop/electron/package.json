@@ -1,0 +1,20 @@
+{
+  "name": "minos-desktop",
+  "version": "1.0.0",
+  "description": "MINOS Electron desktop recruiting assistant",
+  "author": "MINOS",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": { "start": "electron .", "pack": "electron-builder --win nsis --x64" },
+  "devDependencies": { "electron": "41.10.7", "electron-builder": "26.18.0" },
+  "build": {
+    "appId": "ai.minos.desktop",
+    "productName": "MINOS",
+    "compression": "store",
+    "directories": { "output": "../../dist/electron" },
+    "files": ["main.cjs", "preload.cjs", "package.json"],
+    "extraResources": [{ "from": "../../dist/windows/app", "to": "payload", "filter": ["**/*", "!MINOS.exe", "!runtime/python/Lib/site-packages/**/__pycache__/**"] }],
+    "win": { "icon": "../../pi-web/public/icons/minos-ip-512.png", "target": ["nsis"], "signExecutable": false },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "artifactName": "MINOS-Electron-Setup-${version}-${arch}.${ext}" }
+  }
+}

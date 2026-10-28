@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
+import { Script } from 'node:vm';
+const source=readFileSync(new URL('../components/MinosBusiness.tsx',import.meta.url),'utf8');
+const ast=ts.createSourceFile('MinosBusiness.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+const node=ast.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='isMinosPath');
+const fn=new Script(ts.transpileModule(node.getText(ast).replace('export ',''),{compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText+';isMinosPath').runInNewContext();
+test('allows native business routes and refuses arbitrary paths',()=>{for(const p of ['/home','/chat','/resume','/knowledge','/knowledge/college/c1','/guide/star-structure','/interview/room','/career','/review','/admin/review'])assert.equal(fn(p),true,p);for(const p of ['https://evil.com','//evil','/api/files','/home?next=evil','/guide/../../auth',null,{},'x'.repeat(600)])assert.equal(fn(p),false,JSON.stringify(p));});
+test('native business pages do not embed or connect to the legacy frontend',()=>{assert.doesNotMatch(source,/<iframe|postMessage|5173|piEmbed/);assert.match(source,/<BusinessPages/);});
+test('native business API keeps credentials out of browser storage',()=>{const api=readFileSync(new URL('../components/minos/api.js',import.meta.url),'utf8');assert.doesNotMatch(api,/localStorage|accessToken|refreshToken|127\.0\.0\.1/);assert.match(api,/\/api\/business/);});

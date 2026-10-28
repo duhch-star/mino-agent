@@ -1,0 +1,753 @@
+[
+  {
+    "file": "lato/Lato-Bla.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Black"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Black"
+      },
+      {
+        "name_id": 2,
+        "text": "Regular"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-BlaIta.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Black Italic"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Black"
+      },
+      {
+        "name_id": 2,
+        "text": "Italic"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-Bol.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Bold"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-BolIta.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Bold Italic"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-Hai.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1. "
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Hairline"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2011-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL). "
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Hairline"
+      },
+      {
+        "name_id": 2,
+        "text": "Regular"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-HaiIta.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1. "
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Hairline Italic"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2011-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL). "
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Hairline"
+      },
+      {
+        "name_id": 2,
+        "text": "Italic"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-Lig.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1. "
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Light"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2011-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL). "
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Light"
+      },
+      {
+        "name_id": 2,
+        "text": "Regular"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-LigIta.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1. "
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Light Italic"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2011-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL). "
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 1,
+        "text": "Lato Light"
+      },
+      {
+        "name_id": 2,
+        "text": "Italic"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-Reg.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Regular"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "lato/Lato-RegIta.ttf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1."
+      },
+      {
+        "name_id": 1,
+        "text": "Lato"
+      },
+      {
+        "name_id": 2,
+        "text": "Italic"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 1.104; Western+Polish opensource"
+      },
+      {
+        "name_id": 8,
+        "text": "tyPoland Lukasz Dziedzic"
+      },
+      {
+        "name_id": 9,
+        "text": "Lukasz Dziedzic"
+      },
+      {
+        "name_id": 13,
+        "text": "Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic (http://www.typoland.com/) with Reserved Font Name \"Lato\". Licensed under the SIL Open Font License, Version 1.1 (http://scripts.sil.org/OFL)."
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Bold.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Bold"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-ExtraBold.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "ExtraBold"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-ExtraLight.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "ExtraLight"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Heavy.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Heavy"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Light.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Light"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Medium.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Medium"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Regular.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Regular"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-SemiBold.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "SemiBold"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  },
+  {
+    "file": "raleway/Raleway-Thin.otf",
+    "names": [
+      {
+        "name_id": 0,
+        "text": "Copyright (c) 2010 - 2012, Matt McInerney (matt@pixelspread.com), Pablo Impallari(impallari@gmail.com), Rodrigo Fuenzalida (hello@rfuenzalida.com) with Reserved Font Name \"Raleway\""
+      },
+      {
+        "name_id": 1,
+        "text": "Raleway"
+      },
+      {
+        "name_id": 2,
+        "text": "Thin"
+      },
+      {
+        "name_id": 5,
+        "text": "Version 2.001"
+      },
+      {
+        "name_id": 8,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 9,
+        "text": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida"
+      },
+      {
+        "name_id": 13,
+        "text": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL"
+      },
+      {
+        "name_id": 14,
+        "text": "http://scripts.sil.org/OFL"
+      }
+    ]
+  }
+]

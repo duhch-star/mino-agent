@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { createInterviewSession, fetchQuestions } from '../api.js'
 import { useInterviewStore, useLearningStore } from '../store.js'
 import { positions, difficulties, durations } from '../data/interview.js'
 
@@ -8,7 +9,10 @@ const DIRECTION_POSITION = { '产品': '产品经理', '开发': '后端开发',
 
 export default function Interview() {
   const navigate = useNavigate()
-  const configure = useInterviewStore(s => s.configure)
+  const location = useLocation()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const prefix = location.pathname.startsWith('/embedded/') ? '/embedded' : ''
   const profile = useLearningStore(s => s.profile)
 
   const [position, setPosition] = useState(DIRECTION_POSITION[profile.direction] || positions[0])
@@ -17,8 +21,26 @@ export default function Interview() {
   const [mode, setMode] = useState('video') // video voice-first | voice | text
 
   const start = async () => {
-    await configure(position, difficulty, mode, duration)
-    navigate('/interview/room')
+    if (busy) return
+    setBusy(true)
+    setError('')
+    try {
+      const remote = await fetchQuestions(position, difficulty)
+      if (!Array.isArray(remote.items) || !remote.items.length || remote.items.some(q => typeof q !== 'string' || !q.trim())) {
+        throw new Error('服务端题库暂不可用，请重试')
+      }
+      const session = await createInterviewSession({ position, difficulty, durationMinutes: parseInt(duration, 10), answerMode: mode })
+      if (!session.id || !Array.isArray(session.questions) || !session.questions.length || session.questions.some(q => !q.id || typeof q.text !== 'string' || !q.text.trim())) throw new Error('服务端未返回有效面试会话或题目，请重试')
+      useInterviewStore.setState({
+        position, difficulty, mode, duration, questions: session.questions.map(q => q.text), questionIds: session.questions.map(q => q.id), sessionId: session.id,
+        index: 0, transcript: [], stage: 'asking', phase: 'prepare', followup: null,
+        paused: false, messages: [], answerError: '', micOn: false, pendingAnswer: null,
+        finishError: '', finishing: false, finished: false, serverReport: null,
+      })
+      navigate(`${prefix}/interview/room`)
+    } catch (err) {
+      setError(err.message || '创建面试失败，请重试；当前配置已保留')
+    } finally { setBusy(false) }
   }
 
   return (
@@ -71,7 +93,8 @@ export default function Interview() {
         </p>
       </section>
 
-      <button className="btn primary big" onClick={start}>开始面试</button>
+      {error && <p className="formHint" role="alert">{error}</p>}
+      <button className="btn primary big" disabled={busy} onClick={start}>{busy ? '正在创建面试…' : error ? '重试开始面试' : '开始面试'}</button>
     </div>
   )
 }

@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {summarizeInterviewSamples} from './interview-benchmark.mjs';
+const valid={firstAudioMs:2000,completeMs:8000,previewMs:1800,voiceStartupMs:200,dimensionCount:3};
+test('failure and missing audio remain in denominator',()=>{const s=summarizeInterviewSamples([valid,{error:'timeout'},{completeMs:100,dimensionCount:3}]);assert.equal(s.total,3);assert.equal(s.successful,1);assert.equal(s.failed,2);assert.equal(s.withinTarget,1);assert.equal(s.allPassed,false);});
+test('slow successful result fails gate without becoming request failure',()=>{const s=summarizeInterviewSamples([valid,{...valid,firstAudioMs:5000}]);assert.equal(s.successful,2);assert.equal(s.withinTarget,1);assert.equal(s.metrics.firstAudioMs.p95,5000);assert.equal(s.allPassed,false);});
+test('empty corpus never passes and invalid targets rejected',()=>{assert.equal(summarizeInterviewSamples([]).allPassed,false);assert.throws(()=>summarizeInterviewSamples([],{firstAudioMs:NaN,completeMs:10}));});

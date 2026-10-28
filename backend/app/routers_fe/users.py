@@ -53,10 +53,12 @@ def fe_save_profile(req: FeProfile, user: User = Depends(get_fe_user),
 
 @router.delete("/users/me/data")
 def fe_delete_data(user: User = Depends(get_fe_user), db: Session = Depends(get_db)):
-    from app.models.chat import Attachment, ChatMessage, ChatSession
+    from app.models.chat import Attachment, ChatMessage, ChatSession, ResumeDocument, ResumeDocumentHistory
     from app.models.interview import InterviewSession, QaHistory
+    session_ids = db.query(ChatSession.id).filter(ChatSession.user_id == user.id)
+    db.query(ChatMessage).filter(ChatMessage.session_id.in_(session_ids)).delete(synchronize_session=False)
     for model in (Progress, Favorite, Note, QaHistory, InterviewSession,
-                  ChatSession, ChatMessage, Attachment):
+                  ResumeDocumentHistory, ResumeDocument, ChatSession, Attachment):
         if hasattr(model, "user_id"):
             db.query(model).filter(model.user_id == user.id).delete()
     db.commit()

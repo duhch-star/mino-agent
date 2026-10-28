@@ -16,11 +16,27 @@ def new_id(prefix: str) -> str:
 
 
 def hash_password(password: str) -> str:
-    return hashlib.sha256((password + settings.secret_key).encode()).hexdigest()
+    """Password storage must not depend on the JWT signing key."""
+    salt = secrets.token_hex(16)
+    digest = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), 600_000).hex()
+    return f'pbkdf2_sha256$600000${salt}${digest}'
 
 
 def verify_password(password: str, password_hash: str) -> bool:
-    return hash_password(password) == password_hash
+    if password_hash.startswith('pbkdf2_sha256$'):
+        try:
+            _, iterations, salt, expected = password_hash.split('$')
+            count = int(iterations)
+            if count < 1 or count > 2_000_000:
+                return False
+            actual = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), count).hex()
+            return secrets.compare_digest(actual, expected)
+        except (ValueError, TypeError):
+            return False
+    # Existing hashes remain valid under their original configured signing key.
+    # Never guess old keys or reset user passwords during deployment.
+    legacy = hashlib.sha256((password + settings.secret_key).encode()).hexdigest()
+    return secrets.compare_digest(legacy, password_hash)
 
 
 def get(db: Session, user_id: str) -> User | None:

@@ -1,0 +1,28 @@
+/* Scoped business primitives inherit Pi's live theme; never reset the app shell. */
+.minos-native { --dsw-font-family:var(--font-mono),ui-sans-serif,system-ui,sans-serif; --dsw-alias-bg-base:var(--bg); --dsw-alias-bg-layer-1:var(--bg); --dsw-alias-bg-layer-2:var(--bg-panel); --dsw-alias-label-primary:var(--text); --dsw-alias-label-secondary:var(--text-muted); --dsw-alias-label-tertiary:var(--text-dim); --dsw-alias-label-dimmed:var(--text-dim); --dsw-alias-border-l1:var(--border); --dsw-alias-border-l2:var(--border); --dsw-alias-border-l3:var(--border); --dsw-alias-border-l4:var(--border); --dsw-alias-state-business-primary:var(--accent); --dsw-alias-state-business-tertiary:var(--bg-selected); --dsw-alias-button-primary-fill:var(--accent); --dsw-alias-button-primary-hover:var(--accent); --dsw-alias-label-primary-foreground:#fff; --dsw-alias-link:var(--accent); --dsw-alias-interactive-bg-hover:var(--bg-hover); --dsw-alias-button-elevated-fill:var(--bg-panel); --dsw-alias-markdown-code-block-banner:var(--bg-panel); --dsw-radius-sm:4px; --dsw-radius-md:6px; --dsw-radius-lg:8px; --ds-transition-duration-fast:120ms; --ds-ease-in-out:ease-in-out; display:flex; flex:1; flex-direction:column; min-height:0; min-width:0; overflow:hidden; color:var(--text); background:var(--bg); font-size:14px; }
+.minos-native .page { flex:1; min-height:0; }
+.minos-native .scrollable { overflow:auto; padding:24px 28px 48px; }
+.minos-native .pageHeader { margin-bottom:24px; }
+.minos-native h1 { font-size:22px; font-weight:600; }
+.minos-native .pageSub,.minos-native .formHint { color:var(--text-muted); line-height:1.7; font-size:13px; }
+.minos-native .sectionTitle { font-size:15px; font-weight:600; margin:22px 0 12px; }
+.minos-native .btn,.minos-native .chip,.minos-native .iconButton { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid var(--border); background:var(--bg); color:var(--text); border-radius:6px; padding:7px 12px; cursor:pointer; font:inherit; font-size:13px; text-decoration:none; }
+.minos-native .btn.primary,.minos-native .chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+.minos-native .btn.ghost,.minos-native .iconButton { border-color:transparent; }
+.minos-native .btn.sm { padding:5px 9px; font-size:12px; }
+.minos-native .btn:disabled { opacity:.5; cursor:not-allowed; }
+.minos-native .chipRow { display:flex; gap:8px; flex-wrap:wrap; }
+.minos-native :is(input,textarea,select) { color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:6px; font:inherit; padding:9px; }
+.minos-native a { color:var(--accent); }
+.minos-native .reader { display:flex; flex-direction:column; flex:1; min-height:0; }
+.minos-native .readerBody { display:flex; flex:1; min-height:0; }
+.minos-native .readerContent { flex:1; min-width:0; overflow:auto; }
+.minos-native .readerToc { overflow:auto; }
+.minos-native .md { line-height:1.8; }
+.minos-native .md :is(h2,h3,h4) { margin:24px 0 12px; font-weight:600; }
+.minos-native .md p { margin:12px 0; }
+.minos-native .md ul,.minos-native .md ol { padding-left:24px; }
+.minos-native .md pre { overflow:auto; background:var(--bg-panel); padding:16px; border-radius:6px; }
+.minos-native .minos-learning-item { display:grid; gap:8px; padding:18px 0; border-bottom:1px solid var(--border); }
+.minos-native .minos-learning-item span,.minos-native .minos-learning-item small { color:var(--text-muted); }
+@media(max-width:640px) { .minos-native .scrollable { padding:20px 16px 36px; } .minos-native .readerToc { display:none; } }

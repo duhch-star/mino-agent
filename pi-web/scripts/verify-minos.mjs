@@ -1,0 +1,47 @@
+import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
+const credentials = JSON.parse(readFileSync(new URL('../../.runtime/integration-test-account.json', import.meta.url), 'utf8'));
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const page = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+try {
+  await page.goto('http://127.0.0.1:5173/login');
+  await page.locator('#minos-username').fill(credentials.username);
+  await page.locator('#minos-password').fill(credentials.password);
+  await page.getByRole('button', { name: '登录工作区' }).click();
+  await page.waitForURL(url => url.pathname === '/');
+  await page.waitForTimeout(3000);
+  const permission = page.getByRole('button', { name: '我理解并启用' });
+  if (await permission.isVisible()) { await permission.click(); await page.waitForTimeout(4000); }
+  const dismiss = page.getByRole('button', { name: '暂不启用' });
+  if (await dismiss.isVisible()) await dismiss.click();
+  await page.getByRole('button', { name: '知识库', exact: true }).click();
+  await page.getByRole('searchbox', { name: '搜索知识库' }).waitFor();
+  await page.locator('.piKnowledgeRow').first().waitFor();
+  console.log('Knowledge rows:', await page.locator('.piKnowledgeRow').count());
+  await page.locator('.piKnowledgeRow').first().click();
+  await page.locator('.readerTitle h1').waitFor();
+  console.log('Guide:', await page.locator('.readerTitle h1').textContent());
+  await page.getByRole('button', { name: 'AI 面试', exact: true }).click();
+  await page.getByRole('heading', { name: 'AI 模拟面试' }).waitFor();
+  console.log('Native business frames:', await page.locator('iframe').count());
+  const models = await page.request.get('http://127.0.0.1:5173/api/models');
+  console.log('Account-isolated Pi models API:', models.status());
+  if (models.status() !== 200) throw new Error('Pi API forwarding failed: '+await models.text());
+  const security = await page.request.post('http://127.0.0.1:5173/api/minos/account', { headers:{ Origin:'https://evil.invalid', 'Sec-Fetch-Site':'cross-site' }, data:{} });
+  if (security.status() !== 403) throw new Error('Cross-site login allowed');
+  await page.getByRole('button', { name:'文字', exact:true }).click();
+  await page.getByRole('button', { name:/开始.*面试/ }).click();
+  await page.locator('.campusAvatarFrame').waitFor();
+  console.log('Real interview session created');
+  console.log('Browser token storage:', await page.evaluate(() => localStorage.getItem('mino_tokens')));
+  console.log('Page errors:', errors);
+  if (errors.length) throw new Error(errors.join('\n'));
+  await page.screenshot({ path: '../.runtime/unified-interview.png', fullPage: true });
+  await page.getByRole('button', { name: '退出账号' }).click();
+  await page.waitForURL('**/login');
+  const protectedResponse = await page.request.get('http://127.0.0.1:5173/api/business/users/me');
+  console.log('After logout protected status:', protectedResponse.status());
+  if (protectedResponse.status() !== 401) throw new Error('Logout did not revoke account');
+} catch (error) { console.log('PAGE TEXT:', await page.locator('body').innerText()); console.log('PAGE ERRORS:', errors); await page.screenshot({ path:'../.runtime/unified-failure.png', fullPage:true }); throw error; } finally { await browser.close(); }

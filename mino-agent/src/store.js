@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { positions, difficulties, durations, questionBank } from './data/interview.js'
-import { streamChatMessage, fetchInterviewFeedback, backendLogin, createBackendChatSession, fetchBackendChatSessions, fetchBackendChatMessages, renameBackendChatSession, deleteBackendChatSession, uploadChatAttachments, fetchQuestions, apiLogout, deleteCurrentUserData, saveLearningState, fetchLearningState } from './api.js'
+import { streamChatMessage, fetchInterviewFeedback, backendLogin, createBackendChatSession, fetchBackendChatSessions, fetchBackendChatMessages, renameBackendChatSession, deleteBackendChatSession, uploadChatAttachments, fetchQuestions, apiLogout, deleteCurrentUserData, saveLearningState, fetchLearningState, fetchCurrentUser, hasAuthTokens, AUTH_EXPIRED_EVENT } from './api.js'
 
 // ---------------------------------------------------------------------------
 // UI：主题 / 侧边栏 / 设置 / 字号
@@ -22,6 +22,48 @@ export const useUiStore = create(persist((set) => ({
 // 对话助手（复用原 DeepSeek 聊天外壳）
 // ---------------------------------------------------------------------------
 let chatIdSeq = 100
+const backendSessionPromises = new Map()
+let accountEpoch = 0
+let generation = null
+let accountNamespace = 'guest'
+// Legacy unscoped caches are deliberately not imported into authenticated accounts.
+const accountStorage = {
+  getItem: name => { try { return JSON.parse(localStorage.getItem(`${name}:${accountNamespace}`) || 'null') } catch { return null } },
+  setItem: (name, value) => localStorage.setItem(`${name}:${accountNamespace}`, JSON.stringify(value)),
+  removeItem: name => localStorage.removeItem(`${name}:${accountNamespace}`),
+}
+const emptyLearning = () => ({ profile: { direction: '', level: '' }, bookmarks: [], progress: {}, notes: {}, quizResults: {} })
+const emptyChat = () => ({ sessions: [], conversations: {}, activeId: null, drafts: {}, context: null, running: false, runningSessionId: null })
+const draftValue = () => ({ text: '', attachments: [], attachmentIds: [], context: null, mode: 'career', depth: 'standard', tool: '', revision: 0 })
+
+// SSE 结束或页面恢复后，不让未收到终态的调用一直显示“运行中”。
+function finishRunningToolCalls(toolCalls, reason = '调用已中断，未收到完成结果') {
+  return (Array.isArray(toolCalls) ? toolCalls : []).map(call => {
+    if (call.status !== 'running') return call
+    const startedAt = Date.parse(call.startedAt)
+    return {
+      ...call,
+      status: 'failed',
+      error: reason,
+      durationMs: Number.isFinite(call.durationMs) ? call.durationMs : Number.isFinite(startedAt) ? Math.max(0, Date.now() - startedAt) : undefined,
+    }
+  })
+}
+
+function originalRequest(list, index) {
+  const message = list[index]
+  if (message?.request) return message.request
+  const user = message?.role === 'user' ? message : list.slice(0, index).findLast(item => item.role === 'user')
+  if (!user || user.attachmentIds == null && user.context == null) return null
+  return { text: user.content || '请结合附件进行分析', draftText: user.content || '', context: user.context || {}, attachments: user.attachments || [], attachmentIds: user.attachmentIds || [], mode: user.options?.mode || user.mode || 'career', depth: user.options?.depth || user.depth || 'standard', tool: user.options?.tool || user.tool || null }
+}
+function restoreChatMessage(message) {
+  return {
+    ...message,
+    toolCalls: finishRunningToolCalls(message.toolCalls),
+    ...(message.task?.status === 'running' ? { task: { ...message.task, status: 'failed', label: '生成已中断' } } : {}),
+  }
+}
 
 const seedSessions = [
   { id: 's1', title: '求职方向怎么定？' },
@@ -43,15 +85,21 @@ export const useChatStore = create(persist((set, get) => ({
   activeId: 's1',
   conversations: { s1: seedMessages, s2: [], s3: [] },
   running: false,
+  runningSessionId: null,
+  drafts: {},
+  getDraft: id => get().drafts[id] || draftValue(),
+  setDraft: (id, patch) => set(state => ({ drafts: { ...state.drafts, [id]: { ...(state.drafts[id] || draftValue()), ...patch, revision: (state.drafts[id]?.revision || 0) + 1 } } })),
   context: null, // 就地追问上下文 { title, snippet }
 
   hydrateSessions: async () => {
+    const epoch = accountEpoch
     const { items = [] } = await fetchBackendChatSessions()
     const conversations = {}
     await Promise.all(items.map(async session => {
       const result = await fetchBackendChatMessages(session.id)
-      conversations[session.id] = result.items || []
+      conversations[session.id] = (result.items || []).map(restoreChatMessage)
     }))
+    if (epoch !== accountEpoch) return
     set({
       sessions: items.map(item => ({ id: item.id, title: item.title, parentId: item.parentId, branchMessageId: item.branchMessageId })),
       conversations,
@@ -60,15 +108,43 @@ export const useChatStore = create(persist((set, get) => ({
   },
 
   newSession: () => {
-    const id = `s${++chatIdSeq}`
+    const id = `s${Date.now()}-${++chatIdSeq}`
     set(s => ({
       sessions: [{ id, title: '新对话' }, ...s.sessions],
       conversations: { ...s.conversations, [id]: [] },
       activeId: id,
+      context: null,
     }))
   },
 
-  selectSession: (id) => set({ activeId: id }),
+  // 同一临时会话只创建一次；请求完成时不抢回用户已经切换的会话。
+  ensureBackendSession: async (sessionId = get().activeId) => {
+    if (sessionId?.startsWith('conv_')) return sessionId
+    if (backendSessionPromises.has(sessionId)) return backendSessionPromises.get(sessionId)
+    const pending = (async () => {
+      const epoch = accountEpoch
+      const current = get().sessions.find(session => session.id === sessionId)
+      const created = await createBackendChatSession({ title: current?.title || '新对话' })
+      if (epoch !== accountEpoch) throw new Error('账号状态已变化')
+      set(state => {
+        if (sessionId && !state.sessions.some(session => session.id === sessionId)) return state
+        const conversations = { ...state.conversations, [created.id]: state.conversations[sessionId] || [] }
+        delete conversations[sessionId]
+        return {
+          conversations,
+          drafts: { ...state.drafts, [created.id]: state.drafts[sessionId] || draftValue() },
+          runningSessionId: state.runningSessionId === sessionId ? created.id : state.runningSessionId,
+          sessions: sessionId ? state.sessions.map(session => session.id === sessionId ? { ...session, id: created.id } : session) : [{ id: created.id, title: '新对话' }, ...state.sessions],
+          activeId: state.activeId === sessionId ? created.id : state.activeId,
+        }
+      })
+      return created.id
+    })().finally(() => backendSessionPromises.delete(sessionId))
+    backendSessionPromises.set(sessionId, pending)
+    return pending
+  },
+
+  selectSession: (id) => set({ activeId: id, context: get().drafts[id]?.context || null }),
 
   renameSession: (id, title) => {
     const cleanTitle = title.trim()
@@ -78,6 +154,8 @@ export const useChatStore = create(persist((set, get) => ({
   },
 
   deleteSession: (id) => {
+    if (generation && (generation.sessionId === id || get().runningSessionId === id)) { generation.controller.abort(); generation = null; set({ running: false, runningSessionId: null }) }
+    const drafts = { ...get().drafts }; delete drafts[id]; set({ drafts })
     if (id.startsWith('conv_')) deleteBackendChatSession(id).catch(error => console.error(error))
     const state = get()
     const remainingSessions = state.sessions.filter(session => session.id !== id)
@@ -95,30 +173,21 @@ export const useChatStore = create(persist((set, get) => ({
     })
   },
 
-  branchConversation: (sessionId, messageId) => {
-    const { sessions, conversations } = get()
-    const sourceMessages = conversations[sessionId] || []
-    const messageIndex = sourceMessages.findIndex(message => message.id === messageId)
-    if (messageIndex < 0) return
-    const sourceSession = sessions.find(session => session.id === sessionId)
-    const id = `s${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
-    const title = `继续：${sourceSession?.title || '求职对话'}`.slice(0, 24)
-    const branchedMessages = sourceMessages.slice(0, messageIndex + 1).map(message => ({
-      ...message,
-      references: message.references?.map(reference => ({ ...reference })),
-      attachments: message.attachments?.map(file => ({ ...file })),
-      options: message.options ? { ...message.options } : undefined,
-      task: message.task ? { ...message.task } : undefined,
-    }))
-    set(state => ({
-      sessions: [{ id, title, branchedFrom: sessionId }, ...state.sessions],
-      conversations: { ...state.conversations, [id]: branchedMessages },
-      activeId: id,
-    }))
+  branchConversation: async (sessionId, messageId) => {
+    const epoch = accountEpoch
+    try {
+      const parentSessionId = await get().ensureBackendSession(sessionId)
+      const source = get().sessions.find(item => item.id === parentSessionId)
+      const created = await createBackendChatSession({ title: `继续：${source?.title || '求职对话'}`, parentSessionId, branchMessageId: messageId })
+      const result = await fetchBackendChatMessages(created.id)
+      if (epoch !== accountEpoch) return { error: new Error('账号状态已变化') }
+      set(state => ({ sessions: [{ ...created, parentId: parentSessionId, branchMessageId: messageId }, ...state.sessions], conversations: { ...state.conversations, [created.id]: (result.items || []).map(restoreChatMessage) }, activeId: created.id }))
+      return created
+    } catch (error) { return { error } }
   },
 
-  setContext: (ctx) => set({ context: ctx }),
-  clearContext: () => set({ context: null }),
+  setContext: (ctx) => { get().setDraft(get().activeId, { context: ctx }); set({ context: ctx }) },
+  clearContext: () => { get().setDraft(get().activeId, { context: null }); set({ context: null }) },
   setMessageFeedback: (sessionId, messageId, feedback) => set(state => ({
     conversations: {
       ...state.conversations,
@@ -128,124 +197,104 @@ export const useChatStore = create(persist((set, get) => ({
     },
   })),
 
+  stopGeneration: (sessionId) => {
+    if (generation && (!sessionId || generation.sessionId === sessionId || get().runningSessionId === sessionId)) generation.controller.abort()
+  },
+  retryMessage: async (sessionId, assistantId) => {
+    const list = get().conversations[sessionId] || []
+    const request = originalRequest(list, list.findIndex(item => item.id === assistantId))
+    if (!request) return { error: new Error('该消息没有可复用的请求，请编辑后重新发送') }
+    return get().sendMessage(request.text, { request, sessionId, retryOf: assistantId })
+  },
+  editMessageForResend: (sessionId, messageId) => get().loadMessageDraft(sessionId, messageId),
+  loadMessageDraft: (sessionId, messageId) => {
+    const list = get().conversations[sessionId] || []
+    const index = list.findIndex(item => item.id === messageId)
+    const request = originalRequest(list, index)
+    if (!request) return { error: new Error('该消息没有原始请求') }
+    get().setDraft(sessionId, { text: request.draftText ?? request.text, context: request.context, attachments: (request.attachments || []).map((file, index) => ({ ...file, id: request.attachmentIds?.[index] })), attachmentIds: request.attachmentIds || [], mode: request.mode, depth: request.depth, tool: request.tool, editOf: messageId })
+    set({ activeId: sessionId, context: request.context || null })
+    return { sessionId }
+  },
   sendMessage: async (text, options = {}) => {
-    const clean = text.trim()
-    const attachments = (options.attachments || []).map(file => ({
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      lastModified: file.lastModified,
-    }))
-    if (!clean && !attachments.length && !get().context) return
-    let uploadedAttachments = []
-    if (options.attachments?.length) {
-      const uploadResult = await uploadChatAttachments(options.attachments)
-      uploadedAttachments = uploadResult.files || []
-    }
-    let { activeId, conversations, sessions, context } = get()
-    if (!activeId || !activeId.startsWith('conv_')) {
-      const current = sessions.find(session => session.id === activeId)
-      const created = await createBackendChatSession({ title: current?.title || '新对话' })
-      const previousId = activeId
-      activeId = created.id
-      conversations = { ...conversations, [activeId]: conversations[previousId] || [] }
-      delete conversations[previousId]
-      sessions = previousId
-        ? sessions.map(session => session.id === previousId ? { ...session, id: activeId, title: clean.slice(0, 40) || session.title } : session)
-        : [{ id: activeId, title: clean.slice(0, 40) || '新对话' }, ...sessions]
-      set({ activeId, sessions, conversations })
-      if (clean) renameBackendChatSession(activeId, clean.slice(0, 40)).catch(error => console.error(error))
-    }
-    const full = context ? `（关于《${context.title}》：${context.snippet}）\n${clean}` : clean
-    const references = [
-      ...(context ? [{ kind: 'knowledge', title: context.title }] : []),
-      ...attachments.map(file => ({ kind: 'file', title: file.name, status: uploadedAttachments.some(item => item.name === file.name) ? 'ready' : 'failed' })),
-    ]
-    const attachmentMeta = attachments.map(file => ({ ...file, status: uploadedAttachments.some(item => item.name === file.name) ? 'ready' : 'failed' }))
-    const userMsg = { id: `u${Date.now()}`, role: 'user', content: full || '请结合附件进行分析', attachments: attachmentMeta, references, options: { mode: options.mode, depth: options.depth, tool: options.tool } }
-    const assistantId = `a${Date.now()}`
-    set({
-      running: true,
-      context: null,
-
-      conversations: {
-        ...conversations,
-        [activeId]: [...(conversations[activeId] || []), userMsg, {
-          id: assistantId,
-          role: 'assistant',
-          content: '',
-          references,
-          task: {
-            status: 'running',
-            mode: options.mode || 'career',
-            tool: options.tool || null,
-            depth: options.depth || 'standard',
-          },
-        }],
-      },
-      sessions: sessions.map(s =>
-        s.id === activeId && s.title === '新对话'
-          ? { ...s, title: clean ? (clean.length > 16 ? clean.slice(0, 16) + '…' : clean) : attachments[0]?.name || '附件分析' }
-          : s,
-      ),
-    })
-    let acc = ''
-    let pendingUi = null
+    if (['expired', 'error', 'validating'].includes(useAuthStore.getState().status)) return { error: new Error('请先验证登录状态或明确选择游客模式') }
+    if (generation) return { error: new Error('已有回复正在生成，请先停止') }
+    const requestedSessionId = options.sessionId || get().activeId
+    const clean = (text || '').trim()
+    const context = options.request?.context || options.context || get().context
+    const files = [...(options.attachments || [])]
+    if (!clean && !files.length && !options.attachmentIds?.length && !context && !options.request) return { error: new Error('请输入消息或添加附件') }
+    const controller = new AbortController()
+    const epoch = accountEpoch
+    const run = { controller, sessionId: requestedSessionId }
+    generation = run
+    const abort = () => controller.abort()
+    options.signal?.addEventListener('abort', abort, { once: true })
+    if (options.signal?.aborted) abort()
+    set({ running: true, runningSessionId: requestedSessionId })
+    let activeId, assistantId, userMessageId, acc = '', pendingUi
+    const valid = () => epoch === accountEpoch && generation === run
+    const check = () => { if (!valid() || controller.signal.aborted) throw new DOMException('回复已中断', 'AbortError') }
+    const update = patch => { if (valid() && activeId && assistantId) set(state => ({ conversations: { ...state.conversations, [activeId]: (state.conversations[activeId] || []).map(m => m.id === assistantId ? { ...m, ...patch(m) } : m) } })) }
+    // Snapshot before the first await: typing and session switches cannot mutate this request.
+    const snapshot = options.request ? structuredClone(options.request) : { text: clean || (context ? '请结合引用内容进行分析' : '请结合附件进行分析'), draftText: text || '', context: context ? { ...context } : {}, mode: options.mode || 'career', depth: options.depth || 'standard', tool: options.tool || null, attachments: files.map(file => ({ name: file.name, type: file.type, size: file.size, lastModified: file.lastModified })), attachmentIds: [...(options.attachmentIds || [])] }
     try {
-      const result = await streamChatMessage({
-        conversationId: activeId,
-        text: clean,
-        context: context || {},
-        mode: options.mode || 'career',
-        depth: options.depth || 'standard',
-        tool: options.tool || null,
-        attachments: attachmentMeta,
-        attachmentIds: uploadedAttachments.map(file => file.id),
-      }, {
-        onActivity: activity => {
-          set(state => {
-            const list = state.conversations[activeId] || []
-            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, task: { ...m.task, status: activity.status, label: activity.label } } : m) } }
-          })
-        },
-        onChunk: chunk => {
-          acc += chunk
-          set(state => {
-            const list = state.conversations[activeId] || []
-            return {
-              conversations: {
-                ...state.conversations,
-                [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc } : m),
-              },
-            }
-          })
-        },
-        onUi: ui => {
-          pendingUi = ui // 流式期间收到生成式 UI，done 时写入消息
-        },
-        onComplete: result => {
-          set(state => {
-            const list = state.conversations[activeId] || []
-            return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, usage: result.usage, performance: result.performance, task: { ...m.task, status: 'completed', skills: result.skills || [] }, ui: result.ui || pendingUi } : m) } }
-          })
-        },
+      activeId = await get().ensureBackendSession(requestedSessionId)
+      run.sessionId = activeId
+      check()
+      set({ runningSessionId: activeId })
+      const newFiles = files.filter(file => !file.id)
+      if (!options.request && newFiles.length && snapshot.attachmentIds.length !== files.length) {
+        const uploaded = await uploadChatAttachments(newFiles, controller.signal)
+        check()
+        const uploadedFiles = uploaded.files || []
+        if (uploadedFiles.length !== newFiles.length) throw new Error('附件上传未完成，请重试')
+        let uploadIndex = 0
+        snapshot.attachmentIds = files.map(file => file.id || uploadedFiles[uploadIndex++].id)
+        // Preserve uploaded IDs on a failed generation, avoiding duplicate uploads on resend.
+        const draft = get().drafts[activeId]
+        if (draft && draft.revision === options.draftRevision) set(state => ({ drafts: { ...state.drafts, [activeId]: { ...draft, attachments: draft.attachments.map((file, index) => { if (typeof File !== 'undefined' && file instanceof File) { Object.defineProperty(file, 'id', { value: snapshot.attachmentIds[index], configurable: true }); return file }; return { ...file, id: snapshot.attachmentIds[index] } }), attachmentIds: snapshot.attachmentIds } } }))
+      }
+      snapshot.conversationId = activeId
+      assistantId = `a${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+      const references = [...(context?.title ? [{ kind: 'knowledge', title: context.title }] : []), ...snapshot.attachments.map(file => ({ kind: 'file', title: file.name, status: 'ready' }))]
+      userMessageId = `u${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+      const task = { status: 'running', mode: snapshot.mode, depth: snapshot.depth, tool: snapshot.tool, ...(options.retryOf ? { label: '重试生成' } : {}) }
+      set(state => ({ conversations: { ...state.conversations, [activeId]: [...(state.conversations[activeId] || []), ...(!options.retryOf ? [{ id: userMessageId, role: 'user', content: clean || snapshot.text, attachments: snapshot.attachments, references, options: { mode: snapshot.mode, depth: snapshot.depth, tool: snapshot.tool }, request: snapshot }] : []), { id: assistantId, role: 'assistant', content: '', toolCalls: [], references, task, request: snapshot, retryOf: options.retryOf || null, ...(options.retryOf ? { retryLabel: '重试生成' } : {}) }] }, sessions: state.sessions.map(item => item.id === activeId && item.title === '新对话' ? { ...item, title: (clean || files[0]?.name || '附件分析').slice(0, 24) } : item) }))
+      const result = await streamChatMessage(snapshot, {
+        signal: controller.signal,
+        onToolCall: call => { if (call?.id) update(m => ({ toolCalls: (m.toolCalls || []).some(c => c.id === call.id) ? m.toolCalls.map(c => c.id === call.id ? { ...call } : c) : [...(m.toolCalls || []), { ...call }] })) },
+        onActivity: activity => update(m => ({ task: { ...m.task, status: activity.status, label: activity.label } })),
+        onChunk: chunk => { if (!controller.signal.aborted) { acc += chunk; update(() => ({ content: acc })) } },
+        onUi: ui => { pendingUi = ui },
+        onComplete: result => update(m => ({ toolCalls: finishRunningToolCalls(result.toolCalls || m.toolCalls), usage: result.usage, performance: result.performance, task: { ...m.task, status: 'completed', skills: result.skills || [] }, ui: result.ui || pendingUi })),
       })
-      return result
+      check()
+      if (result.messageId || result.userMessageId) {
+        const localAssistantId = assistantId
+        set(state => ({ conversations: { ...state.conversations, [activeId]: (state.conversations[activeId] || []).map(message => message.id === localAssistantId && result.messageId ? { ...message, id: result.messageId } : message.id === userMessageId && result.userMessageId ? { ...message, id: result.userMessageId } : message) } }))
+        assistantId = result.messageId || assistantId
+      }
+      // Only the exact submitted draft is cleared. New typing/context/files survive completion.
+      if (options.draftRevision != null && get().drafts[activeId]?.revision === options.draftRevision) {
+        get().setDraft(activeId, draftValue())
+        if (get().activeId === activeId) set({ context: null })
+      }
+      return { ...result, sessionId: activeId, assistantId }
     } catch (error) {
-      set(state => {
-        const list = state.conversations[activeId] || []
-        return { conversations: { ...state.conversations, [activeId]: list.map(m => m.id === assistantId ? { ...m, content: acc || error.message || '暂时无法生成回复，请稍后重试。', error: true, task: { ...m.task, status: 'failed', label: '生成失败' } } : m) } }
-      })
+      update(m => ({ content: acc || (error.name === 'AbortError' ? '回复已中断。' : error.message), error: true, requestRejected: error.status >= 400 && error.status < 500, toolCalls: finishRunningToolCalls(m.toolCalls), task: { ...m.task, status: 'failed', label: error.name === 'AbortError' ? '生成已中断' : '生成失败' } }))
       return { error }
     } finally {
-      set({ running: false })
+      options.signal?.removeEventListener('abort', abort)
+      if (generation === run) { generation = null; set({ running: false, runningSessionId: null }) }
     }
   },
-}), { name: 'xiao-chat', partialize: (s) => ({ sessions: s.sessions, conversations: s.conversations, activeId: s.activeId }) }))
 
-// ---------------------------------------------------------------------------
-// 面试：流程状态机（config → prepare → running → report）
-// ---------------------------------------------------------------------------
+}), { name: 'xiao-chat', storage: accountStorage,
+  partialize: s => ({ sessions: s.sessions, conversations: s.conversations, activeId: s.activeId }),
+  merge: (persisted, current) => ({ ...current, ...persisted, running: false, runningSessionId: null, drafts: {}, conversations: Object.fromEntries(Object.entries(persisted?.conversations || current.conversations).map(([id, messages]) => [id, messages.map(restoreChatMessage)])) }),
+}))
+
 export const useInterviewStore = create((set, get) => ({
   phase: 'config', // config | prepare | running | report
   position: positions[0],
@@ -337,8 +386,9 @@ export const useInterviewStore = create((set, get) => ({
 let __learningSyncTimer = null
 function __syncLearningToBackend() {
   clearTimeout(__learningSyncTimer)
+  const epoch = accountEpoch
   __learningSyncTimer = setTimeout(() => {
-    if (!useAuthStore.getState().user) return
+    if (epoch !== accountEpoch || !useAuthStore.getState().user || useAuthStore.getState().status !== 'authenticated') return
     const s = useLearningStore.getState()
     saveLearningState({
       progress: s.progress,
@@ -368,43 +418,84 @@ export const useLearningStore = create(persist((set) => ({
     set(s => ({ quizResults: { ...s.quizResults, [id]: { score, total } } }))
     __syncLearningToBackend()
   },
-}), { name: 'xiao-learning', partialize: (s) => ({ profile: s.profile, bookmarks: s.bookmarks, progress: s.progress, notes: s.notes, quizResults: s.quizResults }) }))
+}), { name: 'xiao-learning', storage: accountStorage, partialize: (s) => ({ profile: s.profile, bookmarks: s.bookmarks, progress: s.progress, notes: s.notes, quizResults: s.quizResults }) }))
 
 // ---------------------------------------------------------------------------
 // 账号 / 角色（前端 mock，后端接入后替换为 JWT 鉴权）
 // ---------------------------------------------------------------------------
-export const useAuthStore = create(persist((set) => ({
-  user: null, // { name, role: 'user' | 'admin' }
-  login: async (name, password, role) => {
+function switchAccount(user) {
+  accountEpoch += 1
+  clearTimeout(__learningSyncTimer)
+  useChatStore.getState().stopGeneration()
+  generation = null
+  backendSessionPromises.clear()
+  const next = user ? `user:${user.id || user.username || user.name}` : 'guest'
+  // Read before setState (persist writes immediately), and never copy guest state to a user.
+  accountNamespace = next
+  const chat = accountStorage.getItem('xiao-chat')?.state
+  const learning = accountStorage.getItem('xiao-learning')?.state
+  useChatStore.setState({ ...emptyChat(), ...(chat || {}), conversations: Object.fromEntries(Object.entries(chat?.conversations || {}).map(([id, messages]) => [id, messages.map(restoreChatMessage)])), drafts: {}, running: false, runningSessionId: null })
+  useLearningStore.setState({ ...emptyLearning(), ...(learning || {}) })
+  useInterviewStore.getState().reset()
+  useInterviewStore.setState({ messages: [], answerError: '' })
+}
+async function hydrateAccount(user) {
+  switchAccount(user)
+  const epoch = accountEpoch
+  await Promise.all([
+    useChatStore.getState().hydrateSessions(),
+    fetchLearningState().then(remote => { if (epoch === accountEpoch && remote) useLearningStore.setState({ ...emptyLearning(), ...remote }) }),
+  ])
+}
+let validationPromise = null
+export const useAuthStore = create(persist((set, get) => ({
+  user: null,
+  status: 'unverified', // Shell calls validateCurrentUser once before protected UI.
+  error: '',
+  login: async (name, password) => {
     const { user } = await backendLogin(name, password)
-    set({ user })
-    await useChatStore.getState().hydrateSessions().catch(() => {})
-    // 拉取服务端学习状态并合并（游客期本地积累不丢失；多设备取进度最大值）
-    fetchLearningState().then(remote => {
-      if (!remote) return
-      const cur = useLearningStore.getState()
-      const rp = remote.progress || {}
-      const progress = {}
-      for (const id of new Set([...Object.keys(rp), ...Object.keys(cur.progress)])) {
-        progress[id] = Math.max(rp[id] ?? 0, cur.progress[id] ?? 0)
-      }
-      useLearningStore.setState({
-        progress,
-        bookmarks: [...new Set([...(remote.bookmarks || []), ...cur.bookmarks])],
-        notes: { ...(remote.notes || {}), ...cur.notes },
-        quizResults: { ...(remote.quizResults || {}), ...cur.quizResults },
-      })
-    }).catch(() => {})
+    set({ user, status: 'authenticated', error: '' })
+    await hydrateAccount(user).catch(error => { if (get().user) set({ status: 'error', error: error.message }); throw error })
+    if (!get().user) throw new Error('登录已失效，请重新登录')
     return user
   },
+  validateCurrentUser: () => {
+    if (validationPromise) return validationPromise
+    validationPromise = (async () => {
+      if (!hasAuthTokens()) {
+        if (get().user) { globalThis.dispatchEvent?.(new CustomEvent(AUTH_EXPIRED_EVENT)); if (get().status !== 'expired') { switchAccount(null); set({ user: null, status: 'expired', error: '登录已失效，请重新登录' }) } }
+        else set({ status: 'guest' })
+        return null
+      }
+      set({ status: 'validating' })
+      try {
+        const result = await fetchCurrentUser()
+        const user = result.user || result
+        set({ user, status: 'authenticated', error: '' })
+        await hydrateAccount(user)
+        return user
+      } catch (error) {
+        if (get().status !== 'expired') set({ status: 'error', error: error.message })
+        return { error }
+      }
+    })().finally(() => { validationPromise = null })
+    return validationPromise
+  },
+  enterGuest: () => { switchAccount(null); set({ user: null, status: 'guest', error: '' }); apiLogout().catch(() => {}) },
   logout: async () => {
-    try { await apiLogout() } catch (error) { console.error(error) }
-    set({ user: null })
+    // Clear visible account data immediately; async callbacks are invalidated by epoch.
+    switchAccount(null)
+    set({ user: null, status: 'guest', error: '' })
+    try { await apiLogout() } catch (error) { set({ error: error.message }) }
   },
-  // 注销并清除服务端数据（隐私模块）
   clearData: async () => {
-    try { await deleteCurrentUserData() } catch (error) { console.error(error) }
-    // 同步清空本地学习状态，避免残留
-    useLearningStore.setState({ bookmarks: [], progress: {}, notes: {}, quizResults: {} })
+    await deleteCurrentUserData()
+    useChatStore.getState().stopGeneration()
+    useChatStore.setState(emptyChat())
+    useLearningStore.setState(emptyLearning())
   },
-}), { name: 'xiao-auth' }))
+}), { name: 'xiao-auth', partialize: s => ({ user: s.user }) }))
+globalThis.addEventListener?.(AUTH_EXPIRED_EVENT, () => {
+  switchAccount(null)
+  useAuthStore.setState({ user: null, status: 'expired', error: '登录已失效，请重新登录' })
+})

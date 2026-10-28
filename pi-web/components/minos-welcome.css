@@ -1,0 +1,27 @@
+.minos-welcome { width:min(1080px,100%);max-width:1080px;margin:auto;padding:48px 64px;overflow:auto;max-height:100%; }
+.minos-welcome-eyebrow {display:flex;align-items:center;gap:9px;font-size:10px;letter-spacing:2.4px;color:var(--text-muted);margin-bottom:24px;}
+.minos-welcome-eyebrow > span {width:6px;height:6px;border-radius:50%;background:#6a8d80;}
+.minos-welcome-hero {display:grid;grid-template-columns:1.3fr 1fr;align-items:center;gap:32px;}
+.minos-welcome h1 {font-size:clamp(32px,3.4vw,48px);line-height:1.35;letter-spacing:-1.8px;font-weight:500;margin:0 0 20px;}
+.minos-welcome h1 em {font-style:normal;color:var(--text-muted);}
+.minos-welcome p {font-size:13px;line-height:1.9;color:var(--text-muted);margin:0;}
+.minos-welcome-actions {display:flex;align-items:center;gap:12px;margin-top:28px;flex-wrap:wrap;}
+.minos-welcome-actions button {border:0!important;padding:12px 16px!important;border-radius:8px!important;background:transparent!important;}
+.minos-welcome-actions button.minos-primary {background:var(--text)!important;color:var(--bg)!important;display:flex;gap:24px;align-items:center;}
+.minos-welcome-actions button:hover {opacity:.8;}
+.minos-welcome-art {position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:270px;isolation:isolate;}
+.minos-welcome-art img {width:152px;height:152px;filter:drop-shadow(0 18px 30px #78968d24);}
+.minos-welcome-art > span {font-size:10px;letter-spacing:2px;color:var(--text-muted);margin-top:30px;}
+.minos-orbit {position:absolute;inset:8% 0;border:1px solid var(--border);border-radius:50%;z-index:-1;transform:rotate(-20deg) scaleY(.8);opacity:.6;}
+.minos-orbit:after {content:'';position:absolute;inset:24px -12px;border:1px solid var(--border);border-radius:50%;transform:rotate(38deg);}
+.minos-welcome-rule {display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid var(--border);padding-top:24px;margin-top:48px;margin-bottom:20px;font-size:12px;}
+.minos-welcome-rule small {color:var(--text-muted);font-size:10px;}
+.minos-quick-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.minos-quick-grid > button {display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:18px!important;border-radius:10px!important;background:var(--bg-panel)!important;transition:background .2s,border-color .2s;}
+.minos-quick-grid > button:hover {border-color:var(--text-muted);background:var(--bg-hover)!important;}
+.minos-quick-index {display:flex;justify-content:space-between;color:var(--text-muted);font-size:10px;margin-bottom:22px;}
+.minos-quick-grid strong {font-size:14px;font-weight:500;margin-bottom:8px;}
+.minos-quick-grid p {font-size:11px;}
+.minos-model-settings {position:fixed;inset:0;z-index:1100;}
+@media(max-width:1050px){.minos-welcome {padding:32px;}.minos-welcome-art{min-height:220px}.minos-welcome-art img{width:120px;height:120px}}
+@media(max-width:760px){.minos-welcome{padding:24px}.minos-welcome-hero{grid-template-columns:1fr}.minos-welcome-art{display:none}.minos-quick-grid{grid-template-columns:1fr}.minos-welcome-rule{margin-top:30px}.minos-quick-index{margin-bottom:10px}}

@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.responses import ApiException, api_exception_handler
 from app.db.session import engine, Base
+from app.models.chat import ResumeDocument  # register the new table before create_all
 from app.routers import (
     auth, users, chapters, progress, qa, interviews, coach, files, admin, ws,
 )
@@ -22,6 +23,8 @@ from app.routers_fe import (
     auth as fe_auth, users as fe_users, knowledge as fe_knowledge,
     guides as fe_guides, interview as fe_interview, chat as fe_chat,
     career as fe_career, review as fe_review, speech as fe_speech, resume as fe_resume,
+    resume_documents as fe_resume_documents,
+    pi_web as fe_pi_web,
 )
 
 API_PREFIX = settings.api_prefix
@@ -32,11 +35,15 @@ FE_PREFIX = "/api"
 async def lifespan(app: FastAPI):
     # 开发环境自动建表（生产使用 Alembic 迁移）
     Base.metadata.create_all(bind=engine)
-    from app.db.seed import seed
-    from app.db.session import SessionLocal
-    with SessionLocal() as session:
-        seed(session)
+    # Demo accounts have known credentials: never seed them implicitly.
+    if settings.seed_demo_data:
+        from app.db.seed import seed
+        from app.db.session import SessionLocal
+        with SessionLocal() as session:
+            seed(session)
     yield
+    from app.services.pi_web_service import manager as pi_web_manager
+    pi_web_manager.shutdown()
 
 
 app = FastAPI(
@@ -73,7 +80,8 @@ for router in (auth.router, users.router, chapters.router, progress.router,
 # 前端适配层（/api/*）：与 mino-agent 前端契约对齐
 for router in (fe_auth.router, fe_users.router, fe_knowledge.router,
                fe_guides.router, fe_interview.router, fe_chat.router,
-               fe_career.router, fe_review.router, fe_speech.router, fe_resume.router):
+               fe_career.router, fe_review.router, fe_speech.router, fe_resume.router,
+               fe_resume_documents.router, fe_pi_web.router):
     app.include_router(router, prefix=FE_PREFIX)
 
 

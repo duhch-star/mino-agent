@@ -471,6 +471,38 @@
 .taskTraceBody span { flex: none; width: 70px; }
 .taskTraceBody strong { min-width: 0; overflow-wrap: anywhere; color: var(--dsw-alias-label-secondary); font-weight: 400; }
 
+.toolCalls { min-width: 0; max-width: 100%; margin-bottom: 14px; font-size: 12px; line-height: 20px; color: var(--dsw-alias-label-secondary); }
+.toolCallsHeader, .toolCallsActions, .toolCallJsonHeader { display: flex; align-items: center; gap: 8px; }
+.toolCallsHeader, .toolCallJsonHeader { justify-content: space-between; flex-wrap: wrap; }
+.toolCallsHeader { margin-bottom: 6px; }
+.toolCalls button { padding: 4px 8px; min-height: 32px; border: 1px solid var(--dsw-alias-border-l2); border-radius: var(--dsw-radius-sm); background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.toolCalls button:hover { background: var(--dsw-alias-bg-rd, var(--dsw-alias-surface-l3)); }
+.toolCalls button:focus-visible, .toolCall summary:focus-visible, .toolCall pre:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary, #536bf2); outline-offset: 2px; }
+.toolCall { min-width: 0; border: 1px solid var(--dsw-alias-border-l2); border-radius: var(--dsw-radius-sm); margin-top: 6px; }
+.toolCall summary { display: flex; align-items: center; gap: 8px; padding: 8px 10px; min-height: 40px; cursor: pointer; list-style: none; }
+.toolCall summary::-webkit-details-marker { display: none; }
+.toolCall summary::after { content: '⌄'; flex: none; }
+.toolCall[open] summary::after { transform: rotate(180deg); }
+.toolCallName { min-width: 0; flex: 1; overflow-wrap: anywhere; color: var(--dsw-alias-label-primary); }
+.toolCallStatus, .toolCallDuration { flex: none; color: var(--dsw-alias-label-tertiary); }
+.toolCallBody { min-width: 0; padding: 0 10px 10px; border-top: 1px solid var(--dsw-alias-border-l1); }
+.toolCallJson { min-width: 0; margin-top: 10px; }
+.toolCallJsonHeader strong { font-weight: 500; }
+.toolCallJson pre { max-width: 100%; max-height: 320px; overflow: auto; margin: 6px 0 0; padding: 10px; border-radius: var(--dsw-radius-sm); background: var(--dsw-alias-bg-rd, var(--dsw-alias-surface-l3)); color: var(--dsw-alias-label-primary); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+.toolCallJson code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+.toolCallCopyStatus, .toolCallPending { color: var(--dsw-alias-label-tertiary); }
+.chatGenerationError { margin: 0 0 8px; color: var(--dsw-alias-state-danger-primary, #d55d5d); font-size: 12px; }
+@media (max-width: 540px) {
+  .toolCall summary { flex-wrap: wrap; gap: 5px 7px; }
+  .toolCallName { flex-basis: calc(100% - 25px); }
+  .toolCallStatus { margin-left: 14px; }
+  .toolCall summary::after { margin-left: auto; }
+  .toolCalls button { min-height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toolCalls .taskStatusDot.running { animation: none; }
+}
+
 .assistantBody {
   display: flex;
   flex-direction: column;
