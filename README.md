@@ -23,9 +23,9 @@
 
 支持 **Windows 10/11 x64**。
 
-- [Release 页面：v1.0.0-electron-preview.1](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.1)
-- [Windows 安装包（约 301 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.1/MINOS-Electron-Setup-1.0.0-x64.exe)
-- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.1/SHA256SUMS.txt)
+- [Release 页面：v1.0.0-electron-preview.2](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.2)
+- [Windows 安装包（约 301 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.2/MINOS-Electron-Setup-1.0.0-x64.exe)
+- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.2/SHA256SUMS.txt)
 
 仓库目前为私有仓库，下载需要有仓库访问权限的 GitHub 账号；无权限时会显示 404。
 
