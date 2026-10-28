@@ -84,9 +84,9 @@ Pi 对话梳理证据与差距 → 用户确认 → 保存简历 → LaTeX 编�
 
 ### Windows 安装版
 
-**[下载 Preview 9 安装包](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/MINOS-Electron-Setup-1.0.0-x64.exe)** · [版本说明](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.9) · [SHA256 校验](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/SHA256SUMS.txt)
+**[下载 Preview 10 安装包](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.10/MINOS-Electron-Setup-1.0.0-x64.exe)** · [版本说明](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.10) · [SHA256 校验](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.10/SHA256SUMS.txt)
 
-1. 使用有仓库访问权限的 GitHub 账号下载（仓库目前为私有，无权限会显示 404）。Preview 9 安装包约 **414 MiB**。
+1. 使用有仓库访问权限的 GitHub 账号下载（仓库目前为私有，无权限会显示 404）。Preview 10 安装包约 **415 MiB**。
 2. 校验 SHA256，退出旧版后覆盖安装。不需要单独安装 Node、Python 或 TeX；此处离线 TeX 能力限定于随包模板，不是完整通用 TeX 发行版。
 3. 首次启动创建自己的本机账号，无预置开发者账号或密钥。
 4. 在右上角配置模型，确认本地智能体权限，再开始对话。未配置模型时可先浏览业务页面。
@@ -95,15 +95,15 @@ Pi 对话梳理证据与差距 → 用户确认 → 保存简历 → LaTeX 编�
 
 文档核对日期：**2026-10-28**。本页以 main 源码为准，安装体验以对应 Release 为准。
 
-| 交付项 | Preview 9 安装包 | 当前 main 源码 |
+| 交付项 | Preview 10 安装包 | 当前 main 源码 |
 | --- | --- | --- |
 | 7 款模板、10 项内置 Skills | 已包含并做过定向验证 | 保留 |
-| Pi Web 原生业务界面 | 已包含 | 保留；旧前端目录已删除 |
-| “系统 / 工具”顶栏入口隐藏 | 未包含 | 已实现 |
-| “账号与数据”面板 | 未包含 | 已实现 |
-| 指定品牌 logo、应用图标 | 未包含 | 已实现，待重新打包 |
+| Pi Web 原生业务界面 | 已包含，不打包旧前端 | 旧前端目录已删除 |
+| “系统 / 工具”顶栏入口隐藏 | 已包含 | 已实现 |
+| “账号与数据”面板 | 已包含 | 已实现 |
+| 指定品牌 logo、应用图标 | 已包含 | 已实现 |
 
-不要把 main 的品牌与界面说明理解为 Preview 9 已包含全部更新。最新发布记录请以 [Releases](https://github.com/Akun-python/minos/releases) 为准。
+Preview 10 基于源码提交 `a946e9a` 构建；后续 main 的文档修改不自动改变安装包。最新发布记录请以 [Releases](https://github.com/Akun-python/minos/releases) 为准。
 
 安装包尚未商业签名，Windows 可能显示未知发布者。核验来源与散列，不要关闭系统安全防护。升级前建议备份数据。
 
@@ -286,7 +286,7 @@ finally { Pop-Location }
 - [x] 十项求职 Skills 随包提供、首次直接加载
 - [x] 原生知识学习、模拟面试、复盘与画像
 - [x] 统一指定品牌 logo，保留 AI 面试形象
-- [ ] 将 main 的界面整合与品牌变更重新打包发布
+- [x] 将单前端整合、账号面板与品牌变更打包发布为 Preview 10
 - [ ] 干净 Windows 环境的完整安装、升级、备份与恢复验收
 - [ ] 持续补齐上游前端回归、端到端测试和发布检查
 - [ ] 提升语音能力的兼容性与失败恢复体验

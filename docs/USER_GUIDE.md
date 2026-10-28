@@ -19,15 +19,15 @@
 - [开发与构建](#开发与构建)
 - [验证范围与限制](#验证范围与限制)
 
-> 发布与源码状态可能不同：Preview 9 之后的单前端清理、账号面板、品牌 logo 与顶部入口调整已在 main，尚未重发安装包。
+> Preview 10 已包含单前端清理、账号面板、新品牌 logo 与顶部入口调整。以下部分截图来自早期预发布版，视觉可能不同；安装包基于源码提交 a946e9a。
 
 ## 下载安装
 
 支持 **Windows 10/11 x64**。
 
-- [Release 页面：v1.0.0-electron-preview.9](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.9)
-- [Windows 安装包（Preview 9 约 414 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/MINOS-Electron-Setup-1.0.0-x64.exe)
-- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.9/SHA256SUMS.txt)
+- [Release 页面：v1.0.0-electron-preview.10](https://github.com/Akun-python/minos/releases/tag/v1.0.0-electron-preview.10)
+- [Windows 安装包（Preview 10 约 415 MiB）](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.10/MINOS-Electron-Setup-1.0.0-x64.exe)
+- [SHA256 校验文件](https://github.com/Akun-python/minos/releases/download/v1.0.0-electron-preview.10/SHA256SUMS.txt)
 
 仓库目前为私有仓库，下载需要有仓库访问权限的 GitHub 账号；无权限时会显示 404。
 
