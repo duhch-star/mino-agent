@@ -252,12 +252,15 @@ function permissions() {
 function createWindow() {
   window = new BrowserWindow({
     width: 1280, height: 860, minWidth: 840, minHeight: 600, title: 'MINOS', show: !smoke,
-    titleBarStyle: 'hidden',
-    titleBarOverlay: { color:'#f8fafb', symbolColor:'#506171', height:52 },
+    frame: false,
     backgroundColor:'#f8fafb', autoHideMenuBar:true,
     webPreferences: { preload:path.join(__dirname,'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true,
       webSecurity: true, allowRunningInsecureContent: false, webviewTag: false },
   });
+  window.setMenu(null);
+  const publishWindowState = () => window?.webContents.send('minos:window-state', window.isMaximized());
+  window.on('maximize', publishWindowState);
+  window.on('unmaximize', publishWindowState);
   const contents = window.webContents;
   contents.setWindowOpenHandler(({ url }) => { void openExternal(url).catch(fail); return { action: 'deny' }; });
   contents.on('will-navigate', (event, url) => {
@@ -286,6 +289,12 @@ async function openPath(target) {
     else dialog.showMessageBoxSync(options);
   }
 }
+ipcMain.on('minos:window-control', (event, action) => {
+  if (event.sender !== window?.webContents || !trustedContents(event.sender)) return;
+  if (action === 'minimize') window.minimize();
+  else if (action === 'maximize') { if (window.isMaximized()) window.unmaximize(); else window.maximize(); }
+  else if (action === 'close') window.close();
+});
 ipcMain.on('minos:application-menu', event => {
   if (event.sender !== window?.webContents || !trustedContents(event.sender)) return;
   Menu.getApplicationMenu()?.popup({ window });
