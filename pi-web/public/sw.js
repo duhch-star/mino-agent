@@ -7,10 +7,10 @@ const PRECACHE_URLS = [
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/apple-touch-icon.png",
-  "/icons/minos-ip-192.png",
-  "/icons/minos-ip-512.png",
-  "/icons/minos-ip-apple.png",
-  "/icons/minos-avatar.svg",
+  "/icons/minos-logo-192.png",
+  "/icons/minos-logo-512.png",
+  "/icons/minos-logo-apple.png",
+  "/icons/minos-logo.png",
 ];
 // A reachable port backed by a dead upstream accepts the connection and then
 // never answers: fetch() neither resolves nor rejects, so the navigation hangs

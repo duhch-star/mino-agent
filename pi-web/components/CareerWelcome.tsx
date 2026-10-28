@@ -31,7 +31,7 @@ export function CareerWelcome({ onChooseTask }: { onChooseTask: (prompt: string)
   return (
     <section className="minos-career-welcome" aria-labelledby="minos-career-heading">
       <div className="minos-career-brand">
-        <Image src="/icons/minos-avatar.svg" width={46} height={46} alt="" priority className="minos-career-logo" />
+        <Image src="/icons/minos-logo.png" width={46} height={46} alt="" priority className="minos-career-logo" />
         <div>
           <p className="minos-career-name">MINOS</p>
           <h1 id="minos-career-heading">你的求职搭档</h1>

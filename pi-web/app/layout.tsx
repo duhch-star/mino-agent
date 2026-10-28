@@ -23,14 +23,14 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icons/minos-ip-192.png",
+        url: "/icons/minos-logo-192.png",
         sizes: "192x192",
         type: "image/png",
       },
     ],
     apple: [
       {
-        url: "/icons/minos-ip-apple.png",
+        url: "/icons/minos-logo-apple.png",
         sizes: "180x180",
         type: "image/png",
       },

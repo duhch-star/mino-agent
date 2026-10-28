@@ -282,6 +282,7 @@ function createWindow() {
     x: workArea.x + Math.floor((workArea.width - width) / 2),
     y: workArea.y + Math.floor((workArea.height - height) / 2),
     width, height, minWidth: Math.min(640, width), minHeight: Math.min(480, height), title: 'MINOS', show: !smoke,
+    icon: path.join(payload, 'pi-web', 'public', 'icons', 'minos-logo.ico'),
     frame: false,
     thickFrame: false,
     backgroundColor:'#f8fafb', autoHideMenuBar:true,

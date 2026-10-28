@@ -122,7 +122,7 @@ export function PiWebTitle({ onWidthChange }: {
       aria-label={t("sidebar.brandLabel", { app: appVersion ?? "0.0.0", pi: piVersion ?? "0.0.0" })}
       onClick={handleClick}
     >
-      <img src="/icons/minos-avatar.svg" width="25" height="25" alt="" />
+      <img src="/icons/minos-logo.png" width="25" height="25" alt="" />
       <span>{text}</span>
     </button>
   );

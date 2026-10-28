@@ -49,7 +49,7 @@ function LoginForm() {
     <main className="web-login-page">
       <div className="web-login-shell">
         <header className="web-login-brand">
-          <Image src="/icons/minos-avatar.svg" width={52} height={52} alt="" priority />
+          <Image src="/icons/minos-logo.png" width={52} height={52} alt="" priority />
           <div>
             <h1>MINOS</h1>
             <p>{t("auth.prompt")}</p>
