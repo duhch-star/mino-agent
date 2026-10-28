@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import ts from 'typescript';
 import { Script } from 'node:vm';
 const source=readFileSync(new URL('../components/MinosBusiness.tsx',import.meta.url),'utf8');
@@ -9,4 +9,5 @@ const node=ast.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='i
 const fn=new Script(ts.transpileModule(node.getText(ast).replace('export ',''),{compilerOptions:{target:ts.ScriptTarget.ES2020}}).outputText+';isMinosPath').runInNewContext();
 test('allows native business routes and refuses arbitrary paths',()=>{for(const p of ['/home','/chat','/resume','/knowledge','/knowledge/college/c1','/guide/star-structure','/interview/room','/career','/review','/admin/review'])assert.equal(fn(p),true,p);for(const p of ['https://evil.com','//evil','/api/files','/home?next=evil','/guide/../../auth',null,{},'x'.repeat(600)])assert.equal(fn(p),false,JSON.stringify(p));});
 test('native business pages do not embed or connect to the legacy frontend',()=>{assert.doesNotMatch(source,/<iframe|postMessage|5173|piEmbed/);assert.match(source,/<BusinessPages/);});
+test('only one frontend remains with complete native routes and avatar assets',()=>{assert.equal(existsSync(new URL('../../mino-agent/',import.meta.url)),false);const pages=readFileSync(new URL('../components/minos/BusinessPages.jsx',import.meta.url),'utf8');for(const name of ['Knowledge','Interview','InterviewRoom','LearningReview','Onboarding','Review'])assert.ok(pages.includes(name),name);for(const file of ['index.html','interviewer_effects.css'])assert.ok(existsSync(new URL('../public/avatar/'+file,import.meta.url)),file);});
 test('native business API keeps credentials out of browser storage',()=>{const api=readFileSync(new URL('../components/minos/api.js',import.meta.url),'utf8');assert.doesNotMatch(api,/localStorage|accessToken|refreshToken|127\.0\.0\.1/);assert.match(api,/\/api\/business/);});

@@ -9,7 +9,7 @@
 - 默认不设置开机自启动。重启电脑后再次双击启动即可。
 - 服务只监听本机回环地址，不开放局域网或公网。5173 由 Pi Web Next 生产服务提供，8000 为 Python 业务后端。
 - 登录、知识库、章节、面试、学习复盘、画像和内容审核已迁入 Pi Web 原生 React 工作区，不再嵌套旧前端 iframe。
-- `mino-agent` 只保留历史源码，不再安装、构建或启动。Pi SDK 依旧使用按账号隔离的后台进程，由统一入口同源转发。
+- [pi-web](<pi-web>) 是唯一前端，旧 Vite 前端已删除，不再维护双套界面。Pi SDK 使用按账号隔离的后台进程，由统一入口同源转发。
 
 ## 演示账号
 
@@ -61,7 +61,7 @@ Set-Location pi-web
 npm.cmd ci
 npm.cmd run build
 Set-Location ..
-# 不再需要构建 mino-agent
+# 只构建 pi-web，不存在第二套前端构建
 ```
 
 使用 `npm.cmd` 避免 Windows 对 `npm.ps1` 的执行策略限制。双击脚本只对该次 PowerShell 进程使用 Bypass，不修改系统执行策略。

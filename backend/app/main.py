@@ -77,7 +77,7 @@ for router in (auth.router, users.router, chapters.router, progress.router,
                admin.router, ws.router):
     app.include_router(router, prefix=API_PREFIX)
 
-# 前端适配层（/api/*）：与 mino-agent 前端契约对齐
+# 前端适配层（/api/*）：供 Pi Web 同源业务网关调用
 for router in (fe_auth.router, fe_users.router, fe_knowledge.router,
                fe_guides.router, fe_interview.router, fe_chat.router,
                fe_career.router, fe_review.router, fe_speech.router, fe_resume.router,

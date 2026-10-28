@@ -1,0 +1,22 @@
+.minos-account-panel { position:fixed; inset:0; margin:auto; width:min(640px,calc(100vw - 32px)); max-height:calc(100dvh - 40px); padding:0; border:1px solid var(--border); border-radius:14px; background:var(--bg-panel); color:var(--text); box-shadow:0 24px 80px #0005; overflow:auto; font:inherit; }
+.minos-account-panel::backdrop { background:#0007; }
+.minos-account-panel-surface { padding:24px; }
+.minos-account-panel header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.minos-account-panel h2 { margin:0; font-size:20px; }
+.minos-account-panel section { margin-top:22px; padding-top:18px; border-top:1px solid var(--border); }
+.minos-account-panel h3 { font-size:14px; margin:0 0 10px; }
+.minos-account-panel p { font-size:13px; line-height:1.8; color:var(--text-muted); margin:9px 0; }
+.minos-account-panel dl { margin:0; font-size:13px; }
+.minos-account-panel dl > div { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px 18px; padding:7px 0; }
+.minos-account-panel dt { color:var(--text-muted); }
+.minos-account-panel dd { margin:0; overflow-wrap:anywhere; }
+.minos-account-panel button,.minos-account-panel input { border:1px solid var(--border); border-radius:6px; padding:8px 12px; background:var(--bg); color:var(--text); font:inherit; font-size:13px; }
+.minos-account-panel button { cursor:pointer; }
+.minos-account-panel button:disabled { opacity:.5; cursor:not-allowed; }
+.minos-account-panel button:hover:not(:disabled) { background:var(--bg-hover); }
+.minos-account-panel button:focus-visible,.minos-account-panel input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.minos-account-panel label { display:block; font-size:13px; margin:14px 0 8px; }
+.minos-account-panel input { width:100%; box-sizing:border-box; margin-bottom:12px; }
+.minos-account-panel .minos-account-delete { color:#dc5656; border-color:#dc5656; }
+.minos-account-panel [role=alert] { color:#dc5656; }
+@media(max-width:640px) { .minos-account-panel-surface { padding:18px; } }

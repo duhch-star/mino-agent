@@ -1,8 +1,0 @@
-node_modules/
-dist/
-*.log
-.DS_Store
-
-# 后端敏感配置（含 LLM/语音密钥，勿提交）
-backend/.env
-backend/uploads/

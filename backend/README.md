@@ -1,6 +1,6 @@
 # 小民求职智能体 · 后端（Python / FastAPI）
 
-mino-agent 前端配套的 Python 后端：FastAPI + SQLAlchemy + SQLite，双 API 架构。
+MINOS 唯一前端 Pi Web 配套的 Python 业务后端：FastAPI + SQLAlchemy + SQLite。业务界面由 Pi Web 原生组件提供，对话使用 Pi SDK。
 
 ## 快速启动
 
@@ -10,7 +10,7 @@ pip install -r requirements.txt        # 首次
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-数据文件 `app/xiaomin.db` 首次启动自动建表，并写入种子数据（测试账号 / 知识库 / 求职指南 / 题库 / 审核草稿）。前端 dev server 运行在 `http://localhost:5173`，通过 `VITE_API_BASE_URL`（默认 `http://127.0.0.1:8000`）对接本后端。
+数据文件 `app/xiaomin.db` 首次启动自动建表，并写入种子数据（测试账号 / 知识库 / 求职指南 / 题库 / 审核草稿）。唯一前端位于 [pi-web](<../pi-web>)，通过同源 `/api/business/*` 网关转发到本后端；JWT 仅在服务端保存，不使用 Vite 或浏览器中的 API 密钥。根目录启动脚本提供统一入口 `http://127.0.0.1:5173`。
 
 ## 测试账号
 
@@ -24,7 +24,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 - `/v1/*`（legacy）：严格按《API 接口设计方案》，统一 `{code,data,message}` 包装、配额扣减、WS 会话、验证码注册等。
 - `/api/*`（前端适配层，`app/routers_fe/`）：直接返回前端期望的 JSON（camelCase），错误统一 `{error:{code,message,details},requestId}`，SSE 流式 `activity|delta|done|error`，上传返回 `{files:[{id,name,mimeType,size,status:'ready'}]}`。
 
-前端 `mino-agent/src/api.js` 只调用 `/api/*`，两条链路并存互不干扰。
+Pi Web 的 [业务 API 客户端](<../pi-web/components/minos/api.js>) 通过 `/api/business/*` 同源网关调用 `/api/*`。`/v1/*` 是后端兼容接口，不对应第二套前端。
 
 ## 接入真实大模型（GLM / DeepSeek 等）
 

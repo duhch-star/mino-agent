@@ -1,6 +1,6 @@
 """前端适配层：/api/chat/* 对话助手（SSE 流式）+ 附件
 
-SSE 事件契约（见 mino-agent BACKEND_API.md）：
+兼容聊天 SSE 事件契约（主要对话使用 Pi SDK）：
 event: activity | delta | done | error
 """
 import asyncio

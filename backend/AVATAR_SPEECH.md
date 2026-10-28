@@ -2,7 +2,7 @@
 
 ## 已接入
 
-- mino-agent 的 InterviewRoom 使用 CharacterView 中的透明 2D 小北头像，不再加载火箭 GLB。
+- Pi Web 原生业务组件的 InterviewRoom 使用 CharacterView 中的透明 2D 小北头像，不再加载火箭 GLB。
 - 静态角色资源在前端 public/avatar。包含已确认的软方脸造型、七种状态、动态特效、动作和音量嘴型。
 - 视频/语音模式在提问阶段自动生成曼波 MP3；文字模式不自动播报。
 - 前端通过 POST /api/interview/speech 获取 audio/mpeg 二进制，转成 Blob URL 交给头像播放。
@@ -22,12 +22,12 @@
 
 ## 启动
 
-沿用项目原有命令启动 FastAPI（默认 8000）和 Vite（默认 5173）。无需再运行独立 8900 演示服务。
+使用根目录启动脚本启动 FastAPI（默认 8000）和唯一前端 Pi Web（统一入口默认 5173）。无需独立头像演示服务或 Vite 前端。
 
-前端入口： http://127.0.0.1:5173/#/interview
+前端入口： http://127.0.0.1:5173 （侧栏选择模拟面试）
 后端健康检查： http://127.0.0.1:8000/health
 
-如 Vite 忽略了 public 目录监视，新加头像资源后需重启 Vite 一次。
+头像静态资源仅维护在 [Pi Web public/avatar](<../pi-web/public/avatar>)；生产更新需要重建 Pi Web 并重启应用。
 
 ## 重要限制
 
