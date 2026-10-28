@@ -209,6 +209,28 @@ test("rejects an explicit model outside the enabled scope", async () => {
   );
 });
 
+test("resolves an automatic unscoped choice instead of the SDK provider default", async () => {
+  const configured = { id: "my-model", provider: "acme", name: "My configured model" };
+  const builtin = { id: "gpt-5.5", provider: "openai", name: "GPT-5.5" };
+  const scope = await resolveVisibleModels({ getAvailable: async () => [builtin, configured] }, undefined);
+  assert.equal(selectInitialModelScope(scope).model, configured);
+  assert.equal(selectInitialModelScope(scope, {
+    defaultModel: { provider: "openai", modelId: "gpt-5.5" },
+  }).model, builtin, "a usable saved default still wins");
+  assert.equal(selectInitialModelScope(scope, {
+    defaultModel: { provider: "removed", modelId: "old" },
+  }).model, configured, "a stale default uses the same visible fallback");
+  assert.equal(selectInitialModelScope({ ...scope, visible: [] }).model, undefined);
+});
+
+test("prefers explicitly configured models even under a built-in provider id", async () => {
+  const builtin = { id: 'gpt-5.5', provider: 'openai' };
+  const configured = { id: 'my-gateway-model', provider: 'openai' };
+  const scope = await resolveVisibleModels({ getAvailable: async () => [builtin, configured] }, undefined);
+  assert.equal(selectInitialModelScope(scope, { configuredModels: [{ provider: 'openai', modelId: 'my-gateway-model' }] }).model, configured);
+  assert.equal(selectInitialModelScope(scope, { configuredModels: [{ provider: 'openai', modelId: 'removed' }] }).model, builtin);
+});
+
 test("orders the selector like pi's /model, keeping models.json order (#783)", async () => {
   // Registry order: a models.json provider lists its models in file order.
   const registry = [

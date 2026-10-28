@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { getBridgeToken } from './minos-auth';
 import { CAREER_UI_PROMPT } from './career-ui-prompt';
+import { createMinosDocumentTool } from './minos-document-tool';
 
 const entry = Type.Object({ heading: Type.String(), subtitle: Type.String(), location: Type.String(), dates: Type.String(), items: Type.Array(Type.String()) });
 const section = Type.Object({ title: Type.String(), items: Type.Array(Type.String()), entries: Type.Array(entry), column: Type.Union([Type.Literal('auto'), Type.Literal('left'), Type.Literal('right')]) });
@@ -20,8 +21,9 @@ const definitions = [
 export function createMinosResumeExtension(getSessionId: () => string): InlineExtension {
   return { name: 'minos-resume', hidden: true, factory(pi) {
     if (!process.env.MINOS_PI_BRIDGE_SECRET) return;
-    pi.on('before_agent_start', (event) => ({ systemPrompt: event.systemPrompt + '\n' + CAREER_UI_PROMPT }));
+    pi.on('before_agent_start', (event) => ({ systemPrompt: event.systemPrompt + '\n' + CAREER_UI_PROMPT + '\n用户上传或以 @ 引用 PDF、DOCX、DOC 时，必须先用 document_read 提取其文字，再基于提取内容回答；不要用普通 read 读取二进制，不要猜测文档内容。工具报告空内容、扫描件或格式错误时如实说明并请用户提供可读文本/DOCX。' }));
     const base = process.env.MINOS_API_BASE_URL || 'http://127.0.0.1:8000';
+    pi.registerTool(createMinosDocumentTool(base));
     for (const tool of definitions) pi.registerTool(defineTool({
       ...tool, exposure: 'model-only',
       description: tool.description + ' 用户要求建立/完善并保存简历时必须真实调用；用户仅要求建议、分析或明确不保存时不得调用保存/切换模板工具。修改前先resume_read，完整保留未修改字段，不虚构学校公司成绩。发生版本冲突先重读。保存成功后自动生成PDF；compileError仅表示PDF生成失败，不代表保存失败，不要重复保存。',

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { setInterviewChatContext } from '../../lib/interview-chat-context'
 import { positions, difficulties, durations } from './data/interview.js'
 import { fetchLearningState, saveLearningState } from './api.js'
 
@@ -27,7 +28,7 @@ export const useLearningStore = create(set => ({
   setNote: (id, text) => { set(s => ({ notes: { ...s.notes, [id]: text } })); sync() },
   setQuizResult: (id, score, total) => { set(s => ({ quizResults: { ...s.quizResults, [id]: { score, total } } })); sync() },
 }))
-const blankInterview = () => ({ phase: 'config', position: positions[0], difficulty: difficulties[0], mode: 'text', duration: durations[1], questions: [], index: 0, transcript: [], stage: 'asking', micOn: false, followup: null, paused: false, messages: [], answerError: '', sessionId: null, finishing: false, finished: false, serverReport: null })
+const blankInterview = () => ({ feedbackModel: null, feedbackCwd: null, phase: 'config', position: positions[0], difficulty: difficulties[0], mode: 'text', duration: durations[1], questions: [], index: 0, transcript: [], stage: 'asking', micOn: false, followup: null, paused: false, messages: [], answerError: '', sessionId: null, finishing: false, finished: false, serverReport: null })
 export const useInterviewStore = create(set => ({
   ...blankInterview(),
   start: () => set(s => ({ phase: 'running', stage: 'asking', messages: [{ role: 'assistant', text: s.questions[s.index] || '', time: Date.now() }], answerError: '' })),
@@ -36,6 +37,7 @@ export const useInterviewStore = create(set => ({
   reset: () => set(blankInterview()),
 }))
 export async function activateAccount(user) {
+  setInterviewChatContext(null)
   const current = ++epoch
   clearTimeout(timer)
   useAuthStore.setState({ user, status: user ? 'authenticated' : 'guest' })

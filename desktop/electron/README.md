@@ -18,4 +18,4 @@ Windows 10/11 x64；内置 Electron、Node 和 Python，不依赖系统 Node/Pyt
 渲染窗口关闭 NodeIntegration、启用contextIsolation/sandbox，仅加载本机服务。麦克风/摄像头只向本应用本机来源授权。未做商业代码签名，SmartScreen可能提示未知发布者；请核验来源及SHA256，不要关闭系统安全防护。
 
 ## 重建
-先构建 pi-web 生产资源，运行 desktop/stage.py 生成排除秘密的payload；在本目录 npm ci 后 npm run pack（electron-builder NSIS）。输出 dist/electron。desktop/Launcher.cs 为早期原生启动器方案，不是本次交付目标；minos.iss 也可将 win-unpacked Electron 应用制作成兼容性备用安装器。
+先将 `backend/requirements-local.txt`（包含PDF、DOCX、DOC解析依赖，不只是核心requirements.txt）安装到 `.runtime/packaging/python`；`desktop/verify_document_runtime.py` 会实际导入解析模块及其原生依赖，stage会在清空旧暂存目录之前运行这一检查。然后构建 pi-web 生产资源，运行 desktop/stage.py 生成排除秘密的payload；在本目录 npm ci 后 npm run pack（electron-builder NSIS）。输出 dist/electron。desktop/Launcher.cs 为早期原生启动器方案，不是本次交付目标；minos.iss 也可将 win-unpacked Electron 应用制作成兼容性备用安装器。

@@ -221,13 +221,22 @@ async function openExternal(value) {
 function permissions() {
   const approved = new Map();
   session.defaultSession.setPermissionCheckHandler((contents, permission, origin, details) => {
-    if (!trustedContents(contents) || !localUrl(origin) || permission !== 'media') return false;
+    if (!trustedContents(contents) || !localUrl(origin)) return false;
     if (details?.embeddingOrigin && !localUrl(details.embeddingOrigin)) return false;
+    // Plain-text copy uses this write-only permission. Never grant clipboard
+    // reads (clipboard-read / clipboard-read-write), even to the local page.
+    if (permission === 'clipboard-sanitized-write') return details?.isMainFrame !== false;
+    if (permission !== 'media') return false;
     const type = details?.mediaType;
     // This is an origin/type boundary check; the request handler below obtains user consent.
     return type === 'audio' || type === 'video';
   });
   session.defaultSession.setPermissionRequestHandler((contents, permission, callback, details) => {
+    if (permission === 'clipboard-sanitized-write') {
+      callback(Boolean(trustedContents(contents) && details?.isMainFrame !== false &&
+        details?.requestingUrl && localUrl(details.requestingUrl)));
+      return;
+    }
     const types = details.mediaTypes || [];
     if (!trustedContents(contents) || permission !== 'media' || !types.length ||
       types.some(type => type !== 'audio' && type !== 'video') ||

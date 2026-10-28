@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { CareerExamples } from './CareerExamples';
 import "./minos-career.css";
 
 const CAREER_TASKS = [
@@ -45,6 +46,7 @@ export function CareerWelcome({ onChooseTask }: { onChooseTask: (prompt: string)
           </button>
         ))}
       </div>
+      <CareerExamples onChooseTask={onChooseTask} />
     </section>
   );
 }

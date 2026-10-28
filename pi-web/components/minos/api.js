@@ -29,9 +29,16 @@ export const fetchQuestions = (position, difficulty) => data(`/api/interview/que
 export const createInterviewSession = config => data('/api/interview/sessions', { method: 'POST', body: JSON.stringify(config) })
 export const submitInterviewAnswer = (id, payload) => data(`/api/interview/sessions/${encodeURIComponent(id)}/answers`, { method: 'POST', body: JSON.stringify(payload) })
 export const finishInterviewSession = id => data(`/api/interview/sessions/${encodeURIComponent(id)}/finish`, { method: 'POST', body: '{}' })
+async function requestPiInterview(path, options = {}) {
+  const response = await fetch(`/api/interview/${path}`, { ...options, headers: { 'Content-Type': 'application/json' } })
+  if (response.status === 401) globalThis.dispatchEvent?.(new CustomEvent(AUTH_EXPIRED_EVENT))
+  if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(typeof data.error === 'string' ? data.error : `Pi 模型请求失败 (${response.status})`) }
+  return response
+}
+export const fetchInterviewModels = async (signal, cwd) => (await requestPiInterview(`models${cwd ? `?cwd=${encodeURIComponent(cwd)}` : ''}`, { signal })).json()
 export async function fetchInterviewFeedback(position, question, answer, history = [], options = {}) {
   const signal = options.signal || AbortSignal.timeout(30000)
-  const response = await requestApi('/api/interview/feedback/stream', { method: 'POST', body: JSON.stringify({ position, question, answer, history: history.slice(-40) }), signal })
+  const response = await requestPiInterview('feedback/stream', { method: 'POST', body: JSON.stringify({ position, question, answer, history: history.slice(-40), model: options.model || null, cwd: options.cwd || undefined }), signal })
   return readFeedbackStream(response, { onPreview: options.onPreview, signal })
 }
 export const fetchInterviewSpeechConfig = signal => data('/api/interview/speech/config', { signal })

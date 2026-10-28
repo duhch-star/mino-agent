@@ -2,6 +2,9 @@
 from pathlib import Path
 import shutil, json, subprocess
 ROOT = Path(__file__).resolve().parent.parent
+from verify_document_runtime import verify
+# Validate before deleting an existing stage; never ship silently empty parsers.
+verify(ROOT / '.runtime/packaging/python/python.exe')
 STAGE = ROOT / 'dist/windows/app'
 # Recreate only this verified generated staging directory; never mutate the checkout.
 assert STAGE.resolve() == (ROOT / 'dist/windows/app').resolve()

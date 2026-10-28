@@ -41,6 +41,7 @@ export interface ModelScopeResult {
 export interface InitialModelScopeOptions {
   requestedModel?: { provider: string; modelId: string };
   defaultModel?: { provider: string; modelId: string };
+  configuredModels?: { provider: string; modelId: string }[];
   thinkingLevel?: ThinkingLevel;
 }
 
@@ -218,7 +219,12 @@ export function selectInitialModelScope(
   const defaultVisible = !requested && !fallbackScoped && defaultRef
     ? scope.visible.find((model) => matchesModel(model, defaultRef))
     : undefined;
-  const selectedModel = requested ?? fallbackScoped?.model ?? defaultVisible;
+  // Never hand an unscoped automatic choice back to the SDK: its separate
+  // provider-default fallback can silently prefer a built-in (e.g. gpt-5.5)
+  // over the configured models shown by this selector. Resolve one model here
+  // for both /api/models and session startup, preserving the selector's order.
+  const configured = options.configuredModels?.map(ref => scope.visible.find(model => matchesModel(model, ref))).find(Boolean);
+  const selectedModel = requested ?? fallbackScoped?.model ?? defaultVisible ?? configured ?? orderSelectorModels(scope)[0];
   const scopedSelection = requestedScoped ?? fallbackScoped;
   const thinkingLevel = options.thinkingLevel ?? scopedSelection?.thinkingLevel;
 

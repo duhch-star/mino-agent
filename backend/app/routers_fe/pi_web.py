@@ -39,6 +39,12 @@ class PdfRequest(BaseModel):
     revision: int = Field(ge=0)
 
 
+class DocumentRequest(BaseModel):
+    bridgeSecret: str = Field(min_length=1, max_length=512)
+    token: str = Field(min_length=1, max_length=512)
+    path: str = Field(min_length=1, max_length=4096)
+
+
 class LaunchRequest(BaseModel):
     acknowledgeLocalAgent: bool = False
 
@@ -56,6 +62,13 @@ def launch_confirm(req: LaunchRequest = Body(default=LaunchRequest()), user: Use
 @router.post('/verify')
 def verify(req: BridgeCredentials, db: Session = Depends(get_db)):
     return manager.verify(db, bridge_secret=req.bridgeSecret, ticket=req.ticket, token=req.token)
+
+
+@router.post('/document-read')
+def document_read(req: DocumentRequest, db: Session = Depends(get_db)):
+    from app.services.workspace_documents import read_workspace_document
+    identity = manager.verify(db, token=req.token, bridge_secret=req.bridgeSecret)
+    return read_workspace_document(identity['workspace'], req.path)
 
 
 @router.post('/resume-tool')

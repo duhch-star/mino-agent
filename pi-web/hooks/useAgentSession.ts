@@ -14,6 +14,8 @@ import type {
 } from "@/lib/types";
 import { isBlockingExtensionUiRequest } from "@/lib/browser-notifications";
 import { normalizeToolCalls } from "@/lib/normalize";
+import { copyText } from "@/lib/clipboard";
+import { setInterviewChatContext } from "@/lib/interview-chat-context";
 import { agentStatusUrl, isPromptRejectedError, sendAgentCommand } from "@/lib/agent-client";
 import {
   deleteSessionViewSnapshot,
@@ -557,6 +559,9 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
   const displayModel = isNew
     ? (newSessionModel ?? newSessionDefaultModel)
     : currentModel ?? (data?.context.messages.length === 0 ? newSessionDefaultModel : null);
+  useEffect(() => {
+    setInterviewChatContext({ model: displayModel, cwd: newSessionCwd ?? session?.cwd ?? null });
+  }, [displayModel, newSessionCwd, session?.cwd]);
   const contextThinkingLevel = asConcreteThinkingLevel(
     data?.context.thinkingLevel && data.context.thinkingLevel !== "off"
       ? data.context.thinkingLevel
@@ -2341,7 +2346,7 @@ export function useAgentSession(opts: UseAgentSessionOptions) {
           const data = await sendAgentCommand<LastAssistantTextResponse>(sid, { type: "get_last_assistant_text" });
           const textToCopy = data?.text ?? "";
           if (!textToCopy) return complete({ handled: true, error: "No assistant message to copy" });
-          await navigator.clipboard.writeText(textToCopy);
+          await copyText(textToCopy);
           return complete({ handled: true, message: "Copied last assistant message" });
         }
 

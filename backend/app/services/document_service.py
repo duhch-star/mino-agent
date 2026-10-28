@@ -63,31 +63,62 @@ def _extract_docx_local(path: str) -> str:
         return ""
 
 
+def _doc_piece_text(word: bytes, table: bytes) -> str:
+    """Word 97+ CLX piece table, not a Latin-1 dump of binary/OLE metadata."""
+    import struct
+    if len(word) < 426 or word[:2] != b'\xec\xa5':
+        return ""
+    flags = struct.unpack_from('<H', word, 10)[0]
+    if flags & 0x8100:  # encrypted or obfuscated
+        return ""
+    start, size = struct.unpack_from('<II', word, 418)
+    if start + size > len(table):
+        return ""
+    clx = table[start:start + size]
+    pos = 0
+    while pos < len(clx) and clx[pos] == 1:  # optional Prc records
+        if pos + 3 > len(clx):
+            return ""
+        pos += 3 + struct.unpack_from('<H', clx, pos + 1)[0]
+    if pos + 5 > len(clx) or clx[pos] != 2:
+        return ""
+    length = struct.unpack_from('<I', clx, pos + 1)[0]
+    plc = clx[pos + 5:pos + 5 + length]
+    if len(plc) != length or length < 4 or (length - 4) % 12:
+        return ""
+    count = (length - 4) // 12
+    main_chars = struct.unpack_from('<I', word, 76)[0]  # ccpText; exclude other stories
+    parts = []
+    for index in range(count):
+        first, last = struct.unpack_from('<II', plc, index * 4)
+        if last < first:
+            return ""
+        if first >= main_chars:
+            break
+        chars = min(last, main_chars) - first
+        encoded = struct.unpack_from('<I', plc, (count + 1) * 4 + index * 8 + 2)[0]
+        compressed = bool(encoded & 0x40000000)
+        offset = encoded & 0x3fffffff
+        offset = offset // 2 if compressed else offset
+        size = chars if compressed else chars * 2
+        if offset + size > len(word):
+            return ""
+        parts.append(word[offset:offset + size].decode('cp1252' if compressed else 'utf-16-le', errors='replace'))
+    return ''.join(parts).replace('\r', '\n').replace('\x07', '\t').strip()
+
+
 def _extract_doc_legacy(path: str) -> str:
-    """旧版 .doc（OLE 复合文档）：尽力提取 WordDocument 流中的可打印文本。"""
+    """Extract Word 97+ text using the FIB-selected 0Table/1Table stream."""
     try:
         import olefile
         if not olefile.isOleFile(path):
             return ""
-        ole = olefile.OleFileIO(path)
-        try:
-            if ole.exists("WordDocument"):
-                data = ole.openstream("WordDocument").read()
-            else:
-                data = ole.openstreams()[0].read()
-        finally:
-            ole.close()
-        # 提取连续可打印字符（含中文宽字符），容忍噪声
-        raw = data.decode("latin-1", "ignore")
-        chars = []
-        for ch in raw:
-            o = ord(ch)
-            if ch in "\r\n\t" or 0x20 <= o < 0x7F or 0x80 <= o:
-                chars.append(ch)
-        text = "".join(chars)
-        # 去重连续空行
-        import re
-        return re.sub(r"\n{3,}", "\n\n", text).strip()[:MAX_EXTRACT_CHARS]
+        with olefile.OleFileIO(path) as ole:
+            word = ole.openstream('WordDocument').read()
+            if len(word) < 12:
+                return ""
+            table_name = '1Table' if int.from_bytes(word[10:12], 'little') & 0x0200 else '0Table'
+            return _doc_piece_text(word, ole.openstream(table_name).read())
     except Exception as exc:  # noqa: BLE001
         logger.warning("olefile 解析 .doc 失败 %s: %s", path, exc)
         return ""
@@ -253,8 +284,7 @@ def _extract_local(path: str, mime: str = "", filename: str = "") -> str:
     if ext == ".docx":
         return _extract_docx_local(path)
     if ext == ".doc":
-        return _extract_doc_legacy(path) or (
-            "【旧版 .doc 格式】本地解析未能完整提取内容，建议将文件另存为 .docx 后重新上传。")
+        return _extract_doc_legacy(path)
     if ext == ".xlsx":
         return _extract_xlsx_local(path)
     if ext == ".xls":

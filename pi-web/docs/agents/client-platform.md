@@ -33,6 +33,10 @@
 - Ctrl+Alt+N starts a new session in the active project's cwd; `isNewSessionShortcut()` is the one place that decides. The letter (`event.key`) matches, so the shortcut follows the layout. The physical key (`code === "KeyN"`) matches only when `key === "Dead"`: macOS treats Option as a character-input modifier, so `Option+N` is a dead key (`˜`) in the U.S., ABC and British layouts and Chrome reports `key === "Dead"` with `ctrlKey`/`altKey` intact, which a letter-only match never fired on (#1335). Never match `code` alone: Windows reports AltGr as Ctrl+Alt, and where AltGr+N types a character (Polish `ń`) that keydown is the user's text, which `preventDefault()` would swallow.
 - Esc stops the running agent unless the event is already `defaultPrevented` (a nearer Settings, menu or viewer closed on it) or the focus is a `TEXTAREA`/`INPUT`, which ChatInput owns. See [mcp-settings.md](mcp-settings.md) for the Escape stacking that depends on this.
 
+## Clipboard copying
+- All production plain-text Copy actions use `lib/clipboard.ts` (including generated career cards and `/copy`). A browser can expose `navigator.clipboard.writeText` yet reject it: try the selection-based fallback on rejection, reject if `execCommand('copy')` returns false, and always remove the temporary textarea and restore focus/selection. Never display a successful copy for a denied operation.
+- Electron explicitly permits only `clipboard-sanitized-write` for its trusted local main window, in both permission handlers. Clipboard reads/read-write, external origins and subframes remain denied; do not expose a generic native clipboard IPC bridge.
+
 ## Completion sound
 - `hooks/useAudio.ts` stores the toggle in `localStorage` as `pi-sound-enabled` and reuses one `AudioContext`.
 - Autoplay policy requires unlocking sound from a user gesture: `ChatInput` calls the unlock hook from interactive controls, and `ChatWindow` plays the tone from `onAgentEnd`.

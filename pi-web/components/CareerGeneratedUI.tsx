@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { careerUIPlainText } from "../lib/career-ui";
+import { copyText } from "../lib/clipboard";
 import type { CareerUIData, CareerUIItem, CareerUIStatus, CareerUIType } from "../lib/career-ui";
 import "./career-generated-ui.css";
 
@@ -78,7 +79,7 @@ export function CareerGeneratedUI({ data, onAction }: CareerGeneratedUIProps) {
   const meta = META[data.type];
   const copy = async () => {
     const content = careerUIPlainText(data);
-    try { await navigator.clipboard.writeText(content); setCopyStatus('已复制'); }
+    try { await copyText(content); setCopyStatus('已复制'); }
     catch { setCopyStatus('复制失败，请手动选择文字'); }
   };
   return <section className={`career-ui career-ui-${data.type}`} aria-labelledby={headingId}>

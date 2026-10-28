@@ -98,7 +98,7 @@ export default function InterviewRoom() {
       }
       // answers 端点的启发式分数不能冒充大模型反馈。
       const feedbackStarted = performance.now()
-      const feedback = await fetchInterviewFeedback(position, q, clean, history, { signal: controller.signal, onPreview: preview => { if (isCurrent()) setFeedbackPreview({ ...preview, elapsedMs: Math.round(performance.now() - answerSubmittedAt), serverElapsedMs: preview.elapsedMs }) } })
+      const feedback = await fetchInterviewFeedback(position, q, clean, history, { model: current.feedbackModel, cwd: current.feedbackCwd, signal: controller.signal, onPreview: preview => { if (isCurrent()) setFeedbackPreview({ ...preview, elapsedMs: Math.round(performance.now() - answerSubmittedAt), serverElapsedMs: preview.elapsedMs }) } })
       if (!isCurrent()) return false
       setFeedbackMs(Math.round(performance.now() - feedbackStarted))
       useInterviewStore.setState(s => ({

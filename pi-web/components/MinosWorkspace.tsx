@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { ModelsConfig } from './ModelsConfig';
+import { CareerExamples } from './CareerExamples';
 import { AppShell } from './AppShell';
 import BusinessPages from './minos/BusinessPages';
 import { activateAccount } from './minos/store';
@@ -89,6 +90,7 @@ export function MinosWorkspace() {
       {error && <p role="alert">{error}</p>}
       <div className="minos-welcome-rule"><span>你的求职工作台</span><small>无需模型，也可以从这里开始</small></div>
       <div className="minos-quick-grid">{[['01','知识库','把零散的信息，变成准备。','/knowledge'],['02','AI 面试','提前练习，让表达更从容。','/interview'],['03','学习复盘','看见积累，也看见下一步。','/review']].map(([n,title,desc,route]) => <button key={route} onClick={() => setPath(route)}><span className="minos-quick-index">{n} <span>↗</span></span><strong>{title}</strong><p>{desc}</p></button>)}</div>
+      <CareerExamples onConfigure={configure} />
     </div>}</section></div>}
     {configuration && <div className="minos-model-settings"><ModelsConfig onClose={() => setConfiguration(false)} /></div>}
     {permission && <div className="minos-permission-backdrop"><section role="dialog" aria-modal="true" aria-labelledby="minos-permission-title"><h2 id="minos-permission-title">启用本地 MINOS 智能体</h2><p>智能体可以当前 Windows 用户权限读写文件、运行命令和终端。账号目录分离不等于操作系统安全沙箱，请仅在可信本机使用。</p>{error && <p role="alert">{error}</p>}<footer><button onClick={browse}>稍后启用，继续浏览</button><button onClick={configure}>去配置模型</button><button disabled={busy} onClick={() => connect(true)}>{busy ? '正在连接…' : '我理解并启用'}</button></footer></section></div>}

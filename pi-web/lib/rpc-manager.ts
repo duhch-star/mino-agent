@@ -10,6 +10,7 @@ import { validateAgentImages } from "./image-attachments";
 import { invalidateModelsCache } from "./models-cache";
 import { invalidateModelRuntimeWithExtensions } from "./model-runtime";
 import { resolveVisibleModels, selectInitialModelScope } from "./model-scope";
+import { configuredModelRefs } from './configured-model-refs';
 import { findDeferredModel, findDeferredStartupModel, rememberProviderModels } from "./deferred-provider-models";
 import { isBlockingExtensionUiRequest } from "./extension-ui-queue";
 import {
@@ -2660,6 +2661,7 @@ export async function startRpcSession(
       ? services.modelRuntime.getModel(savedModel.provider, savedModel.modelId)
       : undefined;
     const initial = hasExistingMessages ? null : selectInitialModelScope(scope, {
+        configuredModels: configuredModelRefs(),
         ...(effectiveInitialModel ? { requestedModel: effectiveInitialModel } : {}),
         ...(defaultModel ? { defaultModel } : {}),
         ...(thinkingLevel ? { thinkingLevel } : {}),
@@ -2676,9 +2678,9 @@ export async function startRpcSession(
     // model asked for gets its enabledModels pin; with no usable model asked for, the browser shows
     // that pick and sends none, so a deferred pick is switched to as well.
     const deferredStartup = !hasExistingMessages && !chatOnly && (deferredInitialModel || (!effectiveInitialModel && !startsOnDefault))
-      ? await findDeferredStartupModel(services.modelRuntime, enabledModels, deferredInitialModel
+      ? await findDeferredStartupModel(services.modelRuntime, enabledModels, { configuredModels: configuredModelRefs(), ...(deferredInitialModel
         ? { requestedModel: { provider: deferredInitialModel.provider, modelId: deferredInitialModel.id } }
-        : defaultModel ? { defaultModel } : {})
+        : defaultModel ? { defaultModel } : {}) })
       : undefined;
     const deferredModel = hasExistingMessages
       ? savedModel && !restoredModel

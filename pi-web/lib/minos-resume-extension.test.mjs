@@ -19,6 +19,7 @@ async function harness(fetch, io = {}) {
   const schema = new Proxy({}, { get: () => () => ({}) });
   const create = new Script(body + ';createMinosResumeExtension').runInNewContext({
     Type: schema, defineTool: (tool) => tool, getBridgeToken: () => 'private-token', CAREER_UI_PROMPT: '',
+    createMinosDocumentTool: () => ({ name: 'document_read' }),
     process: { env: { MINOS_PI_BRIDGE_SECRET: 'secret', MINOS_PI_WORKSPACE: workspace } },
     fetch, mkdir: fs.mkdir, lstat: fs.lstat, writeFile: fs.writeFile, randomUUID: () => 'unique-id', ...io,
     join, resolve: (path) => path, Buffer,

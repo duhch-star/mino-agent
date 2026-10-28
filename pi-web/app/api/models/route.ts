@@ -1,4 +1,5 @@
 import { existsSync } from "fs";
+import { configuredModelRefs } from '@/lib/configured-model-refs';
 import { stat } from "fs/promises";
 import { resolve } from "path";
 import { createAgentSessionServices, getAgentDir, type SettingsManager } from "@earendil-works/pi-coding-agent";
@@ -60,6 +61,7 @@ async function loadModels(cwd: string): Promise<ModelsData> {
   const defaultProvider = settings.getDefaultProvider();
   const defaultModelId = settings.getDefaultModel();
   const initial = selectInitialModelScope(scope, {
+    configuredModels: configuredModelRefs(),
     ...(defaultProvider && defaultModelId
       ? { defaultModel: { provider: defaultProvider, modelId: defaultModelId } }
       : {}),
